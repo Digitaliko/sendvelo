@@ -1,0 +1,165 @@
+{
+  "common": {
+    "appName": "SendVelo",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit"
+  },
+  "nav": {
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "dashboard": "Dashboard",
+    "signOut": "Sign out"
+  },
+  "home": {
+    "hero": {
+      "title": "Get approval for your",
+      "titleHighlight": "ChatGPT-generated content",
+      "subtitle": "Send proposals, drafts, and ideas for review directly from ChatGPT. Get feedback via email with a simple approve or reject.",
+      "cta": "Start free trial",
+      "viewDashboard": "View dashboard"
+    },
+    "features": {
+      "emailNotifications": {
+        "title": "Email notifications",
+        "description": "Reviewers get instant email notifications with a link to approve or reject your content."
+      },
+      "chatgptIntegration": {
+        "title": "ChatGPT integration",
+        "description": "Use directly from ChatGPT with our MCP tool. No context switching required."
+      },
+      "simpleDecisions": {
+        "title": "Simple decisions",
+        "description": "Reviewers can approve or reject with optional comments. Clean, simple interface."
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "free": {
+        "name": "Free",
+        "price": "$0",
+        "period": "/month",
+        "features": {
+          "reviewsPerMonth": "5 reviews per month",
+          "emailNotifications": "Email notifications",
+          "chatgptIntegration": "ChatGPT integration"
+        },
+        "cta": "Get started"
+      },
+      "pro": {
+        "name": "Pro",
+        "badge": "Popular",
+        "price": "$15",
+        "period": "/month",
+        "features": {
+          "unlimitedReviews": "Unlimited reviews",
+          "everythingInFree": "Everything in Free",
+          "prioritySupport": "Priority support"
+        },
+        "cta": "Start free trial"
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 SendVelo. All rights reserved."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to your account",
+      "subtitle": "Welcome back! Please enter your details.",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "github": "GitHub"
+    },
+    "signUp": {
+      "title": "Create an account",
+      "subtitle": "Get started with SendVelo today.",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign up",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "github": "GitHub"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back!",
+    "createReview": "Create Review",
+    "stats": {
+      "totalReviews": "Total Reviews",
+      "pending": "Pending",
+      "subscription": "Subscription"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "currentPlan": "Current Plan",
+      "free": "free",
+      "pro": "pro",
+      "upgrade": "Upgrade",
+      "manage": "Manage",
+      "upgradeToPro": "Upgrade to Pro",
+      "manageSubscription": "Manage Subscription",
+      "reviewsThisMonth": "Reviews this month",
+      "unlimited": "Unlimited reviews",
+      "reviewsRemaining": "{{count}} reviews remaining this month"
+    },
+    "reviews": {
+      "title": "Your Reviews",
+      "noReviews": "No reviews yet. Create your first one!",
+      "createFirst": "Create your first review to get started.",
+      "table": {
+        "title": "Title",
+        "reviewer": "Reviewer",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "pending",
+        "approved": "approved",
+        "rejected": "rejected"
+      },
+      "view": "View",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this review?"
+    },
+    "createModal": {
+      "title": "Create New Review",
+      "titleLabel": "Title",
+      "reviewerEmailLabel": "Reviewer Email",
+      "contentLabel": "Content",
+      "cancel": "Cancel",
+      "create": "Create",
+      "creating": "Creating..."
+    }
+  },
+  "review": {
+    "from": "From:",
+    "approved": "✓ This review has been approved",
+    "rejected": "✗ This review has been rejected",
+    "comments": "Comments:",
+    "commentsLabel": "Comments (optional)",
+    "commentsPlaceholder": "Add any comments or feedback...",
+    "approve": "✓ Approve",
+    "reject": "✗ Reject",
+    "footer": "Powered by"
+  }
+}
