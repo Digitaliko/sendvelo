@@ -29,7 +29,7 @@
     "lucide-react": "^0.460.0",
     "mcp-handler": "^1.0.2",
     "nanoid": "^5.1.6",
-    "next": "15.5.7",
+    "next": "15.5.9",
     "next-intl": "^4.6.1",
     "postmark": "^4.0.5",
     "react": "19.1.0",
