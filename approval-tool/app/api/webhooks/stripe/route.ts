@@ -67,14 +67,12 @@ export async function POST(request: Request) {
             where: { email: userEmail },
             data: {
               stripeCustomerId: customerId,
-              subscriptionTier: "pro",
+              subscriptionTier: "STARTER",
               subscriptionStatus: "active",
             },
           });
 
-          console.log(
-            `✓ Subscription activated for ${userEmail} (${customerId})`
-          );
+          // Subscription activated successfully
         }
         break;
       }
@@ -110,11 +108,11 @@ export async function POST(request: Request) {
           data: {
             subscriptionStatus: status,
             subscriptionTier:
-              status === "active" || status === "past_due" ? "pro" : "free",
+              status === "active" || status === "past_due" ? "STARTER" : "FREE",
           },
         });
 
-        console.log(`✓ Subscription updated for ${user.email}: ${status}`);
+        // Subscription updated successfully
         break;
       }
 
@@ -139,17 +137,17 @@ export async function POST(request: Request) {
         await prisma.user.update({
           where: { id: user.id },
           data: {
-            subscriptionTier: "free",
+            subscriptionTier: "FREE",
             subscriptionStatus: "canceled",
           },
         });
 
-        console.log(`✓ Subscription canceled for ${user.email}`);
+        // Subscription canceled successfully
         break;
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        // Unhandled event type (no action needed)
     }
 
     return Response.json({ received: true });

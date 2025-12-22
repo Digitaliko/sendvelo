@@ -106,11 +106,11 @@ export const userRouter = createTRPCRouter({
           resetDate: now,
         },
       });
-      return { canCreate: true, remaining: user.subscriptionTier === "pro" ? -1 : 5 };
+      return { canCreate: true, remaining: user.subscriptionTier !== "FREE" ? -1 : 5 };
     }
 
-    // Pro users have unlimited reviews
-    if (user.subscriptionTier === "pro") {
+    // Paid users have unlimited reviews
+    if (user.subscriptionTier !== "FREE") {
       return { canCreate: true, remaining: -1 };
     }
 

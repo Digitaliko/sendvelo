@@ -143,23 +143,36 @@
     },
     "createModal": {
       "title": "Create New Review",
+      "templateDescription": "Choose a template to get started quickly",
       "titleLabel": "Title",
       "reviewerEmailLabel": "Reviewer Email",
       "contentLabel": "Content",
       "cancel": "Cancel",
       "create": "Create",
       "creating": "Creating..."
-    }
+    },
+    "filters": {
+      "allStatus": "All Status",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "changesRequested": "Changes Requested"
+    },
+    "searchPlaceholder": "Search reviews..."
   },
   "review": {
     "from": "From:",
     "approved": "✓ This review has been approved",
     "rejected": "✗ This review has been rejected",
+    "changesRequested": "⚠ Changes have been requested",
     "comments": "Comments:",
     "commentsLabel": "Comments (optional)",
     "commentsPlaceholder": "Add any comments or feedback...",
+    "commentsSection": "Comments",
     "approve": "✓ Approve",
     "reject": "✗ Reject",
+    "requestChanges": "⚠ Request Changes",
+    "reviewers": "Reviewers",
     "footer": "Powered by"
   }
 }

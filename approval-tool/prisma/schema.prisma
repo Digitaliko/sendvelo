@@ -7,7 +7,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ===== AUTHENTICATION (Better Auth) =====
+// ========================================
+// AUTHENTICATION (Better Auth Core)
+// ========================================
 
 model User {
   id            String   @id @default(cuid())
@@ -16,22 +18,35 @@ model User {
   emailVerified Boolean  @default(false)
   image         String?
 
-  // Subscription (Stripe)
-  subscriptionTier   String  @default("free") // "free" | "pro"
-  subscriptionStatus String? // "active" | "canceled" | "past_due"
-  stripeCustomerId   String? @unique
-  reviewsThisMonth   Int     @default(0)
-  resetDate          DateTime @default(now())
+  // Subscription (Stripe) - UPDATED TIERS
+  subscriptionTier   SubscriptionTier @default(FREE)
+  subscriptionStatus String?          // "active" | "canceled" | "past_due"
+  stripeCustomerId   String?          @unique
+  reviewsThisMonth   Int              @default(0)
+  resetDate          DateTime         @default(now())
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  sessions      Session[]
-  accounts      Account[]
-  reviews       Review[]
+  // Relations
+  sessions            Session[]
+  accounts            Account[]
+  reviews             Review[]
+  organizationMembers OrganizationMember[]
+  invitationsSent     Invitation[]         @relation("InvitationInviter")
+  reviewerAssignments Reviewer[]           @relation("ReviewerUser")
+  comments            Comment[]
+  activityLogs        ActivityLog[]
 
   @@index([email])
   @@index([subscriptionTier])
+}
+
+enum SubscriptionTier {
+  FREE     // 3 active approvals/month
+  STARTER  // $19/mo - Unlimited approvals, 3 team members
+  TEAM     // $49/mo - Unlimited everything, Slack
+  BUSINESS // $99/mo - SSO, audit logs, API
 }
 
 model Session {
@@ -40,45 +55,375 @@ model Session {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // NEW: Active organization
+  activeOrganizationId String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([token])
 }
 
 model Account {
   id                String   @id @default(cuid())
   userId            String
-  provider          String   // "google", "github"
+  provider          String
   providerAccountId String
   accessToken       String?  @db.Text
   refreshToken      String?  @db.Text
   expiresAt         Int?
   createdAt         DateTime @default(now())
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
 
-// ===== CORE REVIEW WORKFLOW =====
+// ========================================
+// ORGANIZATIONS (Better Auth Plugin)
+// ========================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logo      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  members       OrganizationMember[]
+  invitations   Invitation[]
+  teams         Team[]
+  reviews       Review[]
+  slackSettings SlackIntegration?
+  activityLogs  ActivityLog[]
+
+  @@index([slug])
+}
+
+model OrganizationMember {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String
+  role           OrganizationRole @default(MEMBER)
+  createdAt      DateTime         @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model Invitation {
+  id             String           @id @default(cuid())
+  email          String
+  inviterId      String
+  organizationId String
+  role           OrganizationRole @default(MEMBER)
+  status         InvitationStatus @default(PENDING)
+  expiresAt      DateTime
+  createdAt      DateTime         @default(now())
+
+  inviter      User         @relation("InvitationInviter", fields: [inviterId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([status])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELED
+  EXPIRED
+}
+
+model Team {
+  id             String   @id @default(cuid())
+  name           String
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
+
+  @@index([organizationId])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+// ========================================
+// CORE REVIEW WORKFLOW (Enhanced)
+// ========================================
 
 model Review {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  title         String
-  content       String   @db.Text
-  reviewerEmail String
-  status        String   @default("pending") // "pending" | "approved" | "rejected"
-  comments      String?  @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  title        String
+  status       ReviewStatus @default(PENDING)
+  workflowType WorkflowType @default(PARALLEL)
 
   // Creator (authenticated user)
-  creatorId     String
-  creator       User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // Optional organization link
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reviewers    Reviewer[]
+  versions     ReviewVersion[]
+  comments     Comment[]
+  activityLogs ActivityLog[]
 
   @@index([slug])
   @@index([status])
   @@index([creatorId])
-  @@index([creatorId, status]) // Composite index for filtered queries
+  @@index([organizationId])
+  @@index([creatorId, status])
+}
+
+enum ReviewStatus {
+  PENDING
+  PARTIALLY_APPROVED
+  CHANGES_REQUESTED
+  APPROVED
+  REJECTED
+  CANCELED
+}
+
+enum WorkflowType {
+  PARALLEL    // All reviewers can approve in any order
+  SEQUENTIAL  // Must approve in order
+  ANY_ONE     // First approval completes the review
+}
+
+enum ContentFormat {
+  PLAIN_TEXT
+  MARKDOWN
+  HTML
+}
+
+model ReviewVersion {
+  id        String   @id @default(cuid())
+  reviewId  String
+  version   Int
+  content   String   @db.Text
+  changes   String?  @db.Text // Summary of what changed
+
+  // Content format for rendering
+  contentFormat  ContentFormat @default(MARKDOWN)
+
+  // Basic metadata (computed on create)
+  wordCount      Int @default(0)
+  characterCount Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, version])
+  @@index([reviewId])
+}
+
+model Reviewer {
+  id       String         @id @default(cuid())
+  reviewId String
+  email    String
+  name     String?
+  status   ReviewerStatus @default(PENDING)
+
+  // Workflow ordering (0 = parallel, 1+ = sequential position)
+  order    Int     @default(0)
+  required Boolean @default(true)
+
+  // For registered users
+  userId String?
+  user   User?   @relation("ReviewerUser", fields: [userId], references: [id])
+
+  // Magic link access token (for guest reviewers)
+  accessToken   String   @unique @default(cuid())
+  accessExpires DateTime?
+
+  // Engagement tracking
+  viewedAt     DateTime?
+  viewCount    Int       @default(0)
+  timeSpentMs  Int       @default(0)
+  lastActiveAt DateTime?
+
+  // Decision
+  decidedAt DateTime?
+  comments  String?   @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([email])
+  @@index([accessToken])
+  @@index([userId])
+}
+
+enum ReviewerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  reviewId String
+  content  String @db.Text
+
+  // Author (either user or guest)
+  userId      String?
+  user        User?   @relation(fields: [userId], references: [id])
+  authorEmail String?
+  authorName  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([userId])
+}
+
+// ========================================
+// SLACK INTEGRATION
+// ========================================
+
+model SlackIntegration {
+  id             String @id @default(cuid())
+  organizationId String @unique
+
+  // OAuth tokens
+  accessToken String @db.Text
+  botUserId   String
+  teamId      String
+  teamName    String
+
+  // Default channel for notifications
+  defaultChannelId   String?
+  defaultChannelName String?
+
+  // Settings
+  notifyOnNew      Boolean @default(true)
+  notifyOnApproved Boolean @default(true)
+  notifyOnRejected Boolean @default(true)
+  notifyOnComment  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+}
+
+// ========================================
+// ACTIVITY LOG (Audit Trail)
+// ========================================
+
+model ActivityLog {
+  id       String       @id @default(cuid())
+  action   ActivityType
+  metadata Json?
+
+  // Actor
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Context
+  reviewId       String?
+  review         Review?       @relation(fields: [reviewId], references: [id], onDelete: SetNull)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([reviewId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  // Review lifecycle
+  REVIEW_CREATED
+  REVIEW_UPDATED
+  REVIEW_CANCELED
+  REVIEWER_ADDED
+  REVIEWER_REMOVED
+
+  // Reviewer actions
+  REVIEW_VIEWED
+  REVIEW_APPROVED
+  REVIEW_REJECTED
+  REVIEW_CHANGES_REQUESTED
+  COMMENT_ADDED
+
+  // Organization
+  ORG_MEMBER_INVITED
+  ORG_MEMBER_JOINED
+  ORG_MEMBER_REMOVED
+
+  // Integrations
+  SLACK_CONNECTED
+  SLACK_DISCONNECTED
+  REMINDER_SENT
+}
+
+// ========================================
+// REMINDERS
+// ========================================
+
+model Reminder {
+  id          String    @id @default(cuid())
+  reviewerId  String
+  scheduledAt DateTime
+  sentAt      DateTime?
+  attempt     Int       @default(1)
+
+  createdAt DateTime @default(now())
+
+  @@index([scheduledAt])
+  @@index([reviewerId])
 }
