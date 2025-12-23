@@ -1,6 +1,6 @@
-# SendVelo Marketing Plan
+# Thumbway Marketing Plan
 
-**Product**: SendVelo - ChatGPT Approval & Review Tool
+**Product**: Thumbway - ChatGPT Approval & Review Tool
 **Target Launch**: Q1 2025
 **Last Updated**: December 2024
 
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-SendVelo is the first ChatGPT-native approval tool that allows users to send AI-generated content for review and approval directly from ChatGPT. Our unique position as a ChatGPT MCP tool gives us first-mover advantage in a rapidly growing market of AI-assisted workflows.
+Thumbway is the first ChatGPT-native approval tool that allows users to send AI-generated content for review and approval directly from ChatGPT. Our unique position as a ChatGPT MCP tool gives us first-mover advantage in a rapidly growing market of AI-assisted workflows.
 
 **Key Differentiators**:
 - ✅ **First-mover advantage**: No direct competitors in ChatGPT approval space
@@ -104,7 +104,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 
 ### Against Alternatives
 
-| Alternative | SendVelo Advantage |
+| Alternative | Thumbway Advantage |
 |-------------|-------------------|
 | **Email copy-paste** | No context loss, version history, one-click approval |
 | **Google Docs** | No account needed for reviewer, faster approval |
@@ -135,14 +135,14 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 
 3. **Content Marketing**
    - Blog: "How to Get Faster Approvals on ChatGPT Content"
-   - Blog: "5 Ways Teams Use ChatGPT + SendVelo"
+   - Blog: "5 Ways Teams Use ChatGPT + Thumbway"
    - Video: 60-second product demo
    - Goal: 500 email subscribers
 
 4. **Community Engagement**
    - Join ChatGPT Discord, Reddit communities
    - Answer questions, share helpful tips
-   - Soft pitch SendVelo when relevant
+   - Soft pitch Thumbway when relevant
    - Goal: 100 engaged community members
 
 ### Phase 2: Launch (Weeks 5-8)
@@ -170,7 +170,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 
 4. **Email Campaign** (Week 5)
    - Email beta list (500 subscribers)
-   - Subject: "SendVelo is LIVE - Get Faster Approvals"
+   - Subject: "Thumbway is LIVE - Get Faster Approvals"
    - Include: Launch discount, demo video, testimonials
    - Goal: 30% open rate, 10% conversion to signup
 
@@ -364,7 +364,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 ### Pricing Psychology
 
 1. **Anchoring**: Show annual plan first (appears cheaper)
-2. **Social Proof**: "Join 10,000+ users already using SendVelo"
+2. **Social Proof**: "Join 10,000+ users already using Thumbway"
 3. **Urgency**: "Launch special: 50% off Pro for first 100 users"
 4. **Value Framing**: "$15/month = $0.50/day for unlimited approvals"
 5. **Free Trial**: 14-day Pro trial (no credit card required)
@@ -381,14 +381,14 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 
 ### Week 5: Launch Week
 - **Product Hunt**: Launch on Tuesday or Wednesday
-- **Blog**: "Introducing SendVelo - ChatGPT Approvals Made Simple"
+- **Blog**: "Introducing Thumbway - ChatGPT Approvals Made Simple"
 - **Twitter**: 3 posts/day (demo, testimonials, features)
 - **LinkedIn**: Founder story + product announcement
 - **Reddit**: r/ChatGPT launch post
 - **Email**: Send to beta list (500 subscribers)
 
 ### Week 6-8: Post-Launch
-- **Blog**: "5 Ways Teams Use SendVelo" (use cases)
+- **Blog**: "5 Ways Teams Use Thumbway" (use cases)
 - **Blog**: "How to Set Up ChatGPT Approvals in 60 Seconds" (tutorial)
 - **Twitter**: User-generated content, testimonials
 - **LinkedIn**: B2B use cases (marketing, sales, legal)
@@ -401,7 +401,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
   - "Legal Compliance for AI-Generated Content"
   - "ChatGPT Best Practices for Remote Teams"
   - "10 ChatGPT Workflows That Need Approvals"
-  - "SendVelo vs Traditional Approval Tools"
+  - "Thumbway vs Traditional Approval Tools"
   - "Case Study: How [Company] Cut Approval Time by 90%"
   - "The Future of AI-Assisted Workflows"
 - **Twitter**: Daily tips, user stories, feature announcements
@@ -504,7 +504,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 1. **Network Effects**: More users → more testimonials → more users
 2. **Data Moat**: Approval patterns → AI auto-review → better product
 3. **Integration Lock-in**: Deep ChatGPT integration hard to replicate
-4. **Brand**: First-mover = "SendVelo = ChatGPT approvals" in user minds
+4. **Brand**: First-mover = "Thumbway = ChatGPT approvals" in user minds
 5. **Community**: Engaged users create templates, workflows, content
 
 ---
@@ -606,7 +606,7 @@ SendVelo is the first ChatGPT-native approval tool that allows users to send AI-
 3. "How to Set Up AI Content Approval Workflows"
 4. "ChatGPT for Sales: Best Practices"
 5. "Legal Compliance for AI-Generated Content"
-6. "Case Study: 90% Faster Approvals with SendVelo"
+6. "Case Study: 90% Faster Approvals with Thumbway"
 7. "Remote Team Collaboration with ChatGPT"
 8. "ChatGPT vs Human Writing: When to Get Approval"
 9. "Building Trust in AI-Generated Content"

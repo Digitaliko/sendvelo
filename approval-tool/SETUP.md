@@ -1,4 +1,4 @@
-# SendVelo Setup Guide
+# Thumbway Setup Guide
 
 All code has been written! This guide will help you complete the setup, testing, and deployment.
 
@@ -120,7 +120,7 @@ openssl rand -base64 32
 #### GitHub OAuth
 1. Go to https://github.com/settings/developers
 2. Click "New OAuth App"
-3. Application name: "SendVelo"
+3. Application name: "Thumbway"
 4. Homepage URL: `http://localhost:3000`
 5. Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
 6. Copy Client ID and Client Secret to `.env.local`
@@ -227,7 +227,7 @@ Open http://localhost:3000
    - Go to https://platform.openai.com/apps
    - Click "Create App"
    - Fill in details:
-     - Name: "SendVelo"
+     - Name: "Thumbway"
      - Description: "Send content for approval via email"
      - MCP Endpoint: `https://yourdomain.com/mcp`
      - OAuth Configuration:
@@ -269,12 +269,12 @@ vercel
 
 # Follow prompts:
 # - Link to existing project? No
-# - Project name: sendvelo (or your choice)
+# - Project name: thumbway (or your choice)
 # - Directory: ./ (default)
 # - Override settings? No
 
 # After deployment, set environment variables in Vercel dashboard
-# Go to: https://vercel.com/your-username/sendvelo/settings/environment-variables
+# Go to: https://vercel.com/your-username/thumbway/settings/environment-variables
 
 # Add all variables from .env.local
 

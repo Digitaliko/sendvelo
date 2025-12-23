@@ -1,4 +1,4 @@
-# SendVelo Product Hunt Launch Kit
+# Thumbway Product Hunt Launch Kit
 ## Complete Launch Day Playbook
 
 **Target Launch Day:** Tuesday or Wednesday (highest traffic)
@@ -10,7 +10,7 @@
 
 ### Product Name
 ```
-SendVelo
+Thumbway
 ```
 
 ### Tagline (60 characters max)
@@ -25,7 +25,7 @@ Get client sign-off in minutes, not days
 
 ### One-liner Description
 ```
-SendVelo is the approval platform for teams creating content in ChatGPT. Write in ChatGPT, send for approval with one command, get sign-off in minutes.
+Thumbway is the approval platform for teams creating content in ChatGPT. Write in ChatGPT, send for approval with one command, get sign-off in minutes.
 ```
 
 ---
@@ -52,7 +52,7 @@ For content that took 30 minutes to create.
 
 ## The Solution
 
-SendVelo bridges the gap between AI content creation and stakeholder approval.
+Thumbway bridges the gap between AI content creation and stakeholder approval.
 
 **How it works:**
 
@@ -106,11 +106,11 @@ We realized AI had 10x'd content creation but approval workflows were stuck in 1
 
 So we built the bridge.
 
-SendVelo isn't just another approval tool. It's the approval layer for the AI content era.
+Thumbway isn't just another approval tool. It's the approval layer for the AI content era.
 
 ---
 
-Try free: sendvelo.com
+Try free: thumbway.com
 No credit card. No demo required. Just start.
 ```
 
@@ -123,19 +123,19 @@ Post immediately after launch:
 ```
 Hey Product Hunt! 👋
 
-I'm Filip, founder of SendVelo.
+I'm Filip, founder of Thumbway.
 
 Quick story: I was a marketing consultant using ChatGPT to write proposals. I could create 5 in a day. But approvals? Each one took 3-5 days of email ping-pong.
 
 I realized the bottleneck had shifted. AI made creation instant. But approval was still chaos.
 
-So I built SendVelo.
+So I built Thumbway.
 
 **What makes it different:**
 
 Most approval tools are standalone apps. You create content somewhere, then upload to the approval tool.
 
-SendVelo lives INSIDE ChatGPT. You write, say "send for approval," and it just works. No context switching. No copy-paste.
+Thumbway lives INSIDE ChatGPT. You write, say "send for approval," and it just works. No context switching. No copy-paste.
 
 **Where we are:**
 
@@ -179,7 +179,7 @@ Let's make approval not suck. 🚀
 **Image 2: One-Command Send**
 - ChatGPT conversation screenshot
 - User: "Send this proposal to client@acme.com for approval"
-- SendVelo response: "✅ Sent! Review link: ..."
+- Thumbway response: "✅ Sent! Review link: ..."
 - Text: "One command. That's it."
 
 **Image 3: Approval Page**
@@ -201,7 +201,7 @@ Let's make approval not suck. 🚀
 - Text: "Approve without leaving Slack"
 
 ### Thumbnail (240 x 240px)
-- SendVelo logo
+- Thumbway logo
 - Clean, recognizable
 
 ---
@@ -283,9 +283,9 @@ Let's make approval not suck. 🚀
 ```
 Hey [Name],
 
-Quick update: SendVelo is launching on Product Hunt next Tuesday!
+Quick update: Thumbway is launching on Product Hunt next Tuesday!
 
-You've been using SendVelo in beta, and your feedback shaped what we built. Now I need one more favor.
+You've been using Thumbway in beta, and your feedback shaped what we built. Now I need one more favor.
 
 On launch day (Tuesday, [DATE]), could you:
 
@@ -310,7 +310,7 @@ Thanks for being part of this journey!
 ```
 It's go time!
 
-SendVelo is now live on Product Hunt:
+Thumbway is now live on Product Hunt:
 👉 [PRODUCT HUNT LINK]
 
 If you have 30 seconds:
@@ -340,7 +340,7 @@ P.S. Know someone who complains about approval workflows? Forward this to them!
 
 Yesterday was incredible.
 
-SendVelo finished #[X] on Product Hunt with [XXX] upvotes.
+Thumbway finished #[X] on Product Hunt with [XXX] upvotes.
 
 More importantly, we heard from dozens of people who share our frustration with approval chaos.
 
@@ -355,7 +355,7 @@ What's next:
 
 Thank you for supporting the launch. Seriously.
 
-If you haven't tried SendVelo yet, it's free for 10 reviews/month:
+If you haven't tried Thumbway yet, it's free for 10 reviews/month:
 [LINK]
 
 Onward!
@@ -372,7 +372,7 @@ Onward!
 ```
 Today's the day! 🚀
 
-SendVelo is live on Product Hunt.
+Thumbway is live on Product Hunt.
 
 We're building the approval layer for the AI content era.
 
@@ -394,7 +394,7 @@ And I'll be in the comments all day - come ask me anything!
 ### Twitter Thread (Launch Day)
 
 ```
-🧵 Today I'm launching SendVelo on @ProductHunt
+🧵 Today I'm launching Thumbway on @ProductHunt
 
 A thread on why approval workflows are broken, and how we're fixing them:
 
@@ -428,7 +428,7 @@ Done
 
 Same-day approval. No copy-paste. No email chains.
 
-4/ That's SendVelo.
+4/ That's Thumbway.
 
 It's an approval platform that lives inside ChatGPT.
 
@@ -458,13 +458,13 @@ What's your specific use case? Would love to make sure we build it right for peo
 ### For "How is this different from X?"
 
 ```
-Great question! The main difference is where SendVelo lives.
+Great question! The main difference is where Thumbway lives.
 
 [Competitor X] is a standalone tool - you create content elsewhere, then upload for approval.
 
-SendVelo lives INSIDE ChatGPT. You write, say "send for approval," done. No context switching.
+Thumbway lives INSIDE ChatGPT. You write, say "send for approval," done. No context switching.
 
-If you're not using ChatGPT for content creation, [Competitor X] might be better. If you are, SendVelo is built for that workflow.
+If you're not using ChatGPT for content creation, [Competitor X] might be better. If you are, Thumbway is built for that workflow.
 ```
 
 ### For Pricing Questions
@@ -529,7 +529,7 @@ Would love to know more about your workflow - maybe we're not the right fit, and
 ### Template for Retrospective:
 
 ```
-## SendVelo Product Hunt Retrospective
+## Thumbway Product Hunt Retrospective
 
 **Launch Date:** [DATE]
 **Final Position:** #[X]
@@ -573,4 +573,4 @@ Would love to know more about your workflow - maybe we're not the right fit, and
 
 ---
 
-*Generated by BMad Master for SendVelo*
+*Generated by BMad Master for Thumbway*

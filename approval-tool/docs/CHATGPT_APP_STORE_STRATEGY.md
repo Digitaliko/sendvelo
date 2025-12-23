@@ -1,4 +1,4 @@
-# SendVelo ChatGPT App Store Strategy
+# Thumbway ChatGPT App Store Strategy
 ## Use Cases, Metadata & Discovery Optimization
 
 **Last Updated:** December 22, 2024
@@ -74,7 +74,7 @@ Based on OpenAI's recommended approach: **Qualitative → Quantitative → Syste
 5. "Legal needs to review this contract"
 6. "Send this to john@acme.com" (simple sharing intent)
 
-**Negative Prompts** (Should NOT trigger SendVelo):
+**Negative Prompts** (Should NOT trigger Thumbway):
 1. "Schedule a meeting with john@acme.com" → Calendar tool
 2. "Email this to john@acme.com" → Email tool
 3. "Search for approval workflows" → Web search
@@ -83,9 +83,9 @@ Based on OpenAI's recommended approach: **Qualitative → Quantitative → Syste
 
 **Boundary Cases** (Need clarification):
 1. "Share this with my team" → Could be approval or just FYI
-   - SendVelo should ask: "Do you want approval or just sharing?"
+   - Thumbway should ask: "Do you want approval or just sharing?"
 2. "Send to legal@company.com" → Approval or just info?
-   - SendVelo should default to approval, offer "just share" option
+   - Thumbway should default to approval, offer "just share" option
 
 ---
 
@@ -118,7 +118,7 @@ Following OpenAI's recommendation: "Create evaluation prompts across three categ
 
 #### **Direct Prompts (Minimum 5)**
 
-✅ **Should trigger SendVelo:**
+✅ **Should trigger Thumbway:**
 
 1. "Send this blog post to sarah@company.com for approval"
    - **Expected:** `send_for_review` tool called
@@ -142,62 +142,62 @@ Following OpenAI's recommendation: "Create evaluation prompts across three categ
 
 #### **Indirect Prompts (Minimum 5)**
 
-✅ **Should trigger SendVelo:**
+✅ **Should trigger Thumbway:**
 
 1. "My boss needs to sign off on this before I can proceed"
-   - **Expected:** SendVelo asks for boss's email
+   - **Expected:** Thumbway asks for boss's email
    - **Confidence:** Medium
 
 2. "I need Sarah's feedback on this before publishing"
-   - **Expected:** SendVelo asks for Sarah's email
+   - **Expected:** Thumbway asks for Sarah's email
    - **Confidence:** Medium
 
 3. "Can you help me get this approved by my client?"
-   - **Expected:** SendVelo asks for client email
+   - **Expected:** Thumbway asks for client email
    - **Confidence:** High
 
 4. "Legal needs to review this contract before we sign"
-   - **Expected:** SendVelo asks for legal team email
+   - **Expected:** Thumbway asks for legal team email
    - **Confidence:** Medium
 
 5. "I want my team to weigh in on this strategy"
-   - **Expected:** SendVelo asks for team emails
+   - **Expected:** Thumbway asks for team emails
    - **Confidence:** Low (could be discussion, not approval)
 
 #### **Negative Prompts (Should NOT trigger)**
 
-❌ **Should NOT trigger SendVelo:**
+❌ **Should NOT trigger Thumbway:**
 
 1. "Schedule a meeting with john@acme.com to discuss this"
    - **Expected:** Calendar tool
-   - **Precision Test:** SendVelo should NOT activate
+   - **Precision Test:** Thumbway should NOT activate
 
 2. "Email this document to sarah@company.com"
    - **Expected:** Email tool
-   - **Precision Test:** SendVelo should NOT activate
+   - **Precision Test:** Thumbway should NOT activate
 
 3. "Search for approval workflow best practices"
    - **Expected:** Web search
-   - **Precision Test:** SendVelo should NOT activate
+   - **Precision Test:** Thumbway should NOT activate
 
 4. "Create a reminder to get approval next week"
    - **Expected:** Reminder tool
-   - **Precision Test:** SendVelo should NOT activate
+   - **Precision Test:** Thumbway should NOT activate
 
 5. "What's the weather in New York?"
    - **Expected:** Weather tool
-   - **Precision Test:** SendVelo should NOT activate
+   - **Precision Test:** Thumbway should NOT activate
 
 ---
 
 ### **Precision/Recall Targets**
 
-**Precision:** 90%+ (SendVelo only activates when it should)
-**Recall:** 85%+ (SendVelo activates for most approval intents)
+**Precision:** 90%+ (Thumbway only activates when it should)
+**Recall:** 85%+ (Thumbway activates for most approval intents)
 
 **Test Weekly:**
 - Run golden prompt set through ChatGPT
-- Track which prompts correctly trigger SendVelo
+- Track which prompts correctly trigger Thumbway
 - Adjust metadata based on results
 
 ---
@@ -443,7 +443,7 @@ Following OpenAI's guidelines: **Name = domain + action**, **Description = "Use 
 
 ## Discovery Strategy
 
-### **How ChatGPT Chooses SendVelo**
+### **How ChatGPT Chooses Thumbway**
 
 Based on OpenAI docs: *"The assistant chooses your app when your tool metadata, descriptions, and past usage align with the user's prompt and memories."*
 
@@ -466,7 +466,7 @@ User: "Get feedback from my team"
 #### **3. Past Usage**
 ```
 User previously: "Send to sarah@company.com for approval"
-→ SendVelo was called successfully
+→ Thumbway was called successfully
 → ChatGPT learns this pattern
 → Next time user says "send to Sarah", higher likelihood
 ```
@@ -507,7 +507,7 @@ User: "Send this proposal"
 **Explicit negatives prevent mis-activation:**
 > "Do NOT use this for: **scheduling meetings**, sending **regular emails** without approval needed, **sharing files** without feedback request, or creating **reminders**."
 
-**Why:** Prevents SendVelo from competing with Calendar, Email, or Reminder tools
+**Why:** Prevents Thumbway from competing with Calendar, Email, or Reminder tools
 
 ---
 
@@ -526,7 +526,7 @@ User: "Send this proposal"
 **Remember reviewers:**
 ```
 User (first time): "Send to legal@company.com"
-→ SendVelo stores: legal reviews = legal@company.com
+→ Thumbway stores: legal reviews = legal@company.com
 
 User (later): "Send this contract for legal review"
 → ChatGPT auto-fills: "Send to legal@company.com?"
@@ -613,7 +613,7 @@ User (later): "Send this contract for legal review"
   - [ ] Refine negative cases to improve precision
 
 - [ ] **User Feedback Loop**
-  - [ ] Survey users: "Did SendVelo work as expected?"
+  - [ ] Survey users: "Did Thumbway work as expected?"
   - [ ] Collect failed use cases
   - [ ] Prioritize fixes based on frequency
 
@@ -622,10 +622,10 @@ User (later): "Send this contract for legal review"
 ## App Store Listing (Optimized)
 
 ### **App Name**
-**SendVelo - Team Approval for AI Content**
+**Thumbway - Team Approval for AI Content**
 
 **Why:**
-- "SendVelo" = brand
+- "Thumbway" = brand
 - "Team Approval" = primary use case keyword
 - "AI Content" = target content type
 
@@ -644,9 +644,9 @@ User (later): "Send this contract for legal review"
 ### **Long Description**
 
 ```
-SendVelo is the approval platform for teams creating content in ChatGPT.
+Thumbway is the approval platform for teams creating content in ChatGPT.
 
-When ChatGPT generates your proposal, blog post, email, or strategy, SendVelo gets stakeholder approval instantly—without leaving ChatGPT.
+When ChatGPT generates your proposal, blog post, email, or strategy, Thumbway gets stakeholder approval instantly—without leaving ChatGPT.
 
 ✅ Send for approval in one command
 📧 Reviewers get email with approve/reject buttons
@@ -725,7 +725,7 @@ Caption: "Centralized feedback - no more scattered email chains"
 ## Success Metrics
 
 ### **Discovery Metrics (Week 1-4)**
-- [ ] Tool activation rate: 80%+ of approval intents trigger SendVelo
+- [ ] Tool activation rate: 80%+ of approval intents trigger Thumbway
 - [ ] Precision: 90%+ (no false activations)
 - [ ] Recall: 85%+ (catches most approval intents)
 

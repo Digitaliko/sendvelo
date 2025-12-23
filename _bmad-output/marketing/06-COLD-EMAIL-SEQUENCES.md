@@ -1,4 +1,4 @@
-# SendVelo Cold Email Sequences
+# Thumbway Cold Email Sequences
 ## AI-Personalized Outreach for Enterprise & Agency Leads
 
 **Important:** Deploy AFTER you have case studies and social proof (per focus group insight)
@@ -119,7 +119,7 @@ I'll assume the timing isn't right and close your file.
 
 If things change - client approvals get painful, margins get squeezed by admin time - I'm an email away.
 
-Try it free anytime: sendvelo.com
+Try it free anytime: thumbway.com
 
 All the best,
 Filip
@@ -148,7 +148,7 @@ But here's what I keep hearing from marketing leaders:
 
 The bottleneck shifted. CMO review, legal sign-off, stakeholder buy-in - that's where content goes to die.
 
-We built SendVelo to fix that. Our beta users went from 52 hours average approval time to 3.2 hours.
+We built Thumbway to fix that. Our beta users went from 52 hours average approval time to 3.2 hours.
 
 That's 16x faster.
 
@@ -169,7 +169,7 @@ Two questions:
 ```
 [First Name],
 
-One thing marketing teams love about SendVelo:
+One thing marketing teams love about Thumbway:
 
 Stakeholders can approve directly from Slack.
 
@@ -206,9 +206,9 @@ That's 6 full work weeks.
 
 Imagine what [Company]'s team could do with 6 extra weeks per month.
 
-SendVelo delivers that.
+Thumbway delivers that.
 
-Free tier available: sendvelo.com
+Free tier available: thumbway.com
 
 If you want a walkthrough, I'm happy to show you.
 
@@ -240,7 +240,7 @@ I hear this a lot from sales leaders:
 
 The bottleneck isn't the customer. It's getting Finance, Legal, and leadership aligned.
 
-We built SendVelo to collapse that approval timeline. Sales teams using it close deals 3x faster.
+We built Thumbway to collapse that approval timeline. Sales teams using it close deals 3x faster.
 
 Is deal velocity something you're focused on at [Company]?
 
@@ -287,8 +287,8 @@ Hi [First Name],
 
 One of our sales teams shared their results:
 
-Before SendVelo: 5 day average internal approval
-After SendVelo: 2 hours average
+Before Thumbway: 5 day average internal approval
+After Thumbway: 2 hours average
 
 They attributed this to:
 - Parallel reviews (Finance + Legal at same time)
@@ -299,7 +299,7 @@ Result: 23% faster deal close rate.
 
 If you're trying to hit Q1 numbers, this might help.
 
-Free to try: sendvelo.com
+Free to try: thumbway.com
 
 - Filip
 ```
@@ -326,13 +326,13 @@ If you're like most [consultants/designers/freelancers], it's 3-5 days of:
 - "Bumping this to the top of your inbox..."
 - Wondering if they even saw it
 
-We built SendVelo to fix this.
+We built Thumbway to fix this.
 
 Instead of email attachments, you send one link. Client sees clean page with "Approve" button. Average response time: under 4 hours.
 
 Faster approval = faster invoice = faster payment.
 
-Worth a look: sendvelo.com
+Worth a look: thumbway.com
 
 - Filip
 ```
@@ -355,9 +355,9 @@ ChatGPT writes proposal → Copy to doc → Attach to email → Send → Wait 5 
 **After:**
 ChatGPT writes proposal → "Send to client@email.com for approval" → Client approves same day
 
-SendVelo lives inside ChatGPT. One command, done.
+Thumbway lives inside ChatGPT. One command, done.
 
-Try free: sendvelo.com
+Try free: thumbway.com
 
 - Filip
 ```
@@ -372,7 +372,7 @@ Try free: sendvelo.com
 ```
 Hi [First Name],
 
-SendVelo isn't for everyone.
+Thumbway isn't for everyone.
 
 If your clients respond to proposals within 24 hours, you don't need it.
 
@@ -383,7 +383,7 @@ But if you've ever:
 
 ... it might be worth 5 minutes to check it out.
 
-Free for 10 proposals/month: sendvelo.com
+Free for 10 proposals/month: thumbway.com
 
 Either way, good luck with [their work]!
 
@@ -436,7 +436,7 @@ Write a sentence that describes this pain specifically for them.
 
 ### For Value Prop:
 ```
-Given [Company] is in [Industry] with [Team Size] employees, which SendVelo feature would resonate most?
+Given [Company] is in [Industry] with [Team Size] employees, which Thumbway feature would resonate most?
 
 Options:
 - One-command ChatGPT integration
@@ -505,7 +505,7 @@ Write a 2-sentence value prop emphasizing this feature.
 Great to hear, [First Name]!
 
 Here's what I suggest:
-1. Try free at sendvelo.com (takes 2 minutes)
+1. Try free at thumbway.com (takes 2 minutes)
 2. If you like it, I can do a 15-min call to show team features
 
 Or if you prefer a walkthrough first, here's my calendar: [LINK]
@@ -526,7 +526,7 @@ Best of luck with [relevant context]!
 ```
 Appreciate the direct response, [First Name].
 
-I'll remove you from my list. If things change, sendvelo.com will be there.
+I'll remove you from my list. If things change, thumbway.com will be there.
 
 All the best!
 ```
@@ -535,7 +535,7 @@ All the best!
 ```
 Fair question!
 
-I'm Filip, founder of SendVelo. We help teams get content approved faster - especially useful if you create content with AI tools like ChatGPT.
+I'm Filip, founder of Thumbway. We help teams get content approved faster - especially useful if you create content with AI tools like ChatGPT.
 
 Reached out because [specific reason based on their profile].
 
@@ -559,4 +559,4 @@ If that's not relevant, no worries at all. Happy to remove you from my list.
 
 ---
 
-*Generated by BMad Master for SendVelo*
+*Generated by BMad Master for Thumbway*

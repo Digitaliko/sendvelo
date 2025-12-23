@@ -1,4 +1,4 @@
-# SendVelo Case Study Template
+# Thumbway Case Study Template
 ## For Building Social Proof with Early Customers
 
 **Purpose:** Create compelling proof points for enterprise sales and marketing
@@ -10,7 +10,7 @@
 
 ### Step 1: Identify Candidates
 **Criteria:**
-- [ ] Using SendVelo for 30+ days
+- [ ] Using Thumbway for 30+ days
 - [ ] Has measurable results (time saved, approval speed)
 - [ ] Willing to be named (or provide anonymous quote)
 - [ ] Represents target ICP
@@ -18,18 +18,18 @@
 ### Step 2: Request Interview
 **Email Template:**
 ```
-Subject: Quick favor - would you share your SendVelo story?
+Subject: Quick favor - would you share your Thumbway story?
 
 Hi [Name],
 
-I noticed you've been using SendVelo for [X weeks] and your approval times have dropped significantly.
+I noticed you've been using Thumbway for [X weeks] and your approval times have dropped significantly.
 
 Would you be open to a 15-minute interview? I'd love to capture your experience as a case study.
 
 In exchange, I'll:
 - Feature [Company] on our website (good backlink + exposure)
 - Give you 3 months free on your current plan
-- Send you SendVelo swag
+- Send you Thumbway swag
 
 Totally optional, but would mean a lot as we're just getting started.
 
@@ -48,25 +48,25 @@ Filip
 **Interview Script:**
 
 **Opening (2 min):**
-"Thanks for taking the time! I'll ask about your approval workflow before and after SendVelo. Should take 15 minutes. Mind if I record for notes?"
+"Thanks for taking the time! I'll ask about your approval workflow before and after Thumbway. Should take 15 minutes. Mind if I record for notes?"
 
-**Before SendVelo (5 min):**
-1. "Before SendVelo, how did you handle approval workflows?"
+**Before Thumbway (5 min):**
+1. "Before Thumbway, how did you handle approval workflows?"
 2. "What was your biggest frustration with that process?"
 3. "How long did approvals typically take?"
 4. "Can you give me a specific example of approval pain?"
-5. "What did you try before SendVelo?"
+5. "What did you try before Thumbway?"
 
 **Discovery (2 min):**
-6. "How did you find SendVelo?"
+6. "How did you find Thumbway?"
 7. "What made you decide to try it?"
 
-**After SendVelo (5 min):**
+**After Thumbway (5 min):**
 8. "Walk me through your approval process now."
 9. "How long do approvals take now?"
 10. "What's been the biggest improvement?"
 11. "Any features you particularly love?"
-12. "What would you tell someone considering SendVelo?"
+12. "What would you tell someone considering Thumbway?"
 
 **Closing (1 min):**
 13. "Would you be comfortable being quoted by name?"
@@ -119,7 +119,7 @@ Filip
 
 ## The Challenge
 
-[2-3 sentences describing their situation before SendVelo]
+[2-3 sentences describing their situation before Thumbway]
 
 **Key pain points:**
 - [Pain point 1]
@@ -130,7 +130,7 @@ Filip
 
 ## The Solution
 
-[Company] implemented SendVelo to [brief description].
+[Company] implemented Thumbway to [brief description].
 
 **How they use it:**
 - [Use case detail 1]
@@ -157,7 +157,7 @@ Filip
 
 ---
 
-## Try SendVelo Free
+## Try Thumbway Free
 
 [CTA button]
 ```
@@ -173,8 +173,8 @@ Filip
 **Industry:** [Industry]
 **Company Size:** [X employees]
 **Department:** [Marketing/Sales/Operations]
-**SendVelo Plan:** [Pro/Team]
-**Time Using SendVelo:** [X months]
+**Thumbway Plan:** [Pro/Team]
+**Time Using Thumbway:** [X months]
 
 ---
 
@@ -183,7 +183,7 @@ Filip
 [3-4 sentence summary covering:
 - Who they are
 - The problem they faced
-- How SendVelo helped
+- How Thumbway helped
 - The measurable result]
 
 **Key Results:**
@@ -205,7 +205,7 @@ Filip
 
 ## The Challenge
 
-### Before SendVelo
+### Before Thumbway
 
 [2-3 paragraphs describing their situation:
 - What their approval process looked like
@@ -231,9 +231,9 @@ Filip
 
 ## The Solution
 
-### Finding SendVelo
+### Finding Thumbway
 
-[1 paragraph about how they discovered SendVelo:
+[1 paragraph about how they discovered Thumbway:
 - Where they found it (ChatGPT App Store, Google, referral, etc.)
 - What caught their attention
 - Why they decided to try it]
@@ -245,7 +245,7 @@ Filip
 - Team adoption
 - Learning curve]
 
-### How They Use SendVelo
+### How They Use Thumbway
 
 [2-3 paragraphs with specific workflow details:
 - What content they send for approval
@@ -266,7 +266,7 @@ Filip
 
 [Table or bullet points with measurable results]
 
-| Metric | Before SendVelo | After SendVelo | Change |
+| Metric | Before Thumbway | After Thumbway | Change |
 |--------|-----------------|----------------|--------|
 | Average Approval Time | [X days] | [X hours] | [X]% improvement |
 | Weekly Admin Hours | [X hours] | [X hours] | [X hours saved] |
@@ -289,7 +289,7 @@ Filip
 Time saved: [X hours/month]
 Average hourly cost: $[X]
 Monthly savings: $[X]
-SendVelo cost: $[X]/month
+Thumbway cost: $[X]/month
 Net ROI: [X]%
 ```
 
@@ -298,16 +298,16 @@ Net ROI: [X]%
 ## In Their Own Words
 
 ### On the Problem:
-> "[Quote about their pain before SendVelo]"
+> "[Quote about their pain before Thumbway]"
 
 ### On the Solution:
-> "[Quote about what they like about SendVelo]"
+> "[Quote about what they like about Thumbway]"
 
 ### On the Results:
 > "[Quote about the outcomes they've seen]"
 
 ### Their Recommendation:
-> "[Quote about who should use SendVelo]"
+> "[Quote about who should use Thumbway]"
 
 — [Full Name], [Title] at [Company]
 
@@ -321,11 +321,11 @@ Net ROI: [X]%
 
 ---
 
-## About SendVelo
+## About Thumbway
 
-SendVelo is the approval platform for teams creating content in ChatGPT. Send content for approval with one command, get stakeholder sign-off in minutes instead of days.
+Thumbway is the approval platform for teams creating content in ChatGPT. Send content for approval with one command, get stakeholder sign-off in minutes instead of days.
 
-**Try free:** sendvelo.com
+**Try free:** thumbway.com
 **10 reviews/month free. No credit card required.**
 
 ---
@@ -403,11 +403,11 @@ Subject: Would you record a 2-minute video?
 
 Hi [Name],
 
-Your results with SendVelo have been amazing, and I have an unusual ask.
+Your results with Thumbway have been amazing, and I have an unusual ask.
 
 Would you be willing to record a short (2 minute) video testimonial? Just answering:
 
-1. What was approval like before SendVelo?
+1. What was approval like before Thumbway?
 2. What's it like now?
 3. Would you recommend it?
 
@@ -416,7 +416,7 @@ You can record on your phone - doesn't need to be fancy.
 In exchange:
 - 6 months free on your plan
 - Featured on our homepage
-- SendVelo swag package
+- Thumbway swag package
 
 No pressure either way. But video testimonials are incredibly valuable for us as a young company.
 
@@ -434,16 +434,16 @@ INTRO (10 sec):
 "Hi, I'm [Name], [Title] at [Company]."
 
 PROBLEM (30 sec):
-"Before SendVelo, our approval process was [describe pain]. It would take [X days] to get sign-off, and [describe frustration]."
+"Before Thumbway, our approval process was [describe pain]. It would take [X days] to get sign-off, and [describe frustration]."
 
 SOLUTION (30 sec):
-"Now with SendVelo, we [describe new workflow]. I especially love [favorite feature]."
+"Now with Thumbway, we [describe new workflow]. I especially love [favorite feature]."
 
 RESULTS (30 sec):
 "Our approval time went from [X] to [Y]. That means [impact on their work/business]."
 
 RECOMMENDATION (20 sec):
-"If you're struggling with content approval, I'd definitely recommend SendVelo. It's [one word description - simple/fast/powerful]."
+"If you're struggling with content approval, I'd definitely recommend Thumbway. It's [one word description - simple/fast/powerful]."
 
 Tips:
 - Natural lighting is fine
@@ -455,4 +455,4 @@ Tips:
 
 ---
 
-*Generated by BMad Master for SendVelo*
+*Generated by BMad Master for Thumbway*

@@ -1,4 +1,4 @@
-# SendVelo: Consolidated Action Plan
+# Thumbway: Consolidated Action Plan
 **Based on: Web Research + Reddit/G2/Capterra Deep Dive (50+ User Quotes)**
 **Date:** December 22, 2025
 
@@ -214,7 +214,7 @@ Based on competitor failures, this is CRITICAL:
 
 4. **Viral growth mechanism**
    - Every approval in public channel = free advertising
-   - "What's SendVelo?" → Discovery
+   - "What's Thumbway?" → Discovery
    - Team adoption spreads organically
 
 ### Implementation Notes
@@ -223,12 +223,12 @@ Based on competitor failures, this is CRITICAL:
 // Slack app manifest
 {
   "display_information": {
-    "name": "SendVelo",
+    "name": "Thumbway",
     "description": "Approve ChatGPT content in Slack"
   },
   "features": {
     "bot_user": {
-      "display_name": "SendVelo",
+      "display_name": "Thumbway",
       "always_online": true
     }
   },
@@ -245,7 +245,7 @@ Based on competitor failures, this is CRITICAL:
   "settings": {
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://sendvelo.com/api/slack/interactions"
+      "request_url": "https://thumbway.com/api/slack/interactions"
     }
   }
 }

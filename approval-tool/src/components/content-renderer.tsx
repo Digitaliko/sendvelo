@@ -1,7 +1,7 @@
 "use client";
 
 import type { ContentFormat } from "@prisma/client";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitization";
 
 interface ContentRendererProps {
   content: string;
@@ -27,12 +27,7 @@ export function ContentRenderer({ content, format, className = "" }: ContentRend
 
   if (format === "HTML") {
     // Sanitize HTML content with DOMPurify to prevent XSS attacks
-    const sanitizedHTML = DOMPurify.sanitize(content, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'blockquote', 'hr', 'img', 'div', 'span'],
-      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
-      ALLOW_DATA_ATTR: false,
-      ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
-    });
+    const sanitizedHTML = sanitizeHtml(content, true); // Allow class and id for styling
 
     return (
       <div

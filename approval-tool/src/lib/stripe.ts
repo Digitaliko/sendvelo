@@ -1,5 +1,8 @@
+import "server-only";
 import Stripe from "stripe";
 import { env } from "@/env";
+
+export { STRIPE_PRICES } from "./stripe-prices";
 
 export const stripe = env.STRIPE_SECRET_KEY
   ? new Stripe(env.STRIPE_SECRET_KEY, {
@@ -7,34 +10,6 @@ export const stripe = env.STRIPE_SECRET_KEY
       typescript: true,
     })
   : null;
-
-export const STRIPE_PRICES = {
-  FREE: {
-    id: null,
-    name: "Free",
-    price: 0,
-    interval: null,
-    reviewsPerMonth: 5,
-    features: [
-      "5 reviews/month",
-      "Email notifications",
-      "Basic support",
-    ],
-  },
-  PRO: {
-    id: env.STRIPE_PRICE_ID_PRO, // Set this in .env after creating in Stripe
-    name: "Pro",
-    price: 15,
-    interval: "month" as const,
-    reviewsPerMonth: -1, // unlimited
-    features: [
-      "Unlimited reviews",
-      "Email notifications",
-      "Comments & feedback",
-      "Priority support",
-    ],
-  },
-} as const;
 
 export async function createCheckoutSession({
   userId,

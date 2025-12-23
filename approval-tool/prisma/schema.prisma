@@ -55,6 +55,10 @@ model Session {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ipAddress String?
+  userAgent String?
 
   // NEW: Active organization
   activeOrganizationId String?
@@ -66,18 +70,20 @@ model Session {
 }
 
 model Account {
-  id                String   @id @default(cuid())
-  userId            String
-  provider          String
-  providerAccountId String
-  accessToken       String?  @db.Text
-  refreshToken      String?  @db.Text
-  expiresAt         Int?
-  createdAt         DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  accountId    String
+  providerId   String
+  accessToken  String?  @db.Text
+  refreshToken String?  @db.Text
+  expiresAt    DateTime?
+  password     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([providerId, accountId])
   @@index([userId])
 }
 
@@ -197,6 +203,10 @@ model Review {
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
+  // Public sharing settings
+  publicAccessLevel PublicAccessLevel @default(NONE)
+  publicViewCount   Int               @default(0)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -227,6 +237,13 @@ enum WorkflowType {
   PARALLEL    // All reviewers can approve in any order
   SEQUENTIAL  // Must approve in order
   ANY_ONE     // First approval completes the review
+}
+
+enum PublicAccessLevel {
+  NONE           // Only invited reviewers (default)
+  VIEW_ONLY      // Anyone with link can view
+  VIEW_COMMENT   // Anyone can view and comment
+  FULL_ACCESS    // Anyone can approve/reject
 }
 
 enum ContentFormat {

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sendReviewRequestEmail, sendReminderEmail } from "@/lib/email";
 import { sendSlackNotification } from "@/lib/slack";
+import { sanitizeForStorage } from "@/lib/sanitization";
 import { env } from "@/env";
 import { nanoid } from "nanoid";
 import { z } from "zod";
@@ -164,9 +165,9 @@ async function handleSendForReview(
   const wordCount = input.content.split(/\s+/).filter(Boolean).length;
   const characterCount = input.content.length;
 
-  // Sanitize content (basic XSS prevention)
+  // Sanitize content (XSS prevention)
   const sanitizedTitle = input.title.trim().slice(0, 200);
-  const sanitizedContent = input.content.trim().slice(0, 50000);
+  const sanitizedContent = sanitizeForStorage(input.content, contentFormat);
 
   // Create review and increment counter atomically
   const review = await prisma.$transaction(async (tx) => {
@@ -392,17 +393,22 @@ async function handleUpdateReview(
   }
 
   const newVersion = (review.versions[0]?.version ?? 0) + 1;
+  const contentFormat = review.versions[0]?.contentFormat ?? "MARKDOWN";
 
   // Compute content metadata
   const wordCount = input.newContent.split(/\s+/).filter(Boolean).length;
   const characterCount = input.newContent.length;
+
+  // Sanitize content (XSS prevention)
+  const sanitizedContent = sanitizeForStorage(input.newContent, contentFormat);
 
   // Create new version
   await prisma.reviewVersion.create({
     data: {
       reviewId: review.id,
       version: newVersion,
-      content: input.newContent,
+      content: sanitizedContent,
+      contentFormat,
       changes: input.changeSummary,
       wordCount,
       characterCount,
@@ -746,7 +752,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   return Response.json({
-    name: "SendVelo Approval Tool",
+    name: "Thumbway Approval Tool",
     version: "2.0.0",
     description: "AI-native approval workflows for ChatGPT content",
     capabilities: {

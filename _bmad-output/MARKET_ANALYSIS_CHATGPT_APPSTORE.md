@@ -1,6 +1,6 @@
-# SendVelo: Comprehensive Market Analysis & ChatGPT App Store Strategy
+# Thumbway: Comprehensive Market Analysis & ChatGPT App Store Strategy
 **Date:** December 22, 2025
-**Prepared for:** SendVelo Product Team
+**Prepared for:** Thumbway Product Team
 **Purpose:** Market validation, feature prioritization, and ChatGPT App Store launch strategy
 
 ---
@@ -83,7 +83,7 @@ Based on user research, switch to flat-rate:
 **Key Insight from Research:**
 > "When an AI suggests a specific tool to use to solve a problem in real time, the conversion rate is much higher than with a generic banner ad." ([Source](https://www.emarketer.com/content/openai-opens-chatgpt-app-store-creating-new-space-brand-discovery))
 
-**Translation for SendVelo:**
+**Translation for Thumbway:**
 When ChatGPT suggests "Send this to your CMO for approval" mid-conversation, users will convert at 10-20x higher rates than traditional SaaS discovery.
 
 ### USP Strength Matrix
@@ -169,8 +169,8 @@ From Implementation Plan:
 From OpenAI's guidance:
 > "In this early phase, developers can link out from their ChatGPT apps to their own websites or native apps to complete transactions for physical goods. OpenAI is exploring additional monetization options over time, including digital goods." ([Source](https://openai.com/index/developers-can-now-submit-apps-to-chatgpt/))
 
-**Implications for SendVelo:**
-1. You CAN link to sendvelo.com for subscriptions (allowed)
+**Implications for Thumbway:**
+1. You CAN link to thumbway.com for subscriptions (allowed)
 2. Plan for future in-app purchases when OpenAI enables it
 3. Freemium model works perfectly with ChatGPT app discovery
 
@@ -204,7 +204,7 @@ Based on G2, Capterra, and user reviews:
 #### 1. **Approval Emails Get Lost** (Mentioned 47+ times)
 > "Approval emails often get lost among the 100-150 emails people receive daily, causing approval emails to fall through the cracks." ([Source](https://www.cflowapps.com/email-approval-workflow/))
 
-**SendVelo Solution:** ✅ No email chasing - status updates in ChatGPT where they're already working
+**Thumbway Solution:** ✅ No email chasing - status updates in ChatGPT where they're already working
 
 #### 2. **Mobile Experience is Terrible**
 > "60% of approvers are on mobile" (from approval workflow research)
@@ -213,28 +213,28 @@ Based on G2, Capterra, and user reviews:
 - PageProof: "Glitches while proofing multi-page documents, lag while navigating pages" ([Source](https://productive.io/blog/workflow-approval-software/))
 - Approval Studio: "Zoom in/out was cumbersome even for tech-savvy users" ([Source](https://productive.io/blog/workflow-approval-software/))
 
-**SendVelo Solution:** ⚠️ **YOU NEED TO BUILD THIS** - Your review pages MUST be mobile-optimized (single tap to approve)
+**Thumbway Solution:** ⚠️ **YOU NEED TO BUILD THIS** - Your review pages MUST be mobile-optimized (single tap to approve)
 
 #### 3. **Complex Setup & Navigation**
 > "Hard to navigate and especially hard to find previous items in the pipeline when something was marked as complete" - Wrike users ([Source](https://productive.io/blog/workflow-approval-software/))
 
-**SendVelo Solution:** ✅ Natural language in ChatGPT: "Did John approve my proposal?" (no UI to learn)
+**Thumbway Solution:** ✅ Natural language in ChatGPT: "Did John approve my proposal?" (no UI to learn)
 
 #### 4. **Wrong Reviewers Get Assigned**
 > "Several approval requests fail due to wrong assignment of reviewers, with team members often sending requests to the wrong person where the approval email sits unattended." ([Source](https://www.myshyft.com/blog/ai-powered-approval-routing/))
 
-**SendVelo Solution:** ✅ ChatGPT can suggest reviewers based on context ("I see this is legal content - send to legal@company.com?")
+**Thumbway Solution:** ✅ ChatGPT can suggest reviewers based on context ("I see this is legal content - send to legal@company.com?")
 
 #### 5. **Lack of Context in Notifications**
 > "Traditional approval processes suffer from delays, inconsistency, and lack of contextual awareness" ([Source](https://www.myshyft.com/blog/ai-powered-approval-routing/))
 
-**SendVelo Solution:** ✅ ChatGPT maintains full conversation context (what was discussed, why approval is needed)
+**Thumbway Solution:** ✅ ChatGPT maintains full conversation context (what was discussed, why approval is needed)
 
 #### 6. **Slow Performance & Bugs**
 - ClickUp: "Bugs, slow web performance, saving glitches" ([Source](https://productive.io/blog/workflow-approval-software/))
 - Process Street: "Heavy performance that can slow long, logic-heavy approvals" ([Source](https://productive.io/blog/workflow-approval-software/))
 
-**SendVelo Solution:** ✅ Simple, focused product (not a kitchen-sink workflow tool)
+**Thumbway Solution:** ✅ Simple, focused product (not a kitchen-sink workflow tool)
 
 ### Pain Points You Must NOT Reproduce
 
@@ -257,17 +257,17 @@ Based on recent documentation:
 #### 1. **Safety, Privacy, Transparency**
 > "All developers are required to follow the app submission guidelines around safety, privacy, and transparency. Apps must comply with OpenAI's usage policies, be appropriate for all audiences, and adhere to third-party terms of service." ([Source](https://developers.openai.com/blog/what-makes-a-great-chatgpt-app/))
 
-**SendVelo Compliance:**
-- ✅ Privacy policy required (add to sendvelo.com/privacy)
+**Thumbway Compliance:**
+- ✅ Privacy policy required (add to thumbway.com/privacy)
 - ✅ Data handling transparency (explain what you store)
-- ✅ Terms of service (add to sendvelo.com/terms)
+- ✅ Terms of service (add to thumbway.com/terms)
 - ⚠️ **Action Item:** Create GDPR-compliant data retention policy
 
 #### 2. **App Submission Process**
 > "Developers can submit apps for review and track approval status in the OpenAI Developer Platform. Submissions include MCP connectivity details, testing guidelines, directory metadata, and country availability settings." ([Source](https://developers.openai.com/blog/what-makes-a-great-chatgpt-app/))
 
 **Required Metadata for Submission:**
-- App name: "SendVelo"
+- App name: "Thumbway"
 - Tagline: "Get instant approval for your ChatGPT content"
 - Description (150-500 words)
 - Category: Productivity > Collaboration
@@ -296,7 +296,7 @@ Based on recent documentation:
 
 **OpenAI's Criteria for "Great Apps":**
 
-1. **Tightly scoped** ✅ SendVelo does ONE thing: approvals
+1. **Tightly scoped** ✅ Thumbway does ONE thing: approvals
 2. **Intuitive in chat** ✅ Natural language: "Send this to john@acme.com"
 3. **Real-world workflows** ✅ Solves actual approval delays
 4. **AI-native experiences** ⚠️ **You can improve here** - use ChatGPT to suggest reviewers, auto-draft follow-ups
@@ -311,7 +311,7 @@ To get featured in the App Directory:
 4. **Demo-friendly** - Works well in screenshots/videos
 5. **Clear value prop** - Users understand benefit in 5 seconds
 
-**SendVelo's Featured App Checklist:**
+**Thumbway's Featured App Checklist:**
 - [ ] Interactive approval widget (show pending approvals in chat)
 - [ ] Fast MCP responses (<1 second for status checks)
 - [ ] Error messages that guide next steps ("Email not valid - did you mean john@acme.com?")
@@ -324,7 +324,7 @@ To get featured in the App Directory:
 
 ### Combined Priority Matrix (Web Research + Reddit/G2/Capterra Deep Dive)
 
-| Priority | Feature | Evidence Score | User Demand | Competitor Gap | SendVelo Solution |
+| Priority | Feature | Evidence Score | User Demand | Competitor Gap | Thumbway Solution |
 |----------|---------|----------------|-------------|----------------|-------------------|
 | **P0** | Mobile-first approval UX | 9/10 | 4/7 tools criticized | ALL fail here | One-tap approve/reject |
 | **P0** | No-signup guest approvals | 9/10 | Universal friction | Most require login | Magic link access |
@@ -423,7 +423,7 @@ These features are **non-negotiable** based on user pain points:
    - **Why:** Featured apps use OpenAI's UI library for rich interactions
    - **Example from research:**
      > "Apps blend familiar interactive elements–like maps, playlists and presentations–with new ways of interacting through conversation." ([Source](https://openai.com/index/introducing-apps-in-chatgpt/))
-   - **SendVelo widget ideas:**
+   - **Thumbway widget ideas:**
      - Pending reviews list (clickable in ChatGPT)
      - Approval status timeline (visual progress)
      - Reviewer avatars with status badges
@@ -504,7 +504,7 @@ From research on successful apps (Spotify, Zillow examples):
 From OpenAI's Apps SDK:
 > "The Apps SDK builds on the Model Context Protocol (MCP) and extends MCP so developers can design both the logic and interface of their apps." ([Source](https://gist.github.com/ruvnet/7b6843c457822cbcf42fc4aa635eadbb))
 
-**SendVelo UI Components to Build:**
+**Thumbway UI Components to Build:**
 
 ```typescript
 // Example: Pending Reviews Widget
@@ -562,7 +562,7 @@ From OpenAI requirements:
 - [ ] Register OAuth app in OpenAI Developer Platform
 - [ ] Add `openid` scope to Better Auth
 - [ ] Handle OAuth callback from ChatGPT
-- [ ] Store ChatGPT user → SendVelo user mapping
+- [ ] Store ChatGPT user → Thumbway user mapping
 
 #### 5. **External Integrations** (For viral growth)
 
@@ -570,7 +570,7 @@ From OpenAI requirements:
 
 1. **Slack** (Week 2-3)
    - Approvals in Slack channels
-   - Viral team discovery ("What's this SendVelo notification?")
+   - Viral team discovery ("What's this Thumbway notification?")
    - 10x more engagement than email
 
 2. **Microsoft Teams** (Month 2)
@@ -632,7 +632,7 @@ From OpenAI requirements:
 
 **Actions:**
 1. Submit for public listing with full metadata:
-   - App name: "SendVelo"
+   - App name: "Thumbway"
    - Tagline: "Get instant approval on ChatGPT content"
    - Category: Productivity > Collaboration
    - Keywords: approval, workflow, review, feedback, team, content
@@ -668,10 +668,10 @@ From OpenAI requirements:
 2. **Content Marketing**
    - Blog: "How we cut approval time from 2 days to 5 minutes"
    - Case study: Marketing team success story
-   - Video: Side-by-side comparison (email approval vs SendVelo)
+   - Video: Side-by-side comparison (email approval vs Thumbway)
 
 3. **Viral Loops**
-   - Branded review pages (footer: "Powered by SendVelo")
+   - Branded review pages (footer: "Powered by Thumbway")
    - Referral program: Give 1 month free for each referral
    - Slack notifications = free advertising in team channels
 
@@ -694,7 +694,7 @@ From OpenAI requirements:
 #### Pro Tier ($15/month) Optimization
 **Add these features to increase perceived value:**
 - Priority support (24-hour response time)
-- Custom branded review pages (remove "Powered by SendVelo")
+- Custom branded review pages (remove "Powered by Thumbway")
 - Email reminders (auto-remind pending reviewers after 24 hours)
 - Export approved content (PDF, Google Docs, Notion)
 
@@ -734,7 +734,7 @@ From OpenAI requirements:
 **Mitigation:**
 - Build direct web app traffic (SEO, content marketing)
 - Own customer relationship (email list)
-- Alternative: Make SendVelo work standalone without ChatGPT
+- Alternative: Make Thumbway work standalone without ChatGPT
 - Monitor OpenAI announcements closely
 
 **Contingency:** If 30% cut introduced, adjust pricing:
@@ -769,7 +769,7 @@ From OpenAI requirements:
 - **Data point:** OpenAI has 800M weekly users, App Store launched Dec 17, 2025
 - Users are ALREADY using ChatGPT for content creation
 - Your app solves a real workflow gap
-- Fallback: Drive traffic to sendvelo.com web app directly
+- Fallback: Drive traffic to thumbway.com web app directly
 
 **Early indicators to watch:**
 - Week 1: Install rate (target: 500+ installs)
@@ -1029,19 +1029,19 @@ From comprehensive web research on marketing approval workflows:
 
 > "42% of marketing leaders encountered project delays because internal stakeholders failed to provide feedback and comments on time" ([Source](https://www.ziflow.com/blog/marketing-approval-process))
 
-**SendVelo Solution:** ✅ ChatGPT notifications ensure stakeholders never miss approval requests
+**Thumbway Solution:** ✅ ChatGPT notifications ensure stakeholders never miss approval requests
 
 #### Pain Point: Version Control Nightmares
 > "Manual approval methods like email chains and spreadsheet trackers lead to bottlenecks, miscommunication, and version control nightmares" ([Source](https://www.moxo.com/blog/marketing-approval-workflow-process))
 
-**SendVelo Solution:** ✅ Version history with diff view (planned for Week 3)
+**Thumbway Solution:** ✅ Version history with diff view (planned for Week 3)
 
 #### Pain Point: Fragmented Communication
 > "Email chains lack transparency and create delays - it's easy to exclude people when you reply or forward emails" ([Source](https://www.canva.com/resources/marketing-approval-workflow/))
 
 > "Critical feedback often comes in an email response well after everyone else has approved an asset" ([Source](https://www.higherlogic.com/blog/4-tips-to-streamline-the-email-approval-process/))
 
-**SendVelo Solution:** ✅ Centralized dashboard + ChatGPT status queries show all stakeholders in real-time
+**Thumbway Solution:** ✅ Centralized dashboard + ChatGPT status queries show all stakeholders in real-time
 
 ### Freelance Proposal Tool Insights
 
@@ -1054,7 +1054,7 @@ From analysis of freelance proposal software:
 
 **Insight:** Freelancers obsess over "did they see it?" and "are they reading it?" - visibility anxiety is REAL
 
-**SendVelo Opportunity:**
+**Thumbway Opportunity:**
 - Add "seen" status (like read receipts)
 - Show "John viewed your proposal 5 minutes ago"
 - Reduce freelancer anxiety = higher satisfaction
@@ -1062,12 +1062,12 @@ From analysis of freelance proposal software:
 #### Pain Point: Approval → Contract Gap
 > "Turn your approved proposal into a legally binding contract with one click" - Bonsai ([Source](https://www.makeuseof.com/best-free-proposal-management-tools-freelancers/))
 
-**SendVelo Year 2 Feature:** Integration with DocuSign, HelloSign after approval
+**Thumbway Year 2 Feature:** Integration with DocuSign, HelloSign after approval
 
 #### Pain Point: Client Ghosting
 > "Send automatic reminders to clients about proposal approval" - PandaDoc ([Source](https://www.getcone.io/blog/proposal-software-for-freelancers))
 
-**SendVelo Must-Have:** Auto-reminders after 24-48 hours of no response
+**Thumbway Must-Have:** Auto-reminders after 24-48 hours of no response
 
 ### Technical Performance Issues (Competitors)
 
@@ -1076,12 +1076,12 @@ From user forums and reviews:
 #### SharePoint Workflow Delays
 > "SharePoint approval workflow sometimes very slow... random 20-second delays when approving documents" ([Source](https://social.technet.microsoft.com/Forums/office/en-US/56d5da31-aaae-4ddb-a6af-471fa38764a8/sharepoint-approval-workflow-sometimes-very-slow?forum=sharepointgeneralprevious))
 
-**SendVelo Requirement:** Sub-2-second approval page load time on mobile
+**Thumbway Requirement:** Sub-2-second approval page load time on mobile
 
 #### Adobe Workfront Performance
 > "Extremely laggy and buggy for larger teams. Support is slow and mostly unhelpful." ([Source](https://thedigitalprojectmanager.com/tools/best-approval-workflow-software/))
 
-**SendVelo Advantage:** Simple, focused product = fast performance
+**Thumbway Advantage:** Simple, focused product = fast performance
 
 ### Key Takeaway: Marketing Team = Best ICP
 

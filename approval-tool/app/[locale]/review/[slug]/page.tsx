@@ -5,6 +5,7 @@ import { sendSlackNotification } from "@/lib/slack";
 import { env } from "@/env";
 import { getTranslations } from "next-intl/server";
 import { ContentRenderer } from "@/components/content-renderer";
+import { StatusBadge, ReviewerStatusBadge } from "@/components/ui/status-badge";
 import type { ContentFormat } from "@prisma/client";
 
 /**
@@ -55,7 +56,30 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     ? review.reviewers.find((r) => r.accessToken === token)
     : null;
 
-  // Track view
+  // Access control based on publicAccessLevel
+  const publicAccessLevel = review.publicAccessLevel;
+  const hasValidToken = !!currentReviewer;
+
+  // Check if user can access this review
+  const canView = hasValidToken || publicAccessLevel !== "NONE";
+  const canComment = hasValidToken || publicAccessLevel === "VIEW_COMMENT" || publicAccessLevel === "FULL_ACCESS";
+  const canDecidePublic = publicAccessLevel === "FULL_ACCESS";
+
+  // If no access, show restricted message
+  if (!canView) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Access Restricted</h1>
+          <p className="text-gray-600">
+            This review requires an invitation to access. Please check your email for an invitation link.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Track view for authenticated reviewer
   if (currentReviewer && !currentReviewer.viewedAt) {
     await prisma.reviewer.update({
       where: { id: currentReviewer.id },
@@ -67,10 +91,19 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     });
   }
 
+  // Track anonymous view
+  if (!currentReviewer && publicAccessLevel !== "NONE") {
+    await prisma.review.update({
+      where: { id: review.id },
+      data: { publicViewCount: { increment: 1 } },
+    });
+  }
+
   const latestVersion = review.versions[0];
   const content = latestVersion?.content ?? "";
   const contentFormat = (latestVersion?.contentFormat ?? "MARKDOWN") as ContentFormat;
   const canDecide = currentReviewer && currentReviewer.status === "PENDING";
+  const isPublicViewer = !currentReviewer && publicAccessLevel !== "NONE";
   const isDecided = review.status !== "PENDING" && review.status !== "PARTIALLY_APPROVED";
 
   async function handleDecision(formData: FormData) {
@@ -288,6 +321,15 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
             </div>
           )}
 
+          {/* Public Viewer Notice */}
+          {isPublicViewer && (
+            <div className="mb-6 p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <p className="text-sm text-gray-600">
+                You are viewing this review via a public link. To provide feedback, please request an invitation from the creator.
+              </p>
+            </div>
+          )}
+
           {/* Review Content - Card style */}
           <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6">
             <ContentRenderer content={content} format={contentFormat} />
@@ -391,7 +433,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
                 href={env.NEXT_PUBLIC_APP_URL}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                SendVelo
+                Thumbway
               </a>
             </p>
           </div>
@@ -401,42 +443,6 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { bg: string; text: string; label: string }> = {
-    APPROVED: { bg: "bg-green-100", text: "text-green-800", label: "Approved" },
-    REJECTED: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
-    PENDING: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
-    PARTIALLY_APPROVED: { bg: "bg-blue-100", text: "text-blue-800", label: "Partial" },
-    CHANGES_REQUESTED: { bg: "bg-orange-100", text: "text-orange-800", label: "Changes Requested" },
-    CANCELED: { bg: "bg-gray-100", text: "text-gray-800", label: "Canceled" },
-  };
-
-  const c = config[status] ?? config.PENDING;
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.bg} ${c.text}`}>
-      {c.label}
-    </span>
-  );
-}
-
-function ReviewerStatusBadge({ status }: { status: string }) {
-  const config: Record<string, { dot: string; label: string }> = {
-    APPROVED: { dot: "bg-green-500", label: "Approved" },
-    REJECTED: { dot: "bg-red-500", label: "Rejected" },
-    PENDING: { dot: "bg-gray-300", label: "Pending" },
-    CHANGES_REQUESTED: { dot: "bg-yellow-500", label: "Changes" },
-  };
-
-  const c = config[status] ?? config.PENDING;
-
-  return (
-    <span className="flex items-center gap-1.5 text-xs text-gray-500">
-      <span className={`w-2 h-2 rounded-full ${c.dot}`} />
-      {c.label}
-    </span>
-  );
-}
 
 export async function generateMetadata({ params }: ReviewPageProps) {
   const { slug } = await params;

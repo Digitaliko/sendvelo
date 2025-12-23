@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendReviewDecisionEmail } from "@/lib/email";
 import { env } from "@/env";
+import { calculateReviewStatus } from "@/lib/review-status";
 
 /**
  * Slack Interactions Webhook
@@ -63,7 +64,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
       }
     } else {
-      console.warn("SLACK_SIGNING_SECRET not configured - skipping signature verification (NOT RECOMMENDED FOR PRODUCTION)");
+      console.error("SLACK_SIGNING_SECRET not configured - rejecting request for security");
+      return NextResponse.json(
+        { error: "Server configuration error: Slack signing secret not configured" },
+        { status: 401 }
+      );
     }
 
     const payload = JSON.parse(payloadStr) as SlackInteractionPayload;
@@ -147,20 +152,12 @@ export async function POST(req: NextRequest) {
             where: { reviewId: value.reviewId },
           });
 
-          let calculatedStatus = review.status;
-          const approved = updatedReviewers.filter((r) => r.status === "APPROVED").length;
-          const rejected = updatedReviewers.filter((r) => r.status === "REJECTED").length;
-          const changesRequested = updatedReviewers.filter((r) => r.status === "CHANGES_REQUESTED").length;
-          const total = updatedReviewers.length;
-
-          if (review.workflowType === "ANY_ONE") {
-            calculatedStatus = decision;
-          } else {
-            if (rejected > 0) calculatedStatus = "REJECTED";
-            else if (changesRequested > 0) calculatedStatus = "CHANGES_REQUESTED";
-            else if (approved === total) calculatedStatus = "APPROVED";
-            else if (approved > 0) calculatedStatus = "PARTIALLY_APPROVED";
-          }
+          const calculatedStatus = calculateReviewStatus(
+            updatedReviewers,
+            review.workflowType,
+            decision,
+            review.status
+          );
 
           // Update review status if changed
           if (calculatedStatus !== review.status) {

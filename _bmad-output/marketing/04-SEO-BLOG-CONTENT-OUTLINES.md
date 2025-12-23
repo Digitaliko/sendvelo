@@ -1,4 +1,4 @@
-# SendVelo SEO Blog Content Strategy
+# Thumbway SEO Blog Content Strategy
 ## 10 High-Intent Articles for Organic Traffic
 
 **Goal:** Rank for approval workflow keywords, capture frustrated searchers
@@ -71,12 +71,12 @@
 - One-click approval from any device
 - Visible status for all stakeholders
 - Integrate approval into creation workflow
-- Brief mention: Tools like SendVelo that live inside ChatGPT
+- Brief mention: Tools like Thumbway that live inside ChatGPT
 
 ## Conclusion + CTA (150 words)
 - Summary of key points
 - The bottleneck is solvable
-- CTA: "Try SendVelo free - 10 reviews/month, no credit card required"
+- CTA: "Try Thumbway free - 10 reviews/month, no credit card required"
 ```
 
 ---
@@ -134,7 +134,7 @@
 ## Section 7: Strategy 6 - Use Approval Tools (300 words)
 - Move beyond email
 - Dedicated proposal/approval platforms
-- ChatGPT integration options (SendVelo)
+- ChatGPT integration options (Thumbway)
 
 ## Section 8: Strategy 7 - Talk Before You Send (200 words)
 - Pre-frame the proposal in a call
@@ -144,7 +144,7 @@
 ## Conclusion + CTA (150 words)
 - Recap strategies
 - Small changes = big improvements
-- CTA: "SendVelo automates strategies 1-4. Try free."
+- CTA: "Thumbway automates strategies 1-4. Try free."
 ```
 
 ---
@@ -206,7 +206,7 @@
 - Google Docs (free, limited)
 - Monday.com / Asana (project management approach)
 - Dedicated approval tools (Ziflow, Filestage)
-- AI-native tools (SendVelo for ChatGPT users)
+- AI-native tools (Thumbway for ChatGPT users)
 - Decision matrix for choosing
 
 ## Section 6: Approval Workflow Best Practices (300 words)
@@ -226,7 +226,7 @@
 ## Conclusion + CTA (200 words)
 - Summary of key points
 - Your next step: Audit current workflow
-- CTA: "Need approval for ChatGPT content? Try SendVelo free."
+- CTA: "Need approval for ChatGPT content? Try Thumbway free."
 ```
 
 ---
@@ -285,7 +285,7 @@
 - The gap between writing and sending
 - Traditional process (copy, format, email)
 - Modern approach (approval tools)
-- How SendVelo eliminates the gap
+- How Thumbway eliminates the gap
 - "Send this to client@acme.com for approval"
 
 ## Section 7: Proposal Follow-Up Sequences (250 words)
@@ -296,7 +296,7 @@
 ## Conclusion + CTA (150 words)
 - ChatGPT revolutionizes creation
 - Now optimize approval
-- CTA: "Get proposals approved faster with SendVelo. Try free."
+- CTA: "Get proposals approved faster with Thumbway. Try free."
 ```
 
 ---
@@ -349,7 +349,7 @@
 ## Section 4: Tools for Multi-Stakeholder Approval (300 words)
 - Project management tools (Asana, Monday)
 - Dedicated approval platforms
-- AI-integrated tools (SendVelo)
+- AI-integrated tools (Thumbway)
 - Comparison table
 
 ## Section 5: Common Pitfalls and How to Avoid Them (300 words)
@@ -361,7 +361,7 @@
 ## Conclusion + CTA (150 words)
 - Multi-stakeholder approval is manageable
 - Right tools + right process = success
-- CTA: "SendVelo handles multi-reviewer workflows. Try free."
+- CTA: "Thumbway handles multi-reviewer workflows. Try free."
 ```
 
 ---
@@ -419,7 +419,7 @@
 - Pricing
 - Pros/cons
 
-### 3d: SendVelo
+### 3d: Thumbway
 - Overview (ChatGPT integration)
 - Approval features
 - Best for
@@ -427,7 +427,7 @@
 - Pros/cons
 
 ## Section 4: Comparison Matrix (300 words)
-| Feature | Monday | PandaDoc | Ziflow | SendVelo |
+| Feature | Monday | PandaDoc | Ziflow | Thumbway |
 [Full comparison table]
 
 ## Section 5: Which Tool is Right for You? (400 words)
@@ -445,7 +445,7 @@
 ## Conclusion + CTA (200 words)
 - Summary of recommendations
 - Decision framework
-- CTA: "If you create in ChatGPT, try SendVelo free."
+- CTA: "If you create in ChatGPT, try Thumbway free."
 ```
 
 ---
@@ -497,7 +497,7 @@
 - Native tools (Google Docs, Notion)
 - Project management (Asana, Monday)
 - Dedicated platforms
-- AI-integrated (SendVelo for ChatGPT content)
+- AI-integrated (Thumbway for ChatGPT content)
 
 ## Section 6: Measuring Marketing Approval Efficiency (200 words)
 - Time to approval
@@ -508,7 +508,7 @@
 ## Conclusion + CTA (150 words)
 - Summary
 - Audit your current process
-- CTA: "Writing marketing content in ChatGPT? Try SendVelo free."
+- CTA: "Writing marketing content in ChatGPT? Try Thumbway free."
 ```
 
 ---
@@ -556,7 +556,7 @@
 - CRM-integrated options
 - CPQ tools
 - Document platforms (PandaDoc)
-- AI-integrated (SendVelo for ChatGPT proposals)
+- AI-integrated (Thumbway for ChatGPT proposals)
 
 ## Section 5: Metrics That Matter (200 words)
 - Internal approval time
@@ -567,7 +567,7 @@
 ## Conclusion + CTA (150 words)
 - Fast internal = fast close
 - Review your bottlenecks
-- CTA: "Write proposals in ChatGPT? Approve with SendVelo. Try free."
+- CTA: "Write proposals in ChatGPT? Approve with Thumbway. Try free."
 ```
 
 ---
@@ -607,7 +607,7 @@
 - Mobile-first requirements
 - Status visibility
 - Notification management
-- SendVelo for ChatGPT users
+- Thumbway for ChatGPT users
 
 ## Section 4: Setting Async SLAs (300 words)
 - What's reasonable?
@@ -624,7 +624,7 @@
 ## Conclusion + CTA (150 words)
 - Remote approval is solvable
 - Design for async
-- CTA: "SendVelo works async. Try free."
+- CTA: "Thumbway works async. Try free."
 ```
 
 ---
@@ -676,14 +676,14 @@
 
 ## Section 5: Tools Built for the AI Era (300 words)
 - Traditional tools retrofit
-- AI-native tools (SendVelo)
+- AI-native tools (Thumbway)
 - Integration requirements
 - Future direction
 
 ## Conclusion + CTA (200 words)
 - The era shift is here
 - Adapt or fall behind
-- CTA: "SendVelo is built for the AI content era. Try free."
+- CTA: "Thumbway is built for the AI content era. Try free."
 ```
 
 ---
@@ -739,4 +739,4 @@
 
 ---
 
-*Generated by BMad Master for SendVelo*
+*Generated by BMad Master for Thumbway*

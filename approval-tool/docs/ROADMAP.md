@@ -1,4 +1,4 @@
-# SendVelo Product Roadmap
+# Thumbway Product Roadmap
 
 **Vision**: The universal approval platform for AI-generated content
 **Mission**: Make AI content collaboration seamless, secure, and scalable
@@ -549,12 +549,12 @@
     - Best practice recommendations
 
 13. **White-Label Reseller Program**
-    - Partners can rebrand SendVelo
+    - Partners can rebrand Thumbway
     - Recurring revenue share
     - Managed hosting option
 
 14. **Training & Certification**
-    - SendVelo power user certification
+    - Thumbway power user certification
     - Admin training courses
     - Best practices workshops
 

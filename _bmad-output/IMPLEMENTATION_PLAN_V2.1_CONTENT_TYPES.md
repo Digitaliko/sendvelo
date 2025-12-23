@@ -1,4 +1,4 @@
-# SendVelo: Content Rendering Plan v2.1 (Simplified)
+# Thumbway: Content Rendering Plan v2.1 (Simplified)
 ## Follow-up to IMPLEMENTATION_PLAN_V2.md
 
 **Date:** December 22, 2025

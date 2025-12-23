@@ -1,4 +1,4 @@
-# SendVelo Product Positioning
+# Thumbway Product Positioning
 
 **Last Updated:** December 2024
 **Version:** 1.0
@@ -24,17 +24,17 @@
 
 ## Executive Summary
 
-**SendVelo** is the first **ChatGPT-native approval platform** that enables professionals to get real-time feedback on AI-generated content without leaving their ChatGPT conversation.
+**Thumbway** is the first **ChatGPT-native approval platform** that enables professionals to get real-time feedback on AI-generated content without leaving their ChatGPT conversation.
 
 **Category:** AI Content Collaboration & Approval
 **Position:** Market Creator & Category Leader
-**Core Insight:** ChatGPT generates brilliant content, but it needs human oversight. SendVelo bridges the gap between AI creativity and human approval.
+**Core Insight:** ChatGPT generates brilliant content, but it needs human oversight. Thumbway bridges the gap between AI creativity and human approval.
 
 **One-Line Positioning:**
 > "The approval layer for the AI generation era."
 
 **Elevator Pitch (30 seconds):**
-> "SendVelo is the approval tool built for ChatGPT. When ChatGPT writes your proposal, email, or strategy, SendVelo lets you send it for approval in seconds—right from the chat. No copy-paste, no email chains, no tools switching. Just instant feedback from stakeholders, clients, and teams. It's how professionals get AI-generated content approved in 2025."
+> "Thumbway is the approval tool built for ChatGPT. When ChatGPT writes your proposal, email, or strategy, Thumbway lets you send it for approval in seconds—right from the chat. No copy-paste, no email chains, no tools switching. Just instant feedback from stakeholders, clients, and teams. It's how professionals get AI-generated content approved in 2025."
 
 ---
 
@@ -112,7 +112,7 @@
 
 **"Get client approval on ChatGPT content in seconds, not hours."**
 
-**Before SendVelo:**
+**Before Thumbway:**
 1. ChatGPT writes proposal
 2. Copy to Google Docs
 3. Share link via email
@@ -120,7 +120,7 @@
 5. Check email repeatedly
 6. Lose track of versions
 
-**After SendVelo:**
+**After Thumbway:**
 1. ChatGPT writes proposal
 2. "Send to john@client.com for approval"
 3. John clicks link, approves in 30 seconds
@@ -199,7 +199,7 @@
                  High Integration with ChatGPT
                           ↑
                           |
-              SendVelo    |
+              Thumbway    |
               (LEADER)    |
                           |
     Simple     |          |          |     Complex
@@ -302,7 +302,7 @@
 
 ### Feature Comparison Table
 
-| Feature | SendVelo | Email | Google Docs | Asana | Kontentino |
+| Feature | Thumbway | Email | Google Docs | Asana | Kontentino |
 |---------|----------|-------|-------------|-------|------------|
 | **ChatGPT Integration** | ✅ Native | ❌ None | ❌ None | ❌ None | ❌ None |
 | **One-Click Send** | ✅ Yes | ❌ Copy-paste | ❌ Copy-paste | ❌ Manual | ❌ Manual |
@@ -366,13 +366,13 @@
 ### Pricing Anchors
 
 **Anchor #1: ChatGPT Plus Comparison**
-> "SendVelo Pro ($15) costs less than ChatGPT Plus ($20), but makes your ChatGPT subscription 10x more valuable."
+> "Thumbway Pro ($15) costs less than ChatGPT Plus ($20), but makes your ChatGPT subscription 10x more valuable."
 
 **Anchor #2: Time Value**
-> "If SendVelo saves 10 hours/month, and your time is worth $50/hour, you save $500/month. Pro costs $15/month. That's 33x ROI."
+> "If Thumbway saves 10 hours/month, and your time is worth $50/hour, you save $500/month. Pro costs $15/month. That's 33x ROI."
 
 **Anchor #3: Competitor Comparison**
-> "Asana costs $500/month for 5 users. SendVelo Team costs $99/month for unlimited users. That's 80% savings."
+> "Asana costs $500/month for 5 users. Thumbway Team costs $99/month for unlimited users. That's 80% savings."
 
 ---
 
@@ -436,7 +436,7 @@
 **Objection 1: "I can just use email for free."**
 
 **Response:**
-> "You're right, email is free. But it's also slow (2 day avg response), unprofessional (threads get messy), and untrackable (did they see it?). SendVelo costs $15/month but saves 10+ hours/month in approval tracking. If your time is worth more than $1.50/hour, SendVelo pays for itself."
+> "You're right, email is free. But it's also slow (2 day avg response), unprofessional (threads get messy), and untrackable (did they see it?). Thumbway costs $15/month but saves 10+ hours/month in approval tracking. If your time is worth more than $1.50/hour, Thumbway pays for itself."
 
 **Proof:**
 - Case study: User reduced approval time from 48 hours to 30 minutes
@@ -447,10 +447,10 @@
 **Objection 2: "Why not just use Google Docs comments?"**
 
 **Response:**
-> "Google Docs is great for collaboration, but it's not built for approvals. You have to copy-paste from ChatGPT, share the link, chase people for decisions, and figure out if 'LGTM' means approved. SendVelo gives you dedicated Approve/Reject buttons, email notifications, and a dashboard of all decisions. Plus, it stays in ChatGPT—no copy-paste."
+> "Google Docs is great for collaboration, but it's not built for approvals. You have to copy-paste from ChatGPT, share the link, chase people for decisions, and figure out if 'LGTM' means approved. Thumbway gives you dedicated Approve/Reject buttons, email notifications, and a dashboard of all decisions. Plus, it stays in ChatGPT—no copy-paste."
 
 **Proof:**
-- Screenshot comparison: Google Docs comments vs SendVelo approval UI
+- Screenshot comparison: Google Docs comments vs Thumbway approval UI
 - Testimonial from user who switched from Docs
 
 ---
@@ -458,7 +458,7 @@
 **Objection 3: "What if my reviewer doesn't want to create an account?"**
 
 **Response:**
-> "They don't need one! Reviewers click the link, see the content, and click Approve or Reject. No signup, no login, no friction. Only the person sending reviews (you) needs a SendVelo account."
+> "They don't need one! Reviewers click the link, see the content, and click Approve or Reject. No signup, no login, no friction. Only the person sending reviews (you) needs a Thumbway account."
 
 **Proof:**
 - Demo video showing public review page
@@ -480,10 +480,10 @@
 **Objection 5: "How is this different from Asana/Monday?"**
 
 **Response:**
-> "Asana is a project management tool. SendVelo is an approval tool. Asana costs $500/month for 5 users, requires training, and has dozens of features you don't need. SendVelo costs $15/month, works in 30 seconds, and does one thing perfectly: get approval on ChatGPT content. If you need project management, use Asana. If you need fast approvals, use SendVelo."
+> "Asana is a project management tool. Thumbway is an approval tool. Asana costs $500/month for 5 users, requires training, and has dozens of features you don't need. Thumbway costs $15/month, works in 30 seconds, and does one thing perfectly: get approval on ChatGPT content. If you need project management, use Asana. If you need fast approvals, use Thumbway."
 
 **Proof:**
-- Feature comparison table (SendVelo vs Asana)
+- Feature comparison table (Thumbway vs Asana)
 - "Built for approvals, not project management" positioning
 
 ---
@@ -516,7 +516,7 @@
 ### Launch Strategy: Own the "First ChatGPT Approval Tool" Narrative
 
 **Launch Narrative:**
-> "ChatGPT changed how we create content. SendVelo changes how we approve it."
+> "ChatGPT changed how we create content. Thumbway changes how we approve it."
 
 ### Launch Channels & Messaging
 
@@ -531,7 +531,7 @@
 **First Comment:**
 > "Hey Product Hunt! 👋
 >
-> I'm [Name], maker of SendVelo. Here's why we built it:
+> I'm [Name], maker of Thumbway. Here's why we built it:
 >
 > ChatGPT writes brilliant proposals, emails, and strategies. But then you have to:
 > 1. Copy to Google Docs
@@ -540,7 +540,7 @@
 > 4. Check email 10 times
 > 5. Lose track of versions
 >
-> SendVelo fixes this. Just say:
+> Thumbway fixes this. Just say:
 > 'Send this proposal to john@client.com for approval'
 >
 > ChatGPT sends it. John clicks a link. Approves in 30 seconds. You get notified instantly.
@@ -556,13 +556,13 @@
 **2. ChatGPT App Directory**
 
 **Listing Title:**
-> "SendVelo - Get Approval Instantly"
+> "Thumbway - Get Approval Instantly"
 
 **Short Description:**
 > "Send ChatGPT content for approval in one command. Get feedback in minutes, not days."
 
 **Long Description:**
-> "SendVelo is the approval tool built for ChatGPT. When ChatGPT generates a proposal, email, or strategy, SendVelo lets you send it for approval—right from the chat.
+> "Thumbway is the approval tool built for ChatGPT. When ChatGPT generates a proposal, email, or strategy, Thumbway lets you send it for approval—right from the chat.
 >
 > **How it works:**
 > 1. ChatGPT writes your content
@@ -586,7 +586,7 @@
 **3. LinkedIn/Twitter Launch**
 
 **Post Template:**
-> "I just launched SendVelo—the first approval tool built for ChatGPT. 🚀
+> "I just launched Thumbway—the first approval tool built for ChatGPT. 🚀
 >
 > If you've ever:
 > - Had ChatGPT write a brilliant proposal
@@ -596,7 +596,7 @@
 >
 > ...you'll love this.
 >
-> SendVelo lets you send for approval right from ChatGPT. No copy-paste. No email chains. No waiting.
+> Thumbway lets you send for approval right from ChatGPT. No copy-paste. No email chains. No waiting.
 >
 > Try it free: [link]"
 
@@ -607,18 +607,18 @@
 **4. Indie Hackers / HN**
 
 **Title:**
-> "Show IH: SendVelo – Approval tool for ChatGPT content ($300 MRR in beta)"
+> "Show IH: Thumbway – Approval tool for ChatGPT content ($300 MRR in beta)"
 
 **Post:**
 > "Hey IH! 👋
 >
-> I built SendVelo over the past 2 weeks to solve a problem I had: getting client approval on ChatGPT-generated proposals.
+> I built Thumbway over the past 2 weeks to solve a problem I had: getting client approval on ChatGPT-generated proposals.
 >
 > **The problem:**
 > ChatGPT writes great content, but the approval process is broken. Copy to Docs → email link → wait 2 days → check email 10 times.
 >
 > **The solution:**
-> SendVelo integrates directly with ChatGPT. Just say 'Send this to john@client.com for approval' and it's done.
+> Thumbway integrates directly with ChatGPT. Just say 'Send this to john@client.com for approval' and it's done.
 >
 > **The tech:**
 > - Next.js 15 + tRPC (full type safety)
@@ -667,13 +667,13 @@
 ## Appendix: Key Positioning Statements
 
 ### 1-Sentence Positioning
-> "SendVelo is the ChatGPT-native approval platform that gets you feedback in minutes instead of days."
+> "Thumbway is the ChatGPT-native approval platform that gets you feedback in minutes instead of days."
 
 ### 3-Sentence Positioning
-> "SendVelo is the first approval tool built for ChatGPT. When ChatGPT generates content, SendVelo sends it for approval—right from the chat. No copy-paste, no email chains, no waiting. Just instant feedback from stakeholders, clients, and teams."
+> "Thumbway is the first approval tool built for ChatGPT. When ChatGPT generates content, Thumbway sends it for approval—right from the chat. No copy-paste, no email chains, no waiting. Just instant feedback from stakeholders, clients, and teams."
 
 ### Positioning Statement (Full)
-> "For professionals who use ChatGPT to generate proposals, emails, and strategies, SendVelo is the approval platform that enables instant stakeholder feedback without leaving ChatGPT. Unlike email or project management tools, SendVelo integrates directly with ChatGPT, eliminating copy-paste workflows and reducing approval time by 95%."
+> "For professionals who use ChatGPT to generate proposals, emails, and strategies, Thumbway is the approval platform that enables instant stakeholder feedback without leaving ChatGPT. Unlike email or project management tools, Thumbway integrates directly with ChatGPT, eliminating copy-paste workflows and reducing approval time by 95%."
 
 ---
 

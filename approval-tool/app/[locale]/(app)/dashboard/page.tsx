@@ -1,7 +1,7 @@
 "use client";
 
 import { api, type RouterOutputs } from "@/trpc/react";
-import { STRIPE_PRICES } from "@/lib/stripe";
+import { STRIPE_PRICES } from "@/lib/stripe-prices";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -22,6 +22,8 @@ import {
   File,
   ChevronLeft,
 } from "lucide-react";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ShareModal } from "@/components/share-modal";
 
 type Review = RouterOutputs["review"]["getMyReviews"]["reviews"][number];
 
@@ -57,6 +59,9 @@ export default function DashboardPage() {
   // Filter state
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") ?? "");
   const [statusFilter, setStatusFilter] = useState(searchParams.get("status") ?? "all");
+
+  // Share modal state
+  const [shareReviewId, setShareReviewId] = useState<string | null>(null);
 
   const { data: profile, isLoading: profileLoading } =
     api.user.getProfile.useQuery();
@@ -330,18 +335,27 @@ export default function DashboardPage() {
                     {new Date(review.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => {
-                        if (confirm(t("reviews.deleteConfirm"))) {
-                          deleteReviewMutation.mutate({ id: review.id });
-                        }
-                      }}
-                      disabled={deleteReviewMutation.isPending}
-                      className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                      aria-label={`Delete review ${review.title}`}
-                    >
-                      <Trash2 className="w-4 h-4" aria-hidden="true" />
-                    </button>
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => setShareReviewId(review.id)}
+                        className="text-gray-500 hover:text-blue-600 p-1"
+                        aria-label={`Share review ${review.title}`}
+                      >
+                        <Share2 className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(t("reviews.deleteConfirm"))) {
+                            deleteReviewMutation.mutate({ id: review.id });
+                          }
+                        }}
+                        disabled={deleteReviewMutation.isPending}
+                        className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label={`Delete review ${review.title}`}
+                      >
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -371,18 +385,27 @@ export default function DashboardPage() {
                   <span className="text-xs text-gray-500">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
-                  <button
-                    onClick={() => {
-                      if (confirm(t("reviews.deleteConfirm"))) {
-                        deleteReviewMutation.mutate({ id: review.id });
-                      }
-                    }}
-                    disabled={deleteReviewMutation.isPending}
-                    className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    aria-label={`Delete review ${review.title}`}
-                  >
-                    <Trash2 className="w-4 h-4" aria-hidden="true" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setShareReviewId(review.id)}
+                      className="text-gray-500 hover:text-blue-600 p-1"
+                      aria-label={`Share review ${review.title}`}
+                    >
+                      <Share2 className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(t("reviews.deleteConfirm"))) {
+                          deleteReviewMutation.mutate({ id: review.id });
+                        }
+                      }}
+                      disabled={deleteReviewMutation.isPending}
+                      className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label={`Delete review ${review.title}`}
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -540,25 +563,14 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Share Modal */}
+      <ShareModal
+        reviewId={shareReviewId ?? ""}
+        open={!!shareReviewId}
+        onOpenChange={(open) => !open && setShareReviewId(null)}
+      />
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { bg: string; text: string; label: string }> = {
-    APPROVED: { bg: "bg-green-100", text: "text-green-800", label: "Approved" },
-    REJECTED: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
-    PENDING: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
-    PARTIALLY_APPROVED: { bg: "bg-blue-100", text: "text-blue-800", label: "Partial" },
-    CHANGES_REQUESTED: { bg: "bg-orange-100", text: "text-orange-800", label: "Changes" },
-    CANCELED: { bg: "bg-gray-100", text: "text-gray-800", label: "Canceled" },
-  };
-
-  const c = config[status] ?? config.PENDING;
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.bg} ${c.text}`}>
-      {c.label}
-    </span>
-  );
-}

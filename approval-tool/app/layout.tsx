@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SendVelo - Approval Tool for ChatGPT",
+  title: "Thumbway - Approval Tool for ChatGPT",
   description: "Send content for approval and get feedback directly from ChatGPT",
 };
 

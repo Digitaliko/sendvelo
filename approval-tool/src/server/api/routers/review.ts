@@ -5,19 +5,25 @@ import { nanoid } from "nanoid";
 import { sendReviewRequestEmail, sendReviewDecisionEmail } from "@/lib/email";
 import { sendSlackNotification } from "@/lib/slack";
 import { env } from "@/env";
-import type { ContentFormat } from "@prisma/client";
+import { calculateReviewStatus, normalizeStatusFilter } from "@/lib/review-status";
+import {
+  CreateReviewInputSchema,
+  GetMyReviewsInputSchema,
+  GetBySlugInputSchema,
+  SubmitDecisionInputSchema,
+  AddCommentInputSchema,
+  SubmitDecisionFromEmailInputSchema,
+  GetShareDetailsInputSchema,
+  UpdatePublicAccessInputSchema,
+  AddReviewersInputSchema,
+  RemoveReviewerInputSchema,
+  ResendInvitationInputSchema,
+} from "@/lib/schemas";
 
 export const reviewRouter = createTRPCRouter({
   // Create review with multiple reviewers
   create: protectedProcedure
-    .input(z.object({
-      title: z.string().min(1).max(200),
-      content: z.string().min(1).max(50000),
-      reviewers: z.array(z.string().email()).min(1).max(10),
-      workflowType: z.enum(["PARALLEL", "SEQUENTIAL", "ANY_ONE"]).default("PARALLEL"),
-      organizationId: z.string().optional(),
-      contentFormat: z.enum(["PLAIN_TEXT", "MARKDOWN", "HTML"]).default("MARKDOWN"),
-    }))
+    .input(CreateReviewInputSchema)
     .mutation(async ({ ctx, input }) => {
       // Verify organization access if provided
       if (input.organizationId) {
@@ -108,32 +114,18 @@ export const reviewRouter = createTRPCRouter({
 
   // Get reviews with filters
   getMyReviews: protectedProcedure
-    .input(z.object({
-      status: z.enum(["all", "pending", "approved", "rejected", "changes_requested"]).optional(),
-      organizationId: z.string().optional(),
-      search: z.string().optional(),
-      limit: z.number().min(1).max(100).default(50),
-      cursor: z.string().optional(),
-    }).optional())
+    .input(GetMyReviewsInputSchema)
     .query(async ({ ctx, input }) => {
-      const statusMap: Record<string, "PENDING" | "APPROVED" | "REJECTED" | "CHANGES_REQUESTED" | "PARTIALLY_APPROVED"> = {
-        pending: "PENDING",
-        approved: "APPROVED",
-        rejected: "REJECTED",
-        changes_requested: "CHANGES_REQUESTED",
-      };
-
-      type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED" | "CHANGES_REQUESTED" | "PARTIALLY_APPROVED" | "CANCELED";
-
       const where: {
         creatorId: string;
-        status?: ReviewStatus;
+        status?: "PENDING" | "APPROVED" | "REJECTED" | "CHANGES_REQUESTED" | "PARTIALLY_APPROVED" | "CANCELED";
         organizationId?: string;
         title?: { contains: string; mode: "insensitive" };
       } = { creatorId: ctx.session.user.id };
 
-      if (input?.status && input.status !== "all" && statusMap[input.status]) {
-        where.status = statusMap[input.status];
+      const normalizedStatus = normalizeStatusFilter(input?.status);
+      if (normalizedStatus) {
+        where.status = normalizedStatus;
       }
       if (input?.organizationId) {
         where.organizationId = input.organizationId;
@@ -164,10 +156,7 @@ export const reviewRouter = createTRPCRouter({
 
   // Get review by slug (public with token access)
   getBySlug: publicProcedure
-    .input(z.object({
-      slug: z.string(),
-      token: z.string().optional(),
-    }))
+    .input(GetBySlugInputSchema)
     .query(async ({ ctx, input }) => {
       const review = await ctx.prisma.review.findUnique({
         where: { slug: input.slug },
@@ -215,12 +204,7 @@ export const reviewRouter = createTRPCRouter({
 
   // Submit decision (approve/reject/request changes)
   submitDecision: publicProcedure
-    .input(z.object({
-      slug: z.string(),
-      token: z.string(),
-      decision: z.enum(["approved", "rejected", "changes_requested"]),
-      comments: z.string().optional(),
-    }))
+    .input(SubmitDecisionInputSchema)
     .mutation(async ({ ctx, input }) => {
       // Find review and reviewer
       const review = await ctx.prisma.review.findUnique({
@@ -261,24 +245,12 @@ export const reviewRouter = createTRPCRouter({
           where: { reviewId: review.id },
         });
 
-        let calculatedStatus = review.status;
-        const approved = updatedReviewers.filter((r) => r.status === "APPROVED").length;
-        const rejected = updatedReviewers.filter((r) => r.status === "REJECTED").length;
-        const changesRequested = updatedReviewers.filter((r) => r.status === "CHANGES_REQUESTED").length;
-        const total = updatedReviewers.length;
-
-        if (review.workflowType === "ANY_ONE") {
-          // First approval/rejection completes
-          if (input.decision === "approved") calculatedStatus = "APPROVED";
-          else if (input.decision === "rejected") calculatedStatus = "REJECTED";
-          else calculatedStatus = "CHANGES_REQUESTED";
-        } else {
-          // All must decide
-          if (rejected > 0) calculatedStatus = "REJECTED";
-          else if (changesRequested > 0) calculatedStatus = "CHANGES_REQUESTED";
-          else if (approved === total) calculatedStatus = "APPROVED";
-          else if (approved > 0) calculatedStatus = "PARTIALLY_APPROVED";
-        }
+        const calculatedStatus = calculateReviewStatus(
+          updatedReviewers,
+          review.workflowType,
+          input.decision.toUpperCase() as "APPROVED" | "REJECTED" | "CHANGES_REQUESTED",
+          review.status
+        );
 
         // Update review status
         if (calculatedStatus !== review.status) {
@@ -343,11 +315,7 @@ export const reviewRouter = createTRPCRouter({
 
   // Add comment
   addComment: publicProcedure
-    .input(z.object({
-      slug: z.string(),
-      token: z.string().optional(),
-      content: z.string().min(1).max(5000),
-    }))
+    .input(AddCommentInputSchema)
     .mutation(async ({ ctx, input }) => {
       const review = await ctx.prisma.review.findUnique({
         where: { slug: input.slug },
@@ -508,12 +476,7 @@ export const reviewRouter = createTRPCRouter({
 
   // Submit decision from email link (one-click approve/reject)
   submitDecisionFromEmail: publicProcedure
-    .input(z.object({
-      reviewId: z.string(),
-      reviewerId: z.string(),
-      token: z.string(),
-      decision: z.enum(["APPROVED", "REJECTED"]),
-    }))
+    .input(SubmitDecisionFromEmailInputSchema)
     .mutation(async ({ ctx, input }) => {
       // Validate magic link token
       const reviewer = await ctx.prisma.reviewer.findFirst({
@@ -557,20 +520,12 @@ export const reviewRouter = createTRPCRouter({
         });
 
         const review = reviewer.review;
-        let calculatedStatus = review.status;
-        const approved = updatedReviewers.filter((r) => r.status === "APPROVED").length;
-        const rejected = updatedReviewers.filter((r) => r.status === "REJECTED").length;
-        const changesRequested = updatedReviewers.filter((r) => r.status === "CHANGES_REQUESTED").length;
-        const total = updatedReviewers.length;
-
-        if (review.workflowType === "ANY_ONE") {
-          calculatedStatus = input.decision;
-        } else {
-          if (rejected > 0) calculatedStatus = "REJECTED";
-          else if (changesRequested > 0) calculatedStatus = "CHANGES_REQUESTED";
-          else if (approved === total) calculatedStatus = "APPROVED";
-          else if (approved > 0) calculatedStatus = "PARTIALLY_APPROVED";
-        }
+        const calculatedStatus = calculateReviewStatus(
+          updatedReviewers,
+          review.workflowType,
+          input.decision,
+          review.status
+        );
 
         // Update review status if changed
         if (calculatedStatus !== review.status) {
@@ -627,5 +582,260 @@ export const reviewRouter = createTRPCRouter({
       }
 
       return result;
+    }),
+
+  // ========================================
+  // SHARE MODAL PROCEDURES
+  // ========================================
+
+  getShareDetails: protectedProcedure
+    .input(GetShareDetailsInputSchema)
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: {
+          creator: { select: { name: true, email: true } },
+          reviewers: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              status: true,
+              viewedAt: true,
+              viewCount: true,
+              decidedAt: true,
+              createdAt: true,
+            },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      return {
+        id: review.id,
+        title: review.title,
+        slug: review.slug,
+        publicAccessLevel: review.publicAccessLevel,
+        publicViewCount: review.publicViewCount,
+        creator: review.creator,
+        reviewers: review.reviewers,
+      };
+    }),
+
+  updatePublicAccess: protectedProcedure
+    .input(UpdatePublicAccessInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const updated = await ctx.prisma.review.update({
+        where: { id: input.reviewId },
+        data: { publicAccessLevel: input.accessLevel },
+      });
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REVIEW_UPDATED",
+          userId: ctx.session.user.id,
+          reviewId: review.id,
+          metadata: { publicAccessLevel: input.accessLevel },
+        },
+      });
+
+      return { success: true, publicAccessLevel: updated.publicAccessLevel };
+    }),
+
+  addReviewers: protectedProcedure
+    .input(AddReviewersInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: {
+          reviewers: true,
+          creator: { select: { name: true, email: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const existingEmails = new Set(review.reviewers.map((r) => r.email.toLowerCase()));
+      const newEmails = input.emails
+        .map((e) => e.toLowerCase().trim())
+        .filter((e) => !existingEmails.has(e));
+
+      if (newEmails.length === 0) {
+        return { success: true, added: 0, message: "All emails already invited" };
+      }
+
+      if (review.reviewers.length + newEmails.length > 10) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Maximum 10 reviewers per review",
+        });
+      }
+
+      const maxOrder = Math.max(...review.reviewers.map((r) => r.order), 0);
+
+      const createdReviewers = await ctx.prisma.$transaction(
+        newEmails.map((email, idx) =>
+          ctx.prisma.reviewer.create({
+            data: {
+              reviewId: review.id,
+              email,
+              order: review.workflowType === "SEQUENTIAL" ? maxOrder + idx + 1 : 0,
+            },
+          })
+        )
+      );
+
+      for (const reviewer of createdReviewers) {
+        const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
+        try {
+          await sendReviewRequestEmail({
+            to: reviewer.email,
+            creatorName: review.creator.name ?? review.creator.email ?? "Someone",
+            title: review.title,
+            reviewUrl: accessUrl,
+            reviewId: review.id,
+            reviewerId: reviewer.id,
+          });
+        } catch (e) {
+          console.error(`Failed to email ${reviewer.email}:`, e);
+        }
+      }
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REVIEWER_ADDED",
+          userId: ctx.session.user.id,
+          reviewId: review.id,
+          metadata: { emails: newEmails },
+        },
+      });
+
+      return { success: true, added: newEmails.length };
+    }),
+
+  removeReviewer: protectedProcedure
+    .input(RemoveReviewerInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: { reviewers: true },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const reviewer = review.reviewers.find((r) => r.id === input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Reviewer not found" });
+      }
+
+      if (review.reviewers.length <= 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot remove the last reviewer",
+        });
+      }
+
+      await ctx.prisma.reviewer.delete({
+        where: { id: input.reviewerId },
+      });
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REVIEWER_REMOVED",
+          userId: ctx.session.user.id,
+          reviewId: review.id,
+          metadata: { email: reviewer.email },
+        },
+      });
+
+      return { success: true };
+    }),
+
+  resendInvitation: protectedProcedure
+    .input(ResendInvitationInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: {
+          reviewers: true,
+          creator: { select: { name: true, email: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const reviewer = review.reviewers.find((r) => r.id === input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Reviewer not found" });
+      }
+
+      if (reviewer.status !== "PENDING") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Can only resend to pending reviewers",
+        });
+      }
+
+      const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
+      try {
+        await sendReviewRequestEmail({
+          to: reviewer.email,
+          creatorName: review.creator.name ?? review.creator.email ?? "Someone",
+          title: review.title,
+          reviewUrl: accessUrl,
+          reviewId: review.id,
+          reviewerId: reviewer.id,
+        });
+      } catch (e) {
+        console.error(`Failed to resend email to ${reviewer.email}:`, e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send email",
+        });
+      }
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REMINDER_SENT",
+          userId: ctx.session.user.id,
+          reviewId: review.id,
+          metadata: { email: reviewer.email },
+        },
+      });
+
+      return { success: true };
     }),
 });

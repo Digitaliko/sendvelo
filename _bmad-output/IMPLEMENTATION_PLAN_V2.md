@@ -1,4 +1,4 @@
-# SendVelo: Complete Implementation Plan v2.0
+# Thumbway: Complete Implementation Plan v2.0
 ## One-Shot Code Generation Ready
 
 **Date:** December 22, 2025
@@ -1369,7 +1369,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   return Response.json({
-    name: "SendVelo Approval Tool",
+    name: "Thumbway Approval Tool",
     version: "2.0.0",
     description: "AI-native approval workflows for ChatGPT content",
     capabilities: {
@@ -2779,7 +2779,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
           <p className="text-sm text-gray-500">
             Powered by{" "}
             <a href={env.NEXT_PUBLIC_APP_URL} className="text-blue-600 hover:text-blue-700 font-medium">
-              SendVelo
+              Thumbway
             </a>
           </p>
         </div>
@@ -2854,14 +2854,14 @@ export async function sendOrganizationInviteEmail({
           </div>
           <div class="content">
             <p>Hi there,</p>
-            <p><strong>${inviterName}</strong> has invited you to join <strong>${organizationName}</strong> on SendVelo as a <strong>${role.toLowerCase()}</strong>.</p>
+            <p><strong>${inviterName}</strong> has invited you to join <strong>${organizationName}</strong> on Thumbway as a <strong>${role.toLowerCase()}</strong>.</p>
             <p style="text-align: center;">
               <a href="${inviteLink}" class="button">Accept Invitation</a>
             </p>
             <p style="color: #6b7280; font-size: 14px;">This invitation expires in 7 days.</p>
           </div>
           <div class="footer">
-            <p>Powered by SendVelo</p>
+            <p>Powered by Thumbway</p>
           </div>
         </div>
       </body>
@@ -2876,7 +2876,7 @@ export async function sendOrganizationInviteEmail({
   await client.sendEmail({
     From: env.FROM_EMAIL!,
     To: to,
-    Subject: `Join ${organizationName} on SendVelo`,
+    Subject: `Join ${organizationName} on Thumbway`,
     HtmlBody: html,
   });
 }
@@ -3134,7 +3134,7 @@ approval-tool/
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/sendvelo"
+DATABASE_URL="postgresql://user:password@localhost:5432/thumbway"
 
 # Better Auth
 BETTER_AUTH_SECRET="your-32-character-secret-here"
@@ -3148,7 +3148,7 @@ GITHUB_CLIENT_SECRET=""
 
 # Email (Postmark)
 POSTMARK_TOKEN=""
-FROM_EMAIL="noreply@sendvelo.com"
+FROM_EMAIL="noreply@thumbway.com"
 
 # Stripe
 STRIPE_SECRET_KEY=""

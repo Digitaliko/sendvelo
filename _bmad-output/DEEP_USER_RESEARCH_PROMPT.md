@@ -204,8 +204,8 @@ For each pain point discovered, record:
 **Context:**
 [What were they trying to do? What failed? What was the impact?]
 
-**SendVelo Opportunity:**
-[How could SendVelo solve this better?]
+**Thumbway Opportunity:**
+[How could Thumbway solve this better?]
 
 **Priority for MVP:**
 [Must-Have / Should-Have / Nice-to-Have]
@@ -350,7 +350,7 @@ For each pain point discovered, record:
 
 Create a table like this:
 
-| Rank | Pain Point | Frequency (% of reviews) | Severity | SendVelo Solution | MVP Priority |
+| Rank | Pain Point | Frequency (% of reviews) | Severity | Thumbway Solution | MVP Priority |
 |------|-----------|-------------------------|----------|-------------------|-------------|
 | 1 | Approval emails get lost in inbox | 62% | Critical | ChatGPT notifications | Must-Have |
 | 2 | Mobile approval is terrible | 45% | High | Mobile-first review pages | Must-Have |
@@ -377,7 +377,7 @@ Compile 50+ direct user quotes organized by theme:
 
 Create a comparison table:
 
-| Feature | ApprovalMax | Approval Donkey | Process Street | SendVelo |
+| Feature | ApprovalMax | Approval Donkey | Process Street | Thumbway |
 |---------|-------------|-----------------|----------------|----------|
 | ChatGPT integration | ❌ | ❌ | ❌ | ✅ |
 | Mobile-optimized approvals | ⚠️ (complaints) | ✅ | ⚠️ | ✅ |
@@ -386,7 +386,7 @@ Create a comparison table:
 
 ### 4. Ideal Customer Profile (ICP) Validation
 
-Based on Reddit/forum discussions, validate SendVelo's ICPs:
+Based on Reddit/forum discussions, validate Thumbway's ICPs:
 
 **ICP #1: Marketing Teams (5-20 people)**
 - Evidence from research: [X posts/reviews confirming this pain point]
@@ -444,7 +444,7 @@ Anti-patterns to avoid based on user complaints:
 You've completed thorough research when you can answer:
 
 ✅ **What are the top 10 pain points** users have with approval tools? (ranked by frequency)
-✅ **Which pain points does SendVelo uniquely solve?** (vs. competitors)
+✅ **Which pain points does Thumbway uniquely solve?** (vs. competitors)
 ✅ **What features are table stakes?** (if we don't have them, we're DOA)
 ✅ **What features differentiate us?** (ChatGPT-native, Slack, mobile-first)
 ✅ **What's our pricing power?** (how much would users pay for our solution?)
@@ -503,7 +503,7 @@ You've completed thorough research when you can answer:
 - Slack reminders (generic, not tied to specific request)
 - ApprovalMax notifications (still rely on email delivery)
 
-**SendVelo Advantage:**
+**Thumbway Advantage:**
 ✅ Approvals live in ChatGPT (where users already work daily)
 ✅ ChatGPT proactively notifies: "John approved your proposal!"
 ✅ No inbox to get lost in - status is always visible in chat
@@ -522,6 +522,6 @@ This research should feel **exhaustive and definitive**. When complete, we shoul
 - What users hate about current tools
 - What features we must build
 - What our pricing should be
-- Who will buy SendVelo and why
+- Who will buy Thumbway and why
 
 **Quality over speed** - this is foundational market research that informs every product decision for the next 12 months.

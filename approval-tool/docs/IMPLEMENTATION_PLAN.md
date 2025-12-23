@@ -1,4 +1,4 @@
-# SendVelo Implementation Plan
+# Thumbway Implementation Plan
 ## ChatGPT-Native + Standalone Web App
 
 **Last Updated:** December 22, 2024
@@ -111,7 +111,7 @@
 **Quote:**
 > "I spend more time chasing approvals than writing content. Email threads are a nightmare."
 
-**SendVelo Use Case:**
+**Thumbway Use Case:**
 1. ChatGPT writes blog post
 2. "Send to cmo@company.com and legal@company.com for approval"
 3. Both approve in Slack
@@ -138,7 +138,7 @@
 **Quote:**
 > "Clients forget to respond to emails. I need a way to make approval feel official and easy."
 
-**SendVelo Use Case:**
+**Thumbway Use Case:**
 1. ChatGPT writes project proposal
 2. "Send to client@acmecorp.com for approval"
 3. Client gets professional approval page
@@ -165,7 +165,7 @@
 **Quote:**
 > "I need to know: did Legal approve this deal? Did Finance see the pricing? I can't track this in email."
 
-**SendVelo Use Case:**
+**Thumbway Use Case:**
 1. Sales rep uses ChatGPT to create proposal
 2. "Send to sales-manager@, finance@, legal@ for approval. Sales manager first, then finance and legal in parallel"
 3. Tom approves in Slack
@@ -195,7 +195,7 @@
 - **Target:** Daily check-in for status tracking
 
 ### Core Insight
-> "ChatGPT is where content is born. SendVelo is where it gets approved. The web app is where teams manage the process."
+> "ChatGPT is where content is born. Thumbway is where it gets approved. The web app is where teams manage the process."
 
 ---
 
@@ -215,10 +215,10 @@
 👤 User:
 "Send this to john@acmecorp.com for approval"
 
-🔧 SendVelo MCP Tool:
+🔧 Thumbway MCP Tool:
 ✅ Review created: "Website Redesign Proposal"
 📧 Email sent to john@acmecorp.com
-🔗 Review link: sendvelo.com/review/abc123
+🔗 Review link: thumbway.com/review/abc123
 
 📬 John receives email:
 "[Your Name] sent you a proposal for review"
@@ -236,7 +236,7 @@
 👤 User (in ChatGPT):
 "Show me John's feedback"
 
-🤖 ChatGPT + SendVelo:
+🤖 ChatGPT + Thumbway:
 "John said: 'Looks good, let's proceed!'"
 "Your proposal was approved on Dec 22, 2024 at 2:30 PM"
 ```
@@ -259,7 +259,7 @@
 👤 Sarah:
 "Send this to mike@company.com (CMO) and legal@company.com for approval"
 
-🔧 SendVelo MCP Tool:
+🔧 Thumbway MCP Tool:
 ✅ Review created: "AI Feature Launch Blog Post"
 📧 Emails sent to Mike (CMO) & Legal team
 👥 2 reviewers required
@@ -285,7 +285,7 @@
 👤 Sarah:
 "Send the updated version to legal@company.com"
 
-🔧 SendVelo:
+🔧 Thumbway:
 ✅ New version sent (v2)
 🔗 Legal sees diff: v1 → v2
 
@@ -321,7 +321,7 @@
 👤 Tom:
 "Send this to sales-director@company.com, finance@company.com, and legal@company.com for approval. Sales director must approve first, then finance and legal can review in parallel"
 
-🔧 SendVelo MCP Tool:
+🔧 Thumbway MCP Tool:
 ✅ Review created with WORKFLOW:
   Step 1: Sales Director (required)
   Step 2: Finance + Legal (parallel, both required)
@@ -353,20 +353,20 @@
 👤 Tom:
 "Send updated version to finance@company.com only"
 
-🔧 SendVelo:
+🔧 Thumbway:
 ✅ Version 2 sent to Finance
 (Sales Director & Legal already approved, no need to re-send)
 
 💰 Finance:
 → ✅ Approves v2
 
-🎉 SendVelo:
+🎉 Thumbway:
 "All approvals complete! ✅✅✅"
 
 👤 Tom (in ChatGPT):
 "Generate DocuSign link for this approved proposal"
 
-🔧 SendVelo Integration:
+🔧 Thumbway Integration:
 → Exports to DocuSign
 → Sends to Acme Corp for signature
 
@@ -399,17 +399,17 @@
 ```
 1. Discovery (ChatGPT App Store)
    → Sees: "Get approval for ChatGPT content instantly"
-   → Clicks: Install SendVelo
+   → Clicks: Install Thumbway
 
 2. Installation
-   → ChatGPT: "Connect SendVelo to get started"
+   → ChatGPT: "Connect Thumbway to get started"
    → User clicks → OAuth flow → Connects Google/GitHub
-   → Lands on: sendvelo.com/welcome
+   → Lands on: thumbway.com/welcome
 
 3. First Review (In ChatGPT)
    → ChatGPT: "Try it! Say 'Send this to someone@email.com for approval'"
    → User: "Send this draft email to my colleague for feedback"
-   → SendVelo: ✅ Sent! Check your dashboard: sendvelo.com/dashboard
+   → Thumbway: ✅ Sent! Check your dashboard: thumbway.com/dashboard
 
 4. Dashboard Discovery (Web App)
    → User clicks link
@@ -443,7 +443,7 @@
    → Clicks: Try Free
 
 2. Sign Up (Web App First)
-   → Lands: sendvelo.com
+   → Lands: thumbway.com
    → Creates account
    → Sees: "Connect ChatGPT" or "Create Review Manually"
 
@@ -455,7 +455,7 @@
 
 4. ChatGPT Discovery
    → Sees banner: "Create reviews faster in ChatGPT"
-   → Clicks: Install SendVelo in ChatGPT
+   → Clicks: Install Thumbway in ChatGPT
    → Tries it: "Wow, this is much faster!"
 
 5. Team Onboarding
@@ -526,7 +526,7 @@ await authClient.organization.inviteMember({
 ---
 
 #### **4. Email Notifications** ✅
-**Why:** Reviewers don't live in SendVelo, they need to be notified
+**Why:** Reviewers don't live in Thumbway, they need to be notified
 
 **Current:** Using Postmark
 **Better Auth Integration:** Can hook into invitation emails
@@ -574,7 +574,7 @@ These features ONLY work because of ChatGPT integration:
 
 **vs Competitors:**
 ApproveThis.com: 8 steps, 2 minutes
-SendVelo: 1 step, 5 seconds
+Thumbway: 1 step, 5 seconds
 
 ---
 
@@ -750,7 +750,7 @@ export const auth = betterAuth({
         const inviteLink = `${env.BETTER_AUTH_URL}/accept-invite/${data.id}`;
         await sendEmail({
           to: data.email,
-          subject: `Join ${data.organization.name} on SendVelo`,
+          subject: `Join ${data.organization.name} on Thumbway`,
           html: `<p>${data.inviter.name} invited you to join ${data.organization.name}</p>
                  <a href="${inviteLink}">Accept Invitation</a>`
         });
@@ -1060,7 +1060,7 @@ const reviews = await prisma.review.findMany({
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│              SendVelo API (tRPC)                    │
+│              Thumbway API (tRPC)                    │
 │  ┌────────────────────────────────────────────┐    │
 │  │  Routers:                                   │    │
 │  │  - review.create (with organizationId)      │    │

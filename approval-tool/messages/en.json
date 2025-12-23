@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "SendVelo",
+    "appName": "Thumbway",
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
@@ -68,7 +68,7 @@
       }
     },
     "footer": {
-      "copyright": "© 2024 SendVelo. All rights reserved."
+      "copyright": "© 2024 Thumbway. All rights reserved."
     }
   },
   "auth": {
@@ -87,7 +87,7 @@
     },
     "signUp": {
       "title": "Create an account",
-      "subtitle": "Get started with SendVelo today.",
+      "subtitle": "Get started with Thumbway today.",
       "name": "Name",
       "email": "Email",
       "password": "Password",
@@ -174,5 +174,49 @@
     "requestChanges": "⚠ Request Changes",
     "reviewers": "Reviewers",
     "footer": "Powered by"
+  },
+  "share": {
+    "title": "Share \"{title}\"",
+    "description": "Share this review via link or invite reviewers by email",
+    "loading": "Loading...",
+    "copyLink": {
+      "title": "Share link",
+      "copied": "Link copied to clipboard",
+      "copyFailed": "Failed to copy link",
+      "anyoneWithLink": "Anyone with the link",
+      "accessLevels": {
+        "NONE": "No public access",
+        "NONE_desc": "Only invited reviewers can view",
+        "VIEW_ONLY": "Anyone can view",
+        "VIEW_ONLY_desc": "Anyone with the link can view content",
+        "VIEW_COMMENT": "Anyone can view & comment",
+        "VIEW_COMMENT_desc": "Anyone with the link can view and leave comments",
+        "FULL_ACCESS": "Anyone can approve",
+        "FULL_ACCESS_desc": "Anyone with the link can approve or reject"
+      },
+      "accessUpdated": "Access level updated"
+    },
+    "emailInvite": {
+      "title": "Invite by email",
+      "placeholder": "Enter email addresses (comma separated)",
+      "invite": "Invite",
+      "sending": "Sending...",
+      "description": "Reviewers will receive an email with a unique link to review and provide feedback.",
+      "success": "Invites sent",
+      "successCount": "{count} reviewer(s) invited",
+      "noNew": "No new invites",
+      "allInvited": "All emails already invited",
+      "invalidEmail": "Please enter a valid email address"
+    },
+    "access": {
+      "title": "People with access",
+      "owner": "Owner",
+      "noReviewers": "No reviewers invited yet. Add reviewers above.",
+      "resend": "Resend invite",
+      "resendSuccess": "Invitation resent",
+      "remove": "Remove",
+      "removeSuccess": "Reviewer removed",
+      "cannotRemoveLast": "At least one reviewer is required"
+    }
   }
 }

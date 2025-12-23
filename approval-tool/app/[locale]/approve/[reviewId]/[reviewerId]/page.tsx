@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "@/trpc/react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CheckCircle, XCircle, AlertCircle, Loader2 } from "lucide-react";
@@ -8,8 +8,9 @@ import { CheckCircle, XCircle, AlertCircle, Loader2 } from "lucide-react";
 /**
  * Email Approval Page
  *
- * Handles one-click approve/reject from email links.
- * Shows confirmation and redirects to full review page.
+ * Handles approve/reject from email links.
+ * Requires user to click confirmation button to prevent CSRF attacks
+ * from email prefetching or malicious forwards.
  */
 
 export default function EmailApprovePage() {
@@ -51,8 +52,12 @@ export default function EmailApprovePage() {
     );
   }
 
-  const [status, setStatus] = useState<"loading" | "success" | "error" | "invalid">("loading");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [status, setStatus] = useState<"pending_confirmation" | "loading" | "success" | "error" | "invalid">(
+    decision ? "pending_confirmation" : "invalid"
+  );
+  const [errorMessage, setErrorMessage] = useState(
+    !decision ? "Invalid approval link. Please use the link from your email." : ""
+  );
   const [finalDecision, setFinalDecision] = useState<"APPROVED" | "REJECTED" | null>(null);
 
   const submitMutation = api.review.submitDecisionFromEmail.useMutation({
@@ -66,28 +71,67 @@ export default function EmailApprovePage() {
     },
   });
 
-  useEffect(() => {
-    if (!token || !decision || !["approve", "reject"].includes(decision)) {
+  const handleConfirmDecision = () => {
+    if (!decision || !["approve", "reject"].includes(decision)) {
       setStatus("invalid");
       setErrorMessage("Invalid approval link. Please use the link from your email.");
       return;
     }
 
-    // Auto-submit decision
+    setStatus("loading");
     submitMutation.mutate({
       reviewId,
       reviewerId,
       token,
       decision: decision === "approve" ? "APPROVED" : "REJECTED",
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const isApproved = finalDecision === "APPROVED";
+  const isApproveAction = decision === "approve";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+        {status === "pending_confirmation" && (
+          <>
+            <div
+              className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
+                isApproveAction ? "bg-green-100" : "bg-red-100"
+              }`}
+              aria-hidden="true"
+            >
+              {isApproveAction ? (
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              ) : (
+                <XCircle className="w-8 h-8 text-red-600" />
+              )}
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Confirm {isApproveAction ? "Approval" : "Rejection"}
+            </h1>
+            <p className="mt-2 text-gray-600">
+              Click the button below to confirm your decision.
+            </p>
+            <button
+              onClick={handleConfirmDecision}
+              className={`mt-6 inline-block px-6 py-3 rounded-lg font-semibold text-white transition-colors ${
+                isApproveAction
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
+            >
+              {isApproveAction ? "Confirm Approval" : "Confirm Rejection"}
+            </button>
+            <a
+              href={`/review/${encodeURIComponent(reviewId)}?token=${encodeURIComponent(token)}`}
+              className="mt-4 block text-blue-600 hover:text-blue-700 hover:underline font-medium"
+            >
+              View full review details instead
+            </a>
+          </>
+        )}
+
         {status === "loading" && (
           <>
             <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-blue-100 mb-4" role="status" aria-label="Processing">

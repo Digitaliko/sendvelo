@@ -1,6 +1,6 @@
-# Approval Workflow Pain Points: User Research Report for SendVelo
+# Approval Workflow Pain Points: User Research Report for Thumbway
 
-**Bottom Line:** Users overwhelmingly struggle with **scattered feedback across email/Slack/tools** (92% cite approval delays as the main cause of missed deadlines), **multi-stakeholder coordination chaos** (65% of marketers lose over a day weekly chasing feedback), and **terrible mobile experiences** that force desktop-bound approvals. The market opportunity is clear: no tool has solved "email approval hell" effectively, and ChatGPT-native approval routing is virtually non-existent. For SendVelo, the winning formula is **mobile-first, Slack-native, AI-powered approval routing** at the **$9-29/month** freelancer price point or **$50-100/month** flat-rate for teams.
+**Bottom Line:** Users overwhelmingly struggle with **scattered feedback across email/Slack/tools** (92% cite approval delays as the main cause of missed deadlines), **multi-stakeholder coordination chaos** (65% of marketers lose over a day weekly chasing feedback), and **terrible mobile experiences** that force desktop-bound approvals. The market opportunity is clear: no tool has solved "email approval hell" effectively, and ChatGPT-native approval routing is virtually non-existent. For Thumbway, the winning formula is **mobile-first, Slack-native, AI-powered approval routing** at the **$9-29/month** freelancer price point or **$50-100/month** flat-rate for teams.
 
 ---
 
@@ -127,9 +127,9 @@
 
 ## 3. Competitive feature gap analysis
 
-### What competitors lack vs. what SendVelo can offer
+### What competitors lack vs. what Thumbway can offer
 
-| Feature | ApprovalMax | Process Street | ClickUp | Monday.com | Proposify | Better Proposals | SendVelo Opportunity |
+| Feature | ApprovalMax | Process Street | ClickUp | Monday.com | Proposify | Better Proposals | Thumbway Opportunity |
 |---------|-------------|----------------|---------|------------|-----------|------------------|---------------------|
 | **ChatGPT-native routing** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Major differentiator |
 | **Mobile-optimized approvals** | ⚠️ Limited | ⚠️ Limited | ❌ Clunky | ⚠️ Limited | ❌ Poor | ⚠️ | ✅ Mobile-first design |
@@ -268,7 +268,7 @@
 
 ### Critical anti-patterns from competitor failures
 
-| Anti-Pattern | Competitor Example | User Impact | SendVelo Avoidance |
+| Anti-Pattern | Competitor Example | User Impact | Thumbway Avoidance |
 |--------------|-------------------|-------------|-------------------|
 | **Minimum user requirements** | Process Street (5-user minimum) | "Frustrating for 2-person business" | Offer true 1-user tier |
 | **Features locked behind premium** | Monday.com, ClickUp | "Key features locked behind higher-tier plans" | Core approval features in all tiers |
@@ -336,7 +336,7 @@ Users are beginning to expect:
 
 ---
 
-## Summary: SendVelo strategic positioning
+## Summary: Thumbway strategic positioning
 
 ### Core value proposition
 **"Never lose another approval in email. Get instant responses with AI-powered approval routing, one-tap mobile approvals, and Slack-native workflows."**
@@ -356,4 +356,4 @@ Users are beginning to expect:
 ### Winning formula
 **Mobile-first + Slack-native + ChatGPT-powered + transparent pricing = market disruption opportunity**
 
-The approval workflow market is ripe for disruption. Existing tools are either enterprise-focused (ApprovalMax, Process Street), general PM tools with bolted-on approvals (Monday.com, Asana, ClickUp), or proposal-specific (Proposify, Better Proposals). None are AI-native, mobile-first, or truly solve the "email approval hell" problem. SendVelo's ChatGPT-native positioning is a genuine differentiator with zero direct competitors.
+The approval workflow market is ripe for disruption. Existing tools are either enterprise-focused (ApprovalMax, Process Street), general PM tools with bolted-on approvals (Monday.com, Asana, ClickUp), or proposal-specific (Proposify, Better Proposals). None are AI-native, mobile-first, or truly solve the "email approval hell" problem. Thumbway's ChatGPT-native positioning is a genuine differentiator with zero direct competitors.

@@ -5,7 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e9ba56d-7e5a-4752-aeb0-d332c4894922" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/approval-tool" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/ACTION_PLAN_CONSOLIDATED.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/ACTION_PLAN_CONSOLIDATED.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/DEEP_USER_RESEARCH_PROMPT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/DEEP_USER_RESEARCH_PROMPT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.1_CONTENT_TYPES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.1_CONTENT_TYPES.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/MARKET_ANALYSIS_CHATGPT_APPSTORE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/MARKET_ANALYSIS_CHATGPT_APPSTORE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/USER_RESEARCH_REPORT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/USER_RESEARCH_REPORT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/00-MARKETING-EXECUTION-GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/00-MARKETING-EXECUTION-GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/01-LINKEDIN-CONTENT-CALENDAR.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/01-LINKEDIN-CONTENT-CALENDAR.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/02-REDDIT-SEEDING-PLAYBOOK.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/02-REDDIT-SEEDING-PLAYBOOK.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/03-PRODUCT-HUNT-LAUNCH-KIT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/03-PRODUCT-HUNT-LAUNCH-KIT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/04-SEO-BLOG-CONTENT-OUTLINES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/04-SEO-BLOG-CONTENT-OUTLINES.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/05-INFLUENCER-OUTREACH-SEQUENCES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/05-INFLUENCER-OUTREACH-SEQUENCES.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/06-COLD-EMAIL-SEQUENCES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/06-COLD-EMAIL-SEQUENCES.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/07-CASE-STUDY-TEMPLATE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/07-CASE-STUDY-TEMPLATE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/SETUP.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/SETUP.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signup/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signup/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/approve/[reviewId]/[reviewerId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/approve/[reviewId]/[reviewerId]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/api/slack/interactions/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/api/slack/interactions/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/mcp/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/mcp/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/claude.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/claude.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/docs/CHATGPT_APP_STORE_STRATEGY.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/CHATGPT_APP_STORE_STRATEGY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/docs/IMPLEMENTATION_PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/IMPLEMENTATION_PLAN.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/docs/MARKETING_PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/MARKETING_PLAN.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/docs/PRODUCT_POSITIONING.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/PRODUCT_POSITIONING.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/docs/ROADMAP.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/ROADMAP.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/messages/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/messages/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/content-renderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/content-renderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/email.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/email.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/stripe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/stripe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/routers/review.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/routers/review.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,27 +52,27 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="145" />
+    <option name="cachedIndexableFilesCount" value="148" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "filippofilip95"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;filippofilip95&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:Digitaliko/sendvelo.git",
-    "accountId": "f7ecf05d-dbd0-4b91-aaf8-b4a0c4f8057c"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:Digitaliko/sendvelo.git&quot;,
+    &quot;accountId&quot;: &quot;f7ecf05d-dbd0-4b91-aaf8-b4a0c4f8057c&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="376e5cwQ0dvSlMoFa6Srm07HyfX" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -48,7 +87,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "#1 on feature/documentation-and-bmad-setup",
+    "git-widget-placeholder": "#4 on feature/brand-naming-exploration",
     "javascript.preferred.runtime.type.id": "node",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
@@ -102,7 +141,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1766227765472</updated>
-      <workItem from="1766227766732" duration="13649000" />
+      <workItem from="1766227766732" duration="16550000" />
+      <workItem from="1766485074937" duration="5619000" />
     </task>
     <servers />
   </component>

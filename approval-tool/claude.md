@@ -1,66 +1,104 @@
-# Claude Patterns & Best Practices
+# CLAUDE.md - Thumbway Approval Tool Development Guide
 
-This document outlines the coding patterns and best practices for the SendVelo codebase.
+Essential patterns, conventions, and commands for AI assistants working with the Thumbway codebase.
 
-## Core Principles
+## Project Information
 
-1. **Type Safety First**: Use TypeScript strictly - infer types, avoid `any`
-2. **Server Components by Default**: Use RSC unless client interactivity needed
-3. **End-to-End Type Safety**: tRPC for all API calls
-4. **Progressive Enhancement**: Forms work without JS
-5. **Separation of Concerns**: Clean separation between UI, business logic, and data
+**Thumbway** - Review approval workflow platform with ChatGPT integration via MCP. Features multi-reviewer approvals, organization workspaces, Slack notifications, and subscription billing.
 
-## TypeScript Patterns
+**Tech Stack**: Next.js 15 (Turbopack), React 19, TypeScript 5, tRPC 11, Prisma 6, PostgreSQL, Better Auth, Tailwind CSS 4, Radix UI, Stripe, Postmark, Slack API, MCP SDK
 
-### Type Inference
+## Developer Profile
+
+Senior Full Stack Developer expert in Next.js/TypeScript. Follow existing patterns, use path alias imports (`@/*`), write clean self-documenting code without comments unless requested. Use strict TypeScript, functional components with hooks, proper error handling. Forms: React Hook Form + Zod patterns where applicable. Server: tRPC procedures with Zod validation.
+
+## Quick Start Commands
+
+```bash
+# Development (Turbopack)
+pnpm dev
+
+# Production build
+pnpm build
+
+# Start production server
+pnpm start
+
+# Database
+pnpm db:push        # Push schema changes
+pnpm db:generate    # Generate Prisma client
+pnpm db:studio      # Open Prisma Studio
+```
+
+## Project Structure
+
+```
+approval-tool/
+├── app/                          # Next.js App Router
+│   ├── [locale]/                # i18n routes
+│   │   ├── (app)/               # Protected routes (dashboard, settings)
+│   │   ├── (auth)/              # Auth routes (signin, signup)
+│   │   ├── approve/             # Public approval pages
+│   │   └── review/              # Public review pages
+│   ├── api/                     # API routes
+│   │   ├── auth/[...all]/       # Better Auth handler
+│   │   ├── trpc/[trpc]/         # tRPC endpoint
+│   │   ├── slack/               # Slack webhooks
+│   │   └── webhooks/stripe/     # Stripe webhooks
+│   └── mcp/                     # MCP server route
+├── src/
+│   ├── env.ts                   # T3 Env validation
+│   ├── i18n/                    # next-intl config
+│   ├── lib/                     # Core libraries
+│   │   ├── auth.ts              # Better Auth server config
+│   │   ├── auth-client.ts       # Better Auth client
+│   │   ├── db.ts                # Prisma singleton
+│   │   ├── email.ts             # Postmark integration
+│   │   ├── slack.ts             # Slack API client
+│   │   ├── stripe.ts            # Stripe integration
+│   │   └── utils.ts             # Utilities (cn, formatDate, etc.)
+│   ├── server/api/              # tRPC backend
+│   │   ├── trpc.ts              # tRPC setup & procedures
+│   │   ├── root.ts              # Router aggregation
+│   │   └── routers/             # Individual routers
+│   ├── trpc/                    # tRPC client setup
+│   │   ├── react.tsx            # React Query integration
+│   │   └── server.ts            # RSC caller
+│   └── components/              # React components
+│       └── ui/                  # UI components (toast, etc.)
+├── prisma/schema.prisma         # Database schema
+├── messages/en.json             # i18n translations
+└── middleware.ts                # CORS + i18n middleware
+```
+
+## Core Patterns
+
+### 1. Type Safety (CRITICAL)
+
 ```typescript
-// ✅ GOOD: Infer types from tRPC router
+// ✅ GOOD: Infer types from tRPC
 import { type RouterOutputs } from "@/trpc/react";
 type Review = RouterOutputs["review"]["getMyReviews"]["reviews"][number];
 
+// ✅ GOOD: Infer from Better Auth
+import type { Session } from "@/lib/auth";
+type Session = typeof auth.$Infer.Session;
+
 // ❌ BAD: Manual type definitions that drift
-type Review = {
-  id: string;
-  title: string;
-  // ...manual fields
-};
+type Review = { id: string; title: string; /* ... */ };
 ```
 
-### Avoid Any
+### 2. Server Components by Default
+
 ```typescript
-// ✅ GOOD: Proper typing
-const reviews = reviewsData?.reviews || [];
-reviews.map((review: Review) => ...)
-
-// ❌ BAD: Using any
-reviews.map((review: any) => ...)
-```
-
-### Non-Null Assertions
-```typescript
-// ✅ GOOD: Use when you're certain value exists
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, { ... });
-
-// ⚠️ WARN: Check for null first if uncertain
-if (review.creator.email) {
-  await sendEmail({ to: review.creator.email, ... });
-}
-```
-
-## Next.js 15 Patterns
-
-### Server Components (Default)
-```typescript
-// ✅ GOOD: Server component by default
+// ✅ GOOD: Server component (default)
 export default async function Page() {
-  const data = await prisma.review.findMany();
-  return <div>{data.map(...)}</div>;
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/signin");
+  return <Dashboard />;
 }
-```
 
-### Client Components (When Needed)
-```typescript
-// ✅ GOOD: Use "use client" only when needed
+// ✅ GOOD: Client component only when needed
 "use client";
 import { useState } from "react";
 export default function InteractiveComponent() {
@@ -69,46 +107,62 @@ export default function InteractiveComponent() {
 }
 ```
 
-### Async Headers in Server Components
+### 3. tRPC Patterns (MANDATORY for all server calls)
+
+**Router Definition:**
 ```typescript
-// ✅ GOOD: Await headers() in Next.js 15
-const heads = new Headers(await headers());
+// src/server/api/routers/your-router.ts
+export const yourRouter = createTRPCRouter({
+  // Public - accessible without auth
+  getPublicData: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.yourModel.findUnique({
+        where: { id: input.id },
+      });
+    }),
 
-// ❌ BAD: Direct use without await
-const heads = new Headers(headers());
-```
-
-## tRPC Patterns
-
-### Router Definition
-```typescript
-// ✅ GOOD: Group related procedures
-export const reviewRouter = createTRPCRouter({
-  getMyReviews: protectedProcedure
-    .input(z.object({ cursor: z.string().optional() }))
-    .query(async ({ ctx, input }) => { ... }),
-
+  // Protected - requires authentication
   create: protectedProcedure
-    .input(CreateReviewSchema)
-    .mutation(async ({ ctx, input }) => { ... }),
+    .input(z.object({
+      title: z.string().min(1).max(200),
+      content: z.string().min(1).max(50000),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // ctx.session.user is guaranteed to exist
+      return await ctx.prisma.yourModel.create({
+        data: { ...input, userId: ctx.session.user.id },
+      });
+    }),
 });
 ```
 
-### Type-Safe Client Calls
+**Client Usage:**
 ```typescript
-// ✅ GOOD: Full type safety
-const { data } = api.review.getMyReviews.useQuery();
-const createMutation = api.review.create.useMutation({
-  onSuccess: () => refetch(),
-});
+"use client";
+import { api } from "@/trpc/react";
 
-// Access typed data
-const reviews = data?.reviews || [];
+export function Component() {
+  // Query
+  const { data, isLoading, refetch } = api.review.getMyReviews.useQuery();
+
+  // Mutation
+  const mutation = api.review.create.useMutation({
+    onSuccess: () => {
+      refetch();
+      addToast("success", "Created!");
+    },
+    onError: (error) => {
+      addToast("error", error.message);
+    },
+  });
+
+  const handleSubmit = () => mutation.mutate({ title, content });
+}
 ```
 
-### Server-Side tRPC Calls
+**Server-Side tRPC (RSC):**
 ```typescript
-// ✅ GOOD: Use server-side caller
 import { trpc } from "@/trpc/server";
 
 export default async function Page() {
@@ -117,547 +171,235 @@ export default async function Page() {
 }
 ```
 
-## Database Patterns (Prisma)
+### 4. Error Handling
 
-### Query Optimization
+```typescript
+// tRPC: Use TRPCError with specific codes
+import { TRPCError } from "@trpc/server";
+
+if (!session) {
+  throw new TRPCError({ code: "UNAUTHORIZED" });
+}
+if (!review) {
+  throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+}
+if (!isMember) {
+  throw new TRPCError({ code: "FORBIDDEN", message: "Not a member" });
+}
+
+// Client: Handle in mutation callbacks
+const mutation = api.review.create.useMutation({
+  onError: (error) => addToast("error", error.message),
+});
+```
+
+### 5. Database Patterns (Prisma)
+
 ```typescript
 // ✅ GOOD: Select only needed fields
 const review = await prisma.review.findUnique({
   where: { slug },
-  select: { title: true, content: true },
+  select: { title: true, content: true, status: true },
 });
 
-// ⚠️ WARN: Avoid selecting everything when not needed
-const review = await prisma.review.findUnique({
-  where: { slug },
-});
-```
-
-### Include Relations When Needed
-```typescript
 // ✅ GOOD: Include relations explicitly
 const review = await prisma.review.findUnique({
   where: { slug },
-  include: { creator: true },
-});
-```
-
-### Null Safety
-```typescript
-// ✅ GOOD: Refetch with includes before accessing nested data
-const reviewWithCreator = await prisma.review.findUnique({
-  where: { slug },
-  include: { creator: true },
+  include: {
+    creator: { select: { name: true, email: true } },
+    reviewers: true,
+  },
 });
 
-if (reviewWithCreator?.creator.email) {
-  await sendEmail({ to: reviewWithCreator.creator.email });
+// ✅ GOOD: Transactions for atomic operations
+const result = await prisma.$transaction(async (tx) => {
+  await tx.reviewer.update({ ... });
+  await tx.review.update({ ... });
+  return calculatedStatus;
+});
+
+// ✅ GOOD: Cursor-based pagination
+const reviews = await prisma.review.findMany({
+  take: limit + 1,
+  cursor: cursor ? { id: cursor } : undefined,
+  orderBy: { createdAt: "desc" },
+});
+let nextCursor: string | undefined;
+if (reviews.length > limit) {
+  nextCursor = reviews.pop()?.id;
 }
 ```
 
-## Environment Variables
+### 6. Authentication (Better Auth)
 
-### T3 Env Validation
 ```typescript
-// ✅ GOOD: Validate all env vars with Zod
-export const env = createEnv({
-  server: {
-    DATABASE_URL: z.string().url(),
-    STRIPE_SECRET_KEY: z.string().optional(),
-  },
-  client: {
-    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
-  },
-  runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  },
+// Server Component: Get session
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+const session = await auth.api.getSession({
+  headers: await headers(),  // Must await in Next.js 15
 });
+
+// Protected Layout Pattern
+export default async function AppLayout({ children }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/signin");
+  return <>{children}</>;
+}
+
+// Client: Use auth client
+import { authClient } from "@/lib/auth-client";
+await authClient.signIn.email({ email, password });
+await authClient.signOut();
 ```
 
-### Usage
+### 7. Environment Variables (T3 Env)
+
 ```typescript
 // ✅ GOOD: Import from env.ts
 import { env } from "@/env";
-const apiKey = env.STRIPE_SECRET_KEY!;
+const apiKey = env.STRIPE_SECRET_KEY;
 
 // ❌ BAD: Direct process.env access
 const apiKey = process.env.STRIPE_SECRET_KEY;
 ```
 
-## Authentication Patterns (Better Auth)
+### 8. Internationalization (next-intl)
 
-### Session Access in Server Components
 ```typescript
-// ✅ GOOD: Get session in server components
-import { auth } from "@/lib/auth";
-
-export default async function Page() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/signin");
-  return <div>Welcome {session.user.name}</div>;
-}
-```
-
-### Protected tRPC Procedures
-```typescript
-// ✅ GOOD: Use protectedProcedure for auth-required endpoints
-export const protectedProcedure = publicProcedure.use(async ({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({
-    ctx: {
-      session: ctx.session,
-    },
-  });
-});
-```
-
-## i18n Patterns (next-intl)
-
-### Server Components
-```typescript
-// ✅ GOOD: Use useTranslations in server components
-import { useTranslations } from "next-intl";
-
-export default function Page() {
-  const t = useTranslations("home");
-  return <h1>{t("hero.title")}</h1>;
-}
-```
-
-### Client Components
-```typescript
-// ✅ GOOD: Same API works in client components
-"use client";
+// Server & Client Components
 import { useTranslations } from "next-intl";
 
 export default function Component() {
   const t = useTranslations("dashboard");
-  return <button>{t("createReview")}</button>;
+  return <h1>{t("title")}</h1>;
 }
 ```
 
-### Translation Files Structure
-```json
-{
-  "namespace": {
-    "key": "Simple string",
-    "nested": {
-      "key": "Nested value"
-    },
-    "withPlaceholder": "Hello {{name}}"
-  }
-}
-```
+### 9. Import Patterns
 
-## Form Patterns
-
-### Server Actions
 ```typescript
-// ✅ GOOD: Use server actions for forms
-async function handleDecision(formData: FormData) {
-  "use server";
-
-  const decision = formData.get("decision") as string;
-  await prisma.review.update({
-    where: { slug },
-    data: { status: decision },
-  });
-
-  redirect(`/review/${slug}`);
-}
-
-// In component
-<form action={handleDecision}>
-  <button name="decision" value="approved">Approve</button>
-</form>
-```
-
-### Client-Side Forms with tRPC
-```typescript
-// ✅ GOOD: Use tRPC mutations for client-side forms
-const createMutation = api.review.create.useMutation({
-  onSuccess: () => {
-    refetch();
-    setIsOpen(false);
-  },
-});
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  await createMutation.mutateAsync(formData);
-};
-```
-
-## Error Handling
-
-### tRPC Error Handling
-```typescript
-// ✅ GOOD: Use TRPCError with proper codes
-import { TRPCError } from "@trpc/server";
-
-if (!session) {
-  throw new TRPCError({
-    code: "UNAUTHORIZED",
-    message: "You must be logged in",
-  });
-}
-
-if (!review) {
-  throw new TRPCError({
-    code: "NOT_FOUND",
-    message: "Review not found",
-  });
-}
-```
-
-### Client-Side Error Handling
-```typescript
-// ✅ GOOD: Handle mutation errors
-const mutation = api.review.create.useMutation({
-  onError: (error) => {
-    toast.error(error.message);
-  },
-  onSuccess: () => {
-    toast.success("Review created!");
-  },
-});
-```
-
-## Email Patterns
-
-### Type-Safe Email Functions
-```typescript
-// ✅ GOOD: Dedicated functions with typed params
-export async function sendReviewRequestEmail({
-  to,
-  reviewerName,
-  creatorName,
-  title,
-  reviewUrl,
-}: {
-  to: string;
-  reviewerName?: string;
-  creatorName: string;
-  title: string;
-  reviewUrl: string;
-}) {
-  if (!client) {
-    console.warn("Email client not configured");
-    return;
-  }
-
-  await client.sendEmail({
-    From: env.FROM_EMAIL!,
-    To: to,
-    Subject: `Review request: ${title}`,
-    HtmlBody: generateHtml({ ... }),
-  });
-}
-```
-
-## Stripe Patterns
-
-### Conditional Initialization
-```typescript
-// ✅ GOOD: Only initialize if API key exists
-export const stripe = env.STRIPE_SECRET_KEY
-  ? new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-10-29.clover",
-      typescript: true,
-    })
-  : null;
-```
-
-### Usage with Null Checks
-```typescript
-// ✅ GOOD: Check before using
-export async function createCheckoutSession(...) {
-  if (!stripe) {
-    throw new Error("Stripe not configured");
-  }
-
-  return await stripe.checkout.sessions.create({ ... });
-}
-```
-
-## Performance Patterns
-
-### Pagination
-```typescript
-// ✅ GOOD: Implement cursor-based pagination
-getMyReviews: protectedProcedure
-  .input(z.object({
-    limit: z.number().min(1).max(100).default(50),
-    cursor: z.string().optional(),
-  }))
-  .query(async ({ ctx, input }) => {
-    const reviews = await ctx.db.review.findMany({
-      where: { creatorId: ctx.session.user.id },
-      take: input.limit + 1,
-      cursor: input.cursor ? { id: input.cursor } : undefined,
-    });
-
-    let nextCursor: string | undefined;
-    if (reviews.length > input.limit) {
-      const nextItem = reviews.pop();
-      nextCursor = nextItem!.id;
-    }
-
-    return { reviews, nextCursor };
-  });
-```
-
-### Database Indexing
-```prisma
-// ✅ GOOD: Add indexes for frequent queries
-model Review {
-  id     String @id @default(cuid())
-  slug   String @unique
-  status String @default("pending")
-
-  @@index([slug])
-  @@index([status])
-  @@index([creatorId])
-}
-```
-
-## Security Patterns
-
-### Input Validation
-```typescript
-// ✅ GOOD: Validate all inputs with Zod
-const CreateReviewSchema = z.object({
-  title: z.string().min(1).max(200),
-  content: z.string().min(1).max(10000),
-  reviewerEmail: z.string().email(),
-});
-
-export const reviewRouter = createTRPCRouter({
-  create: protectedProcedure
-    .input(CreateReviewSchema)
-    .mutation(async ({ ctx, input }) => {
-      // input is fully validated
-    }),
-});
-```
-
-### SQL Injection Prevention
-```typescript
-// ✅ GOOD: Prisma handles this automatically
-await prisma.review.findUnique({
-  where: { slug: userInput }, // Safe
-});
-
-// ❌ BAD: Raw SQL without parameterization
-await prisma.$queryRaw`SELECT * FROM Review WHERE slug = ${userInput}`;
-
-// ✅ GOOD: Parameterized raw queries if needed
-await prisma.$queryRaw`SELECT * FROM Review WHERE slug = ${Prisma.sql([userInput])}`;
-```
-
-### XSS Prevention
-```typescript
-// ✅ GOOD: React escapes by default
-<div>{userContent}</div>
-
-// ⚠️ WARN: Only use dangerouslySetInnerHTML with sanitized content
-<div dangerouslySetInnerHTML={{ __html: sanitize(userContent) }} />
-```
-
-## Code Organization
-
-### File Structure
-```
-/app                 # Next.js App Router
-  /(app)            # Authenticated app routes
-    /dashboard      # Dashboard page
-    layout.tsx      # App layout with auth
-  /api              # API routes
-  /review           # Public review pages
-  layout.tsx        # Root layout
-  page.tsx          # Landing page
-
-/src
-  /env.ts           # Environment validation
-  /i18n             # Internationalization
-  /lib              # Shared libraries
-    /auth.ts        # Better Auth setup
-    /db.ts          # Prisma client
-    /email.ts       # Email functions
-    /stripe.ts      # Stripe setup
-  /server           # Server-only code
-    /api            # tRPC routers
-  /trpc             # tRPC client/server setup
-
-/prisma
-  schema.prisma     # Database schema
-
-/messages           # i18n translation files
-  en.json
-```
-
-### Import Aliases
-```typescript
-// ✅ GOOD: Use @ alias for absolute imports
+// ✅ GOOD: Use @ alias for all imports
 import { prisma } from "@/lib/db";
 import { env } from "@/env";
+import { api, type RouterOutputs } from "@/trpc/react";
+import type { Session } from "@/lib/auth";
+import { cn, formatDate } from "@/lib/utils";
 
 // ❌ BAD: Relative imports for shared code
 import { prisma } from "../../../lib/db";
 ```
 
-## Testing Patterns (To Implement)
+## API Routes (Exceptions to tRPC)
 
-### Unit Tests
+Only these should NOT use tRPC:
+- `/api/auth/[...all]` - Better Auth handler
+- `/api/webhooks/stripe` - Stripe webhooks (signature verification)
+- `/api/slack/interactions` - Slack webhooks (signature verification)
+- `/mcp` - MCP server
+
+## Utility Functions
+
 ```typescript
-// ✅ GOOD: Test business logic separately
-describe("calculateSubscriptionUsage", () => {
-  it("should return remaining reviews for free tier", () => {
-    const result = calculateRemaining("free", 3);
-    expect(result).toBe(2);
-  });
+import { cn } from "@/lib/utils";
+
+// Merge Tailwind classes
+<div className={cn("flex items-center", isActive && "bg-primary", className)} />
+
+// Date formatting
+import { formatDate, formatRelativeTime } from "@/lib/utils";
+formatDate(review.createdAt);      // "January 15, 2025"
+formatRelativeTime(review.updatedAt); // "5 minutes ago"
+
+// Absolute URL (for emails)
+import { absoluteUrl } from "@/lib/utils";
+absoluteUrl("/review/" + slug);    // "https://app.com/review/abc"
+```
+
+## External Integration Patterns
+
+```typescript
+// Conditional initialization (null if not configured)
+export const stripe = env.STRIPE_SECRET_KEY
+  ? new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: "2025-10-29.clover" })
+  : null;
+
+// Usage with null check
+export async function createCheckout(params) {
+  if (!stripe) throw new Error("Stripe not configured");
+  return await stripe.checkout.sessions.create({ ... });
+}
+```
+
+## Security Patterns
+
+```typescript
+// XSS prevention in emails
+function escapeHtml(text: string): string {
+  const htmlEscapes: Record<string, string> = {
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;",
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] ?? char);
+}
+
+// Row-level authorization
+const review = await prisma.review.findFirst({
+  where: {
+    id: input.id,
+    creatorId: ctx.session.user.id,  // Ownership check
+  },
 });
+if (!review) throw new TRPCError({ code: "NOT_FOUND" });
+
+// Token-based access (magic links)
+const reviewer = review.reviewers.find((r) => r.accessToken === input.token);
+if (!reviewer) throw new TRPCError({ code: "FORBIDDEN" });
 ```
 
-### Integration Tests
-```typescript
-// ✅ GOOD: Test tRPC procedures
-describe("review.create", () => {
-  it("should create review when authenticated", async () => {
-    const caller = createCaller({ session: mockSession });
-    const review = await caller.review.create({
-      title: "Test",
-      content: "Content",
-      reviewerEmail: "test@example.com",
-    });
-    expect(review.id).toBeDefined();
-  });
-});
-```
+## File Naming Conventions
 
-## Accessibility Patterns
+- **Components**: PascalCase (`DashboardPage.tsx`)
+- **Utilities/hooks**: camelCase (`useToast.ts`, `utils.ts`)
+- **Routers**: singular noun (`review.ts`, `user.ts`)
+- **Layouts/Pages**: `layout.tsx`, `page.tsx`, `error.tsx`
+- **API routes**: `route.ts`
 
-### Semantic HTML
-```typescript
-// ✅ GOOD: Use semantic elements
-<nav>
-  <ul>
-    <li><a href="/dashboard">Dashboard</a></li>
-  </ul>
-</nav>
+## Key Files Reference
 
-// ❌ BAD: Div soup
-<div className="nav">
-  <div className="nav-item">
-    <div onClick={() => router.push("/dashboard")}>Dashboard</div>
-  </div>
-</div>
-```
+| File | Purpose |
+|------|---------|
+| `src/env.ts` | Environment variable validation |
+| `src/lib/auth.ts` | Better Auth server configuration |
+| `src/lib/db.ts` | Prisma client singleton |
+| `src/server/api/trpc.ts` | tRPC setup with procedures |
+| `src/server/api/root.ts` | Router aggregation |
+| `src/trpc/react.tsx` | React Query + tRPC client |
+| `prisma/schema.prisma` | Database schema |
+| `middleware.ts` | CORS + i18n middleware |
+| `app/layout.tsx` | Root layout with ChatGPT SDK bootstrap |
 
-### Form Labels
-```typescript
-// ✅ GOOD: Always label inputs
-<label htmlFor="email">Email</label>
-<input id="email" type="email" />
+## Database Models Overview
 
-// ❌ BAD: Unlabeled inputs
-<input type="email" placeholder="Email" />
-```
+- **User**: Auth, subscription tier (FREE/STARTER/TEAM/BUSINESS), review quota
+- **Review**: Status (PENDING/APPROVED/REJECTED/CHANGES_REQUESTED), workflow type, versions
+- **Reviewer**: Magic link access, engagement tracking, decision
+- **Organization**: Multi-tenant workspace with members and roles
+- **SlackIntegration**: OAuth tokens, notification settings
+- **ActivityLog**: Comprehensive audit trail
 
-## Anti-Patterns to Avoid
+## Don't Forget
 
-### ❌ Direct Database Access in Client Components
-```typescript
-// ❌ BAD: Can't use Prisma in client components
-"use client";
-import { prisma } from "@/lib/db";
-export default function Component() {
-  const data = await prisma.review.findMany(); // ERROR
-}
+1. **Always use tRPC** for server calls (except webhooks)
+2. **No comments** unless explicitly requested - code is self-documenting
+3. **Run `pnpm build`** before considering work complete
+4. **Use path aliases** (`@/`) not relative imports
+5. **Await `headers()`** in Next.js 15 server components
+6. **Null-check integrations** (Stripe, Postmark, Slack)
+7. **Use transactions** for multi-step database operations
+8. **Escape HTML** in email templates
 
-// ✅ GOOD: Use tRPC
-"use client";
-export default function Component() {
-  const { data } = api.review.getMyReviews.useQuery();
-}
-```
+---
 
-### ❌ Missing Error Boundaries
-```typescript
-// ⚠️ TODO: Add error boundaries
-// app/error.tsx
-"use client";
-export default function Error({ error, reset }: {
-  error: Error;
-  reset: () => void;
-}) {
-  return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button onClick={reset}>Try again</button>
-    </div>
-  );
-}
-```
-
-### ❌ Hardcoded Strings (i18n)
-```typescript
-// ❌ BAD: Hardcoded text
-<button>Create Review</button>
-
-// ✅ GOOD: Internationalized
-<button>{t("createReview")}</button>
-```
-
-## Performance Checklist
-
-- [ ] Use Server Components by default
-- [ ] Lazy load client components when possible
-- [ ] Implement proper pagination for large lists
-- [ ] Add database indexes for frequent queries
-- [ ] Optimize images with next/image
-- [ ] Use React.memo for expensive renders
-- [ ] Implement proper caching strategies (stale-while-revalidate)
-- [ ] Minimize client-side bundle size
-
-## Security Checklist
-
-- [ ] Validate all user inputs with Zod
-- [ ] Use protectedProcedure for authenticated endpoints
-- [ ] Implement CSRF protection (Better Auth handles this)
-- [ ] Sanitize user content before rendering
-- [ ] Use HTTPS in production
-- [ ] Set proper CORS headers
-- [ ] Rate limit API endpoints
-- [ ] Implement proper session management
-
-## Code Review Checklist
-
-Before committing code, verify:
-
-- [ ] TypeScript strict mode passes with no errors
-- [ ] No `any` types (unless absolutely necessary)
-- [ ] All forms have proper validation
-- [ ] Error cases are handled
-- [ ] Loading states are shown
-- [ ] Success/error messages are displayed
-- [ ] Code follows established patterns
-- [ ] New code is covered by translation strings
-- [ ] Database queries are optimized
-- [ ] Build passes (`pnpm build`)
-
-## Future Improvements
-
-1. **Add E2E Tests**: Implement Playwright tests for critical flows
-2. **Add Unit Tests**: Test business logic and tRPC procedures
-3. **Implement Logging**: Add structured logging with Pino
-4. **Add Monitoring**: Implement error tracking (Sentry)
-5. **Optimize Bundle**: Analyze and reduce client bundle size
-6. **Add Caching**: Implement Redis for session/data caching
-7. **Rate Limiting**: Add rate limiting to prevent abuse
-8. **Email Templates**: Migrate to React Email for better templates
-9. **Webhooks**: Add webhook support for review events
-10. **Multi-tenancy**: Implement team workspaces
+**Version**: 1.0.0
+**Last Updated**: 2025-01-24

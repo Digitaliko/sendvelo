@@ -1,5 +1,5 @@
 /**
- * SendVelo Homepage
+ * Thumbway Homepage
  *
  * Landing page for the approval tool.
  */
