@@ -1,57 +1,120 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import { sendReviewRequestEmail, sendReminderEmail } from "@/lib/email";
-import { sendSlackNotification } from "@/lib/slack";
-import { sanitizeForStorage } from "@/lib/sanitization";
 import { env } from "@/env";
-import { nanoid } from "nanoid";
+import { baseURL } from "@/baseUrl";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import {
+  handleSendForReview,
+  SendForReviewSchema,
+  handleCheckStatus,
+  CheckStatusSchema,
+  handleListReviews,
+  ListReviewsSchema,
+  handleUpdateReview,
+  UpdateReviewSchema,
+  handleManageReviewers,
+  ManageReviewersSchema,
+  handleGenerateNudge,
+  GenerateNudgeSchema,
+  handleGetShareDetails,
+  GetShareDetailsSchema,
+  handleUpdatePublicAccess,
+  UpdatePublicAccessSchema,
+  handleStatusSummary,
+  StatusSummarySchema,
+  handleCancelReview,
+  CancelReviewSchema,
+} from "@/lib/mcp";
 
 // ========================================
-// SCHEMAS
+// WIDGET HELPERS
 // ========================================
 
-const SendForReviewSchema = z.object({
-  title: z.string().describe("Title of the content to review"),
-  content: z.string().describe("Content to review (markdown supported)"),
-  reviewers: z.array(z.string().email()).min(1).max(10)
-    .describe("Email addresses of reviewers (1-10)"),
-  workflowType: z.enum(["parallel", "sequential", "any_one"]).default("parallel")
-    .describe("Workflow type: parallel (all approve), sequential (in order), any_one (first approves)"),
-  remindAfter: z.enum(["24h", "48h", "72h", "never"]).default("24h")
-    .describe("Auto-remind after this time if no response"),
-  format: z.enum(["plain_text", "markdown", "html"]).default("markdown")
-    .describe("Content format: plain_text, markdown, or html. Defaults to markdown."),
-});
+type WidgetConfig = {
+  templateUri: string;
+  invoking: string;
+  invoked: string;
+  widgetPath: string;
+};
 
-const CheckStatusSchema = z.object({
-  reviewId: z.string().optional().describe("Specific review ID to check"),
-  titleSearch: z.string().optional().describe("Search reviews by title"),
-});
+const WIDGET_CONFIGS: Record<string, WidgetConfig> = {
+  check_approval_status: {
+    templateUri: "ui://thumbway/review-status",
+    invoking: "Loading review status...",
+    invoked: "Review status loaded",
+    widgetPath: "/widget/review-status",
+  },
+  list_pending_reviews: {
+    templateUri: "ui://thumbway/reviews-dashboard",
+    invoking: "Loading your reviews...",
+    invoked: "Reviews loaded",
+    widgetPath: "/widget/reviews-dashboard",
+  },
+  status_summary: {
+    templateUri: "ui://thumbway/review-status",
+    invoking: "Analyzing review status...",
+    invoked: "Status summary ready",
+    widgetPath: "/widget/review-status",
+  },
+  send_for_review: {
+    templateUri: "ui://thumbway/review-created",
+    invoking: "Sending for review...",
+    invoked: "Review sent successfully!",
+    widgetPath: "/widget/review-created",
+  },
+  generate_nudge: {
+    templateUri: "ui://thumbway/nudge-preview",
+    invoking: "Crafting nudge message...",
+    invoked: "Nudge ready for review",
+    widgetPath: "/widget/nudge-preview",
+  },
+  manage_reviewers: {
+    templateUri: "ui://thumbway/reviewer-management",
+    invoking: "Loading reviewers...",
+    invoked: "Reviewers loaded",
+    widgetPath: "/widget/reviewer-management",
+  },
+  get_share_details: {
+    templateUri: "ui://thumbway/export",
+    invoking: "Loading share details...",
+    invoked: "Share details ready",
+    widgetPath: "/widget/export",
+  },
+};
 
-const ListReviewsSchema = z.object({
-  status: z.enum(["pending", "approved", "rejected", "all"]).default("all")
-    .describe("Filter by status"),
-  limit: z.number().min(1).max(20).default(10)
-    .describe("Maximum number of reviews to return"),
-});
+async function getWidgetHtml(widgetPath: string): Promise<string | null> {
+  try {
+    const response = await fetch(`${baseURL}${widgetPath}`, {
+      headers: { Accept: "text/html" },
+    });
+    if (!response.ok) return null;
+    return await response.text();
+  } catch (error) {
+    console.error(`Failed to fetch widget HTML for ${widgetPath}:`, error);
+    return null;
+  }
+}
 
-const UpdateReviewSchema = z.object({
-  reviewId: z.string().describe("The review ID to update"),
-  newContent: z.string().describe("Updated content"),
-  changeSummary: z.string().optional().describe("Brief summary of what changed"),
-  notifyReviewers: z.enum(["all", "pending_only", "none"]).default("pending_only")
-    .describe("Which reviewers to notify about the update"),
-});
+function createWidgetMeta(config: WidgetConfig, widgetHtml: string | null) {
+  const meta: Record<string, unknown> = {
+    "openai/outputTemplate": config.templateUri,
+    "openai/toolInvocation/invoking": config.invoking,
+    "openai/toolInvocation/invoked": config.invoked,
+    "openai/resultCanProduceWidget": true,
+    "openai/widgetAccessible": true,
+  };
 
-const ManageReviewersSchema = z.object({
-  reviewId: z.string().describe("The review ID"),
-  action: z.enum(["add", "remove", "remind"])
-    .describe("Action: add new reviewers, remove existing, or send reminder"),
-  emails: z.array(z.string().email()).min(1)
-    .describe("Email addresses to add/remove/remind"),
-});
+  if (widgetHtml) {
+    meta["openai/widgetHtml"] = widgetHtml;
+    meta["openai/widgetPrefersBorder"] = false;
+    meta["openai/widgetCsp"] = {
+      connect_domains: [baseURL],
+      resource_domains: [baseURL],
+    };
+  }
+
+  return meta;
+}
 
 // ========================================
 // AUTH HELPERS
@@ -91,541 +154,7 @@ function unauthorizedResponse() {
   );
 }
 
-// ========================================
-// TOOL HANDLERS
-// ========================================
 
-async function handleSendForReview(
-  input: z.infer<typeof SendForReviewSchema>,
-  userId: string,
-  userName: string,
-) {
-  // Check usage limits
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { subscriptionTier: true, reviewsThisMonth: true, resetDate: true },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  // Reset monthly counter if needed
-  const now = new Date();
-  if (now.getMonth() !== user.resetDate.getMonth()) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { reviewsThisMonth: 0, resetDate: now },
-    });
-    user.reviewsThisMonth = 0;
-  }
-
-  // Check limits based on tier
-  const limits: Record<string, number> = {
-    FREE: 5,
-    STARTER: 999999,
-    TEAM: 999999,
-    BUSINESS: 999999,
-  };
-
-  const limit = limits[user.subscriptionTier] ?? 5;
-  if (user.reviewsThisMonth >= limit) {
-    return {
-      content: [{
-        type: "text",
-        text: `You've reached your monthly limit of ${limit} reviews. Upgrade at ${env.NEXT_PUBLIC_APP_URL}/en/dashboard to send more reviews.`,
-      }],
-      isError: true,
-    };
-  }
-
-  // Validate reviewer emails
-  const validEmails = input.reviewers.filter((email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  });
-
-  if (validEmails.length === 0) {
-    return {
-      content: [{
-        type: "text",
-        text: "No valid email addresses provided. Please provide at least one valid reviewer email.",
-      }],
-      isError: true,
-    };
-  }
-
-  // Map format to ContentFormat enum
-  const contentFormatMap: Record<string, "PLAIN_TEXT" | "MARKDOWN" | "HTML"> = {
-    plain_text: "PLAIN_TEXT",
-    markdown: "MARKDOWN",
-    html: "HTML",
-  };
-  const contentFormat = contentFormatMap[input.format] ?? "MARKDOWN";
-
-  // Compute content metadata
-  const wordCount = input.content.split(/\s+/).filter(Boolean).length;
-  const characterCount = input.content.length;
-
-  // Sanitize content (XSS prevention)
-  const sanitizedTitle = input.title.trim().slice(0, 200);
-  const sanitizedContent = sanitizeForStorage(input.content, contentFormat);
-
-  // Create review and increment counter atomically
-  const review = await prisma.$transaction(async (tx) => {
-    // Create review with initial version
-    const newReview = await tx.review.create({
-      data: {
-        slug: nanoid(10),
-        title: sanitizedTitle,
-        creatorId: userId,
-        workflowType: input.workflowType.toUpperCase() as "PARALLEL" | "SEQUENTIAL" | "ANY_ONE",
-        versions: {
-          create: {
-            version: 1,
-            content: sanitizedContent,
-            contentFormat,
-            wordCount,
-            characterCount,
-          },
-        },
-        reviewers: {
-          create: input.reviewers.map((email, index) => ({
-            email: email.toLowerCase().trim(),
-            order: input.workflowType === "sequential" ? index + 1 : 0,
-          })),
-        },
-      },
-      include: {
-        reviewers: true,
-      },
-    });
-
-    // Increment review count atomically
-    await tx.user.update({
-      where: { id: userId },
-      data: { reviewsThisMonth: { increment: 1 } },
-    });
-
-    return newReview;
-  });
-
-  // Send email notifications
-  const reviewUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`;
-  for (const reviewer of review.reviewers) {
-    const accessUrl = `${reviewUrl}?token=${reviewer.accessToken}`;
-    try {
-      await sendReviewRequestEmail({
-        to: reviewer.email,
-        reviewerName: reviewer.email.split("@")[0],
-        creatorName: userName,
-        title: input.title,
-        reviewUrl: accessUrl,
-        reviewId: review.id,
-        reviewerId: reviewer.id,
-      });
-    } catch (e) {
-      console.error(`Failed to send email to ${reviewer.email}:`, e);
-    }
-  }
-
-  // Log activity
-  await prisma.activityLog.create({
-    data: {
-      action: "REVIEW_CREATED",
-      userId,
-      reviewId: review.id,
-      metadata: { reviewerCount: input.reviewers.length, workflowType: input.workflowType },
-    },
-  });
-
-  const remaining = user.subscriptionTier === "FREE"
-    ? limit - (user.reviewsThisMonth + 1)
-    : "unlimited";
-
-  return {
-    content: [{
-      type: "text",
-      text: `Review created successfully!
-
-**${input.title}**
-Link: ${reviewUrl}
-Reviewers: ${input.reviewers.join(", ")}
-Workflow: ${input.workflowType}
-Format: ${input.format}
-Reminder: ${input.remindAfter}
-
-Reviews remaining: ${remaining}`,
-    }],
-  };
-}
-
-async function handleCheckStatus(
-  input: z.infer<typeof CheckStatusSchema>,
-  userId: string
-) {
-  let review;
-
-  if (input.reviewId) {
-    review = await prisma.review.findFirst({
-      where: { id: input.reviewId, creatorId: userId },
-      include: {
-        reviewers: { orderBy: { order: "asc" } },
-        versions: { orderBy: { version: "desc" }, take: 1 },
-      },
-    });
-  } else if (input.titleSearch) {
-    review = await prisma.review.findFirst({
-      where: {
-        creatorId: userId,
-        title: { contains: input.titleSearch, mode: "insensitive" },
-      },
-      include: {
-        reviewers: { orderBy: { order: "asc" } },
-        versions: { orderBy: { version: "desc" }, take: 1 },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-  }
-
-  if (!review) {
-    return {
-      content: [{ type: "text", text: "Review not found. Try listing your reviews first." }],
-      isError: true,
-    };
-  }
-
-  const statusEmoji: Record<string, string> = {
-    PENDING: "[PENDING]",
-    APPROVED: "[APPROVED]",
-    REJECTED: "[REJECTED]",
-    CHANGES_REQUESTED: "[CHANGES]",
-    PARTIALLY_APPROVED: "[PARTIAL]",
-  };
-
-  const reviewerStatuses = review.reviewers.map((r) => {
-    const emoji = statusEmoji[r.status] ?? "[PENDING]";
-    const viewed = r.viewedAt ? ` (viewed ${formatTimeAgo(r.viewedAt)})` : "";
-    return `  ${emoji} ${r.email}${viewed}`;
-  }).join("\n");
-
-  return {
-    content: [{
-      type: "text",
-      text: `**${review.title}**
-
-Status: ${statusEmoji[review.status] ?? "[PENDING]"} ${review.status}
-Version: ${review.versions[0]?.version ?? 1}
-Created: ${formatTimeAgo(review.createdAt)}
-
-**Reviewers:**
-${reviewerStatuses}
-
-Link: ${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`,
-    }],
-  };
-}
-
-async function handleListReviews(
-  input: z.infer<typeof ListReviewsSchema>,
-  userId: string
-) {
-  const statusMap: Record<string, "PENDING" | "APPROVED" | "REJECTED"> = {
-    pending: "PENDING",
-    approved: "APPROVED",
-    rejected: "REJECTED",
-  };
-
-  const reviews = await prisma.review.findMany({
-    where: {
-      creatorId: userId,
-      ...(input.status !== "all" && statusMap[input.status] ? { status: statusMap[input.status] } : {}),
-    },
-    include: {
-      reviewers: true,
-      _count: { select: { reviewers: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: input.limit,
-  });
-
-  if (reviews.length === 0) {
-    return {
-      content: [{ type: "text", text: "No reviews found." }],
-    };
-  }
-
-  const statusEmoji: Record<string, string> = {
-    PENDING: "[PENDING]",
-    APPROVED: "[APPROVED]",
-    REJECTED: "[REJECTED]",
-    CHANGES_REQUESTED: "[CHANGES]",
-    PARTIALLY_APPROVED: "[PARTIAL]",
-  };
-
-  const reviewList = reviews.map((r, i) => {
-    const approved = r.reviewers.filter((rv) => rv.status === "APPROVED").length;
-    const total = r.reviewers.length;
-    return `${i + 1}. ${statusEmoji[r.status] ?? "[PENDING]"} **${r.title}** (${approved}/${total} approved)\n   ID: ${r.id} | ${formatTimeAgo(r.createdAt)}`;
-  }).join("\n\n");
-
-  return {
-    content: [{
-      type: "text",
-      text: `**Your Reviews** (${input.status})\n\n${reviewList}`,
-    }],
-  };
-}
-
-async function handleUpdateReview(
-  input: z.infer<typeof UpdateReviewSchema>,
-  userId: string,
-  userName: string
-) {
-  const review = await prisma.review.findFirst({
-    where: { id: input.reviewId, creatorId: userId },
-    include: { reviewers: true, versions: { orderBy: { version: "desc" }, take: 1 } },
-  });
-
-  if (!review) {
-    return {
-      content: [{ type: "text", text: "Review not found or you don't have access." }],
-      isError: true,
-    };
-  }
-
-  const newVersion = (review.versions[0]?.version ?? 0) + 1;
-  const contentFormat = review.versions[0]?.contentFormat ?? "MARKDOWN";
-
-  // Compute content metadata
-  const wordCount = input.newContent.split(/\s+/).filter(Boolean).length;
-  const characterCount = input.newContent.length;
-
-  // Sanitize content (XSS prevention)
-  const sanitizedContent = sanitizeForStorage(input.newContent, contentFormat);
-
-  // Create new version
-  await prisma.reviewVersion.create({
-    data: {
-      reviewId: review.id,
-      version: newVersion,
-      content: sanitizedContent,
-      contentFormat,
-      changes: input.changeSummary,
-      wordCount,
-      characterCount,
-    },
-  });
-
-  // Update review status if changes were requested
-  if (review.status === "CHANGES_REQUESTED") {
-    await prisma.review.update({
-      where: { id: review.id },
-      data: { status: "PENDING" },
-    });
-  }
-
-  // Notify reviewers
-  const reviewersToNotify = input.notifyReviewers === "all"
-    ? review.reviewers
-    : input.notifyReviewers === "pending_only"
-    ? review.reviewers.filter((r) => r.status === "PENDING" || r.status === "CHANGES_REQUESTED")
-    : [];
-
-  for (const reviewer of reviewersToNotify) {
-    const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
-    try {
-      await sendReviewRequestEmail({
-        to: reviewer.email,
-        reviewerName: reviewer.name ?? reviewer.email.split("@")[0],
-        creatorName: userName,
-        title: `[Updated v${newVersion}] ${review.title}`,
-        reviewUrl: accessUrl,
-      });
-    } catch (e) {
-      console.error(`Failed to notify ${reviewer.email}:`, e);
-    }
-  }
-
-  // Log activity
-  await prisma.activityLog.create({
-    data: {
-      action: "REVIEW_UPDATED",
-      userId,
-      reviewId: review.id,
-      metadata: { version: newVersion, changes: input.changeSummary },
-    },
-  });
-
-  return {
-    content: [{
-      type: "text",
-      text: `Review updated to version ${newVersion}!
-
-**${review.title}**
-${input.changeSummary ? `Changes: ${input.changeSummary}` : ""}
-Notified: ${reviewersToNotify.length} reviewer(s)
-
-Link: ${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`,
-    }],
-  };
-}
-
-async function handleManageReviewers(
-  input: z.infer<typeof ManageReviewersSchema>,
-  userId: string,
-  userName: string
-) {
-  const review = await prisma.review.findFirst({
-    where: { id: input.reviewId, creatorId: userId },
-    include: { reviewers: true },
-  });
-
-  if (!review) {
-    return {
-      content: [{ type: "text", text: "Review not found or you don't have access." }],
-      isError: true,
-    };
-  }
-
-  // Prevent adding more than 10 total reviewers
-  if (input.action === "add" && review.reviewers.length + input.emails.length > 10) {
-    return {
-      content: [{ type: "text", text: "Cannot add reviewers. Maximum of 10 reviewers per review." }],
-      isError: true,
-    };
-  }
-
-  if (input.action === "add") {
-    const existingEmails = new Set(review.reviewers.map((r) => r.email.toLowerCase()));
-    const newEmails = input.emails.filter((e) => !existingEmails.has(e.toLowerCase()));
-
-    if (newEmails.length === 0) {
-      return {
-        content: [{ type: "text", text: "All specified reviewers are already on this review." }],
-      };
-    }
-
-    // Add new reviewers
-    const maxOrder = Math.max(...review.reviewers.map((r) => r.order), 0);
-    for (let i = 0; i < newEmails.length; i++) {
-      const email = newEmails[i];
-      if (!email) continue;
-
-      const reviewer = await prisma.reviewer.create({
-        data: {
-          reviewId: review.id,
-          email,
-          order: review.workflowType === "SEQUENTIAL" ? maxOrder + i + 1 : 0,
-        },
-      });
-
-      // Send email
-      const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
-      try {
-        await sendReviewRequestEmail({
-          to: email,
-          reviewerName: email.split("@")[0],
-          creatorName: userName,
-          title: review.title,
-          reviewUrl: accessUrl,
-          reviewId: review.id,
-          reviewerId: reviewer.id,
-        });
-      } catch (e) {
-        console.error(`Failed to send email to ${email}:`, e);
-      }
-    }
-
-    return {
-      content: [{
-        type: "text",
-        text: `Added ${newEmails.length} reviewer(s): ${newEmails.join(", ")}`,
-      }],
-    };
-  }
-
-  if (input.action === "remove") {
-    // Prevent removing all reviewers
-    if (review.reviewers.length <= input.emails.length) {
-      return {
-        content: [{
-          type: "text",
-          text: "Cannot remove all reviewers. At least one reviewer must remain.",
-        }],
-        isError: true,
-      };
-    }
-
-    const result = await prisma.reviewer.deleteMany({
-      where: {
-        reviewId: review.id,
-        email: { in: input.emails.map((e) => e.toLowerCase()) },
-        status: "PENDING", // Only allow removing pending reviewers
-      },
-    });
-
-    return {
-      content: [{
-        type: "text",
-        text: `Removed ${result.count} reviewer(s)`,
-      }],
-    };
-  }
-
-  if (input.action === "remind") {
-    const reviewersToRemind = review.reviewers.filter(
-      (r) => input.emails.map(e => e.toLowerCase()).includes(r.email.toLowerCase()) && r.status === "PENDING"
-    );
-
-    for (const reviewer of reviewersToRemind) {
-      const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
-      try {
-        await sendReminderEmail({
-          to: reviewer.email,
-          reviewerName: reviewer.name ?? reviewer.email.split("@")[0],
-          creatorName: userName,
-          title: review.title,
-          reviewUrl: accessUrl,
-        });
-      } catch (e) {
-        console.error(`Failed to remind ${reviewer.email}:`, e);
-      }
-    }
-
-    // Log activity
-    await prisma.activityLog.create({
-      data: {
-        action: "REMINDER_SENT",
-        userId,
-        reviewId: review.id,
-        metadata: { count: reviewersToRemind.length },
-      },
-    });
-
-    return {
-      content: [{
-        type: "text",
-        text: `Sent reminder to ${reviewersToRemind.length} reviewer(s)`,
-      }],
-    };
-  }
-
-  return {
-    content: [{ type: "text", text: "Unknown action" }],
-    isError: true,
-  };
-}
-
-// ========================================
-// HELPERS
-// ========================================
-
-function formatTimeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (seconds < 60) return "just now";
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
-}
 
 // ========================================
 // ROUTE HANDLERS
@@ -641,21 +170,33 @@ export async function POST(request: Request) {
         tools: [
           {
             name: "send_for_review",
-            description: "Send content for approval to one or more reviewers. Supports parallel, sequential, or any-one approval workflows.",
+            description: "Send content for approval to one or more reviewers. Supports parallel, sequential, or any-one approval workflows. Shows confirmation widget with next actions.",
             inputSchema: zodToJsonSchema(SendForReviewSchema),
             securitySchemes: [{ type: "oauth2", scopes: ["reviews:write"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.send_for_review.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
           },
           {
             name: "check_approval_status",
-            description: "Check the current status of a review, including which reviewers have approved and engagement data (when they viewed it).",
+            description: "Check the current status of a review, including which reviewers have approved and engagement data (when they viewed it). Shows an interactive widget with approval progress.",
             inputSchema: zodToJsonSchema(CheckStatusSchema),
             securitySchemes: [{ type: "oauth2", scopes: ["reviews:read"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.check_approval_status.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
           },
           {
             name: "list_pending_reviews",
-            description: "List your reviews filtered by status (pending, approved, rejected, or all).",
+            description: "List your reviews filtered by status (pending, approved, rejected, or all). Shows an interactive dashboard widget.",
             inputSchema: zodToJsonSchema(ListReviewsSchema),
             securitySchemes: [{ type: "oauth2", scopes: ["reviews:read"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.list_pending_reviews.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
           },
           {
             name: "update_review_version",
@@ -665,8 +206,54 @@ export async function POST(request: Request) {
           },
           {
             name: "manage_reviewers",
-            description: "Add, remove, or send reminders to reviewers on an existing review.",
+            description: "Add, remove, or send reminders to reviewers on an existing review. Shows interactive reviewer management widget.",
             inputSchema: zodToJsonSchema(ManageReviewersSchema),
+            securitySchemes: [{ type: "oauth2", scopes: ["reviews:write"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.manage_reviewers.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
+          },
+          {
+            name: "generate_nudge",
+            description: "Generate an AI-crafted follow-up message to nudge pending reviewers. Shows preview widget to review and edit before sending. Uses context like view status and time waiting to craft appropriate messages.",
+            inputSchema: zodToJsonSchema(GenerateNudgeSchema),
+            securitySchemes: [{ type: "oauth2", scopes: ["reviews:write"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.generate_nudge.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
+          },
+          {
+            name: "get_share_details",
+            description: "Get the current sharing settings for a review, including public access level, share link, public view count, and export options.",
+            inputSchema: zodToJsonSchema(GetShareDetailsSchema),
+            securitySchemes: [{ type: "oauth2", scopes: ["reviews:read"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.get_share_details.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
+          },
+          {
+            name: "update_public_access",
+            description: "Update the public access level for a review. Controls who can view, comment on, or approve the review via the public link.",
+            inputSchema: zodToJsonSchema(UpdatePublicAccessSchema),
+            securitySchemes: [{ type: "oauth2", scopes: ["reviews:write"] }],
+          },
+          {
+            name: "status_summary",
+            description: "Get a natural language summary of a review's approval status with smart suggestions. Shows an interactive status widget.",
+            inputSchema: zodToJsonSchema(StatusSummarySchema),
+            securitySchemes: [{ type: "oauth2", scopes: ["reviews:read"] }],
+            _meta: {
+              "openai/outputTemplate": WIDGET_CONFIGS.status_summary.templateUri,
+              "openai/resultCanProduceWidget": true,
+            },
+          },
+          {
+            name: "cancel_review",
+            description: "Cancel a review by ID or title. Stops all pending reviewers and marks the review as cancelled.",
+            inputSchema: zodToJsonSchema(CancelReviewSchema),
             securitySchemes: [{ type: "oauth2", scopes: ["reviews:write"] }],
           },
         ],
@@ -687,19 +274,40 @@ export async function POST(request: Request) {
           case "send_for_review": {
             const input = SendForReviewSchema.parse(args);
             const result = await handleSendForReview(input, userId, userName);
-            return Response.json(result, { status: result.isError ? 400 : 200 });
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            const widgetConfig = WIDGET_CONFIGS.send_for_review;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
           }
 
           case "check_approval_status": {
             const input = CheckStatusSchema.parse(args);
             const result = await handleCheckStatus(input, userId);
-            return Response.json(result, { status: result.isError ? 400 : 200 });
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            const widgetConfig = WIDGET_CONFIGS.check_approval_status;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
           }
 
           case "list_pending_reviews": {
             const input = ListReviewsSchema.parse(args);
             const result = await handleListReviews(input, userId);
-            return Response.json(result);
+            const widgetConfig = WIDGET_CONFIGS.list_pending_reviews;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
           }
 
           case "update_review_version": {
@@ -711,6 +319,72 @@ export async function POST(request: Request) {
           case "manage_reviewers": {
             const input = ManageReviewersSchema.parse(args);
             const result = await handleManageReviewers(input, userId, userName);
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            const widgetConfig = WIDGET_CONFIGS.manage_reviewers;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
+          }
+
+          case "generate_nudge": {
+            const input = GenerateNudgeSchema.parse(args);
+            const result = await handleGenerateNudge(input, userId, userName);
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            // Only show widget for draft mode (not when sendImmediately is true)
+            if (!input.sendImmediately) {
+              const widgetConfig = WIDGET_CONFIGS.generate_nudge;
+              const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+              return Response.json({
+                ...result,
+                _meta: createWidgetMeta(widgetConfig, widgetHtml),
+              });
+            }
+            return Response.json(result);
+          }
+
+          case "get_share_details": {
+            const input = GetShareDetailsSchema.parse(args);
+            const result = await handleGetShareDetails(input, userId);
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            const widgetConfig = WIDGET_CONFIGS.get_share_details;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
+          }
+
+          case "update_public_access": {
+            const input = UpdatePublicAccessSchema.parse(args);
+            const result = await handleUpdatePublicAccess(input, userId);
+            return Response.json(result, { status: result.isError ? 400 : 200 });
+          }
+
+          case "status_summary": {
+            const input = StatusSummarySchema.parse(args);
+            const result = await handleStatusSummary(input, userId);
+            if (result.isError) {
+              return Response.json(result, { status: 400 });
+            }
+            const widgetConfig = WIDGET_CONFIGS.status_summary;
+            const widgetHtml = await getWidgetHtml(widgetConfig.widgetPath);
+            return Response.json({
+              ...result,
+              _meta: createWidgetMeta(widgetConfig, widgetHtml),
+            });
+          }
+
+          case "cancel_review": {
+            const input = CancelReviewSchema.parse(args);
+            const result = await handleCancelReview(input, userId);
             return Response.json(result, { status: result.isError ? 400 : 200 });
           }
 
@@ -753,7 +427,7 @@ export async function POST(request: Request) {
 export async function GET() {
   return Response.json({
     name: "Thumbway Approval Tool",
-    version: "2.0.0",
+    version: "2.1.0",
     description: "AI-native approval workflows for ChatGPT content",
     capabilities: {
       tools: [
@@ -762,6 +436,11 @@ export async function GET() {
         "list_pending_reviews",
         "update_review_version",
         "manage_reviewers",
+        "generate_nudge",
+        "get_share_details",
+        "update_public_access",
+        "status_summary",
+        "cancel_review",
       ],
       auth: "oauth2",
     },

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { baseURL } from "@/baseUrl";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
@@ -70,14 +78,14 @@ function NextChatSDKBootstrap({ baseUrl }: { baseUrl: string }) {
             history.replaceState = (s, unused, url) => {
               const u = new URL(url ?? "", window.location.href);
               const href = u.pathname + u.search + u.hash;
-              originalReplaceState.call(history, unused, href);
+              originalReplaceState.call(history, s, unused, href);
             };
 
             const originalPushState = history.pushState;
             history.pushState = (s, unused, url) => {
               const u = new URL(url ?? "", window.location.href);
               const href = u.pathname + u.search + u.hash;
-              originalPushState.call(history, unused, href);
+              originalPushState.call(history, s, unused, href);
             };
 
             const appOrigin = new URL(baseUrl).origin;
@@ -86,7 +94,9 @@ function NextChatSDKBootstrap({ baseUrl }: { baseUrl: string }) {
             window.addEventListener(
               "click",
               (e) => {
-                const a = (e?.target as HTMLElement)?.closest("a");
+                const target = e?.target;
+                if (!(target instanceof HTMLElement)) return;
+                const a = target.closest("a");
                 if (!a || !a.href) return;
                 const url = new URL(a.href, window.location.href);
                 if (
@@ -95,7 +105,7 @@ function NextChatSDKBootstrap({ baseUrl }: { baseUrl: string }) {
                 ) {
                   try {
                     if (window.openai) {
-                      window.openai?.openExternal({ href: a.href });
+                      window.openai.openExternal({ href: a.href });
                       e.preventDefault();
                     }
                   } catch {

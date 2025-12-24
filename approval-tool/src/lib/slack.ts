@@ -1,5 +1,6 @@
 import { WebClient } from "@slack/web-api";
 import { prisma } from "./db";
+import { captureException } from "./error-tracking";
 
 type SlackNotificationType =
   | "NEW_REVIEW"
@@ -97,7 +98,9 @@ export async function sendSlackNotification({
 
     return true;
   } catch (error) {
-    console.error("Failed to send Slack notification after retries:", error);
+    captureException(error instanceof Error ? error : new Error("Failed to send Slack notification after retries"), {
+      extra: { organizationId, type },
+    });
     return false;
   }
 }
@@ -286,7 +289,7 @@ export async function getSlackChannels(accessToken: string) {
       isPrivate: channel.is_private ?? false,
     })).filter((channel) => channel.id && channel.name);
   } catch (error) {
-    console.error("Failed to get Slack channels:", error);
+    captureException(error instanceof Error ? error : new Error("Failed to get Slack channels"));
     return [];
   }
 }

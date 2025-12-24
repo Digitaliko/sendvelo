@@ -7,6 +7,7 @@ import {
   ReminderEmail,
   OrganizationInviteEmail,
 } from "@/emails";
+import { captureException } from "./error-tracking";
 
 const client = env.POSTMARK_TOKEN
   ? new ServerClient(env.POSTMARK_TOKEN)
@@ -30,7 +31,7 @@ async function sendEmail({
   }
 
   if (!env.FROM_EMAIL) {
-    console.error("[Email] FROM_EMAIL environment variable is not configured");
+    captureException(new Error("FROM_EMAIL environment variable is not configured"));
     throw new Error("Email sending is not properly configured. Please contact support.");
   }
 
@@ -42,7 +43,9 @@ async function sendEmail({
       HtmlBody: html,
     });
   } catch (error) {
-    console.error("[Email] Failed to send email:", error);
+    captureException(error instanceof Error ? error : new Error("Failed to send email"), {
+      extra: { to, from: env.FROM_EMAIL },
+    });
     throw new Error("Failed to send email notification");
   }
 }
@@ -74,7 +77,9 @@ export async function sendReviewRequestEmail({
     const urlParts = new URL(reviewUrl);
     token = urlParts.searchParams.get("token") ?? "";
   } catch (error) {
-    console.error("[Email] Invalid reviewUrl provided:", error);
+    captureException(error instanceof Error ? error : new Error("Invalid reviewUrl provided"), {
+      extra: { reviewUrl },
+    });
     token = "";
   }
 
@@ -155,12 +160,14 @@ export async function sendReminderEmail({
   creatorName,
   title,
   reviewUrl,
+  customMessage,
 }: {
   to: string;
   reviewerName?: string;
   creatorName: string;
   title: string;
   reviewUrl: string;
+  customMessage?: string;
 }) {
   const html = await render(
     ReminderEmail({
@@ -168,6 +175,7 @@ export async function sendReminderEmail({
       creatorName,
       title,
       reviewUrl,
+      customMessage,
     })
   );
 

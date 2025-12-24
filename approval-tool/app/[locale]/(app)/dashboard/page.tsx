@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/toast";
 import { REVIEW_TEMPLATES, type ReviewTemplate } from "@/lib/templates";
+import { formatTimeSpent, formatTimeAgo } from "@/lib/utils";
 import {
   Search,
   Filter,
@@ -21,9 +22,45 @@ import {
   Newspaper,
   File,
   ChevronLeft,
+  Eye,
+  EyeOff,
+  Bell,
+  Clock,
+  X,
 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DeadlineBadge } from "@/components/ui/deadline-badge";
+import { DashboardStats } from "@/components/dashboard-stats";
 import { ShareModal } from "@/components/share-modal";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { DashboardSkeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Credenza,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaDescription,
+  CredenzaBody,
+  CredenzaFooter,
+} from "@/components/ui/credenza";
+import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Review = RouterOutputs["review"]["getMyReviews"]["reviews"][number];
 
@@ -63,6 +100,9 @@ export default function DashboardPage() {
   // Share modal state
   const [shareReviewId, setShareReviewId] = useState<string | null>(null);
 
+  // Delete confirmation modal state
+  const [deleteReviewId, setDeleteReviewId] = useState<string | null>(null);
+
   const { data: profile, isLoading: profileLoading } =
     api.user.getProfile.useQuery();
 
@@ -82,22 +122,31 @@ export default function DashboardPage() {
       setIsCreateModalOpen(false);
       setCreateStep("template");
       setSelectedTemplate(null);
-      addToast("success", "Review created", "Your review has been sent to reviewers");
+      addToast("success", t("reviews.createSuccess"), t("reviews.createSuccessDesc"));
     },
     onError: (error) => {
       console.error("Failed to create review:", error);
-      addToast("error", "Failed to create review", error.message);
+      addToast("error", t("reviews.createFailed"), error.message);
     },
   });
 
   const deleteReviewMutation = api.review.delete.useMutation({
     onSuccess: () => {
       refetch();
-      addToast("success", "Review deleted");
+      addToast("success", t("reviews.deleteSuccess"));
     },
     onError: (error) => {
       console.error("Failed to delete review:", error);
-      addToast("error", "Failed to delete review", error.message);
+      addToast("error", t("reviews.deleteFailed"), error.message);
+    },
+  });
+
+  const pokeMutation = api.review.resendInvitation.useMutation({
+    onSuccess: () => {
+      addToast("success", t("reviews.reminderSent"), t("reviews.reminderSentDesc"));
+    },
+    onError: (error) => {
+      addToast("error", t("reviews.reminderFailed"), error.message);
     },
   });
 
@@ -129,6 +178,7 @@ export default function DashboardPage() {
     title: "",
     content: "",
     reviewerEmail: "",
+    deadline: "",
   });
 
   const handleSelectTemplate = (template: ReviewTemplate) => {
@@ -137,6 +187,7 @@ export default function DashboardPage() {
       title: template.defaultTitle,
       content: template.defaultContent,
       reviewerEmail: "",
+      deadline: "",
     });
     setCreateStep("details");
   };
@@ -149,8 +200,9 @@ export default function DashboardPage() {
         content: newReview.content,
         reviewers: [newReview.reviewerEmail],
         contentFormat: "MARKDOWN",
+        deadline: newReview.deadline ? new Date(newReview.deadline) : undefined,
       });
-      setNewReview({ title: "", content: "", reviewerEmail: "" });
+      setNewReview({ title: "", content: "", reviewerEmail: "", deadline: "" });
     } catch (error) {
       // Error is already handled by onError callback
     }
@@ -173,13 +225,7 @@ export default function DashboardPage() {
   };
 
   if (profileLoading || reviewsLoading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center py-12">
-          <p className="text-gray-600">{tCommon("loading")}</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   const tier = profile?.subscriptionTier ?? "FREE";
@@ -187,109 +233,118 @@ export default function DashboardPage() {
     tier === "FREE" ? 5 - (profile?.reviewsThisMonth ?? 0) : "unlimited";
 
   return (
+    <TooltipProvider>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-500">
-            {t("stats.totalReviews")}
-          </h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stats?.total ?? 0}
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-500">
-            {t("stats.pending")}
-          </h3>
-          <p className="text-3xl font-bold text-yellow-600 mt-2">
-            {stats?.pending ?? 0}
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-500">
-            {t("stats.subscription")}
-          </h3>
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-lg font-bold text-gray-900 capitalize">
-              {tier.toLowerCase()}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t("stats.totalReviews")}
+            </h3>
+            <p className="text-3xl font-bold mt-2">
+              {stats?.total ?? 0}
             </p>
-            {tier === "FREE" ? (
-              <button
-                onClick={() =>
-                  createCheckoutMutation.mutate({
-                    priceId: STRIPE_PRICES.PRO.id || "",
-                  })
-                }
-                disabled={createCheckoutMutation.isPending}
-                className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-              >
-                {t("subscription.upgrade")}
-              </button>
-            ) : (
-              <button
-                onClick={() => createPortalMutation.mutate()}
-                disabled={createPortalMutation.isPending}
-                className="text-sm text-blue-600 hover:text-blue-700"
-              >
-                {t("subscription.manage")}
-              </button>
-            )}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">
-            {remaining === "unlimited"
-              ? t("subscription.unlimited")
-              : t("subscription.reviewsRemaining", { count: remaining })}
-          </p>
-        </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t("stats.pending")}
+            </h3>
+            <p className="text-3xl font-bold text-yellow-600 mt-2">
+              {stats?.pending ?? 0}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t("stats.subscription")}
+            </h3>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-lg font-bold capitalize">
+                {tier.toLowerCase()}
+              </p>
+              {tier === "FREE" ? (
+                <Button
+                  size="sm"
+                  onClick={() =>
+                    createCheckoutMutation.mutate({
+                      priceId: STRIPE_PRICES.PRO.id || "",
+                    })
+                  }
+                  disabled={createCheckoutMutation.isPending}
+                >
+                  {t("subscription.upgrade")}
+                </Button>
+              ) : (
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => createPortalMutation.mutate()}
+                  disabled={createPortalMutation.isPending}
+                >
+                  {t("subscription.manage")}
+                </Button>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              {remaining === "unlimited"
+                ? t("subscription.unlimited")
+                : t("subscription.reviewsRemaining", { count: remaining })}
+            </p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Dashboard Stats Overview */}
+      <DashboardStats period="week" />
 
       {/* Header with Search/Filter */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold">
           {t("reviews.title")}
         </h2>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
-        >
+        <Button onClick={() => setIsCreateModalOpen(true)}>
           <Plus className="w-5 h-5" />
           {t("createReview")}
-        </button>
+        </Button>
       </div>
 
       {/* Search and Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <form onSubmit={handleSearch} className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input
             type="text"
             placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="pl-10"
             aria-label="Search reviews"
           />
         </form>
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <select
-            value={statusFilter}
-            onChange={(e) => handleStatusChange(e.target.value)}
-            className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
-          >
-            <option value="all">{t("filters.allStatus")}</option>
-            <option value="pending">{t("filters.pending")}</option>
-            <option value="approved">{t("filters.approved")}</option>
-            <option value="rejected">{t("filters.rejected")}</option>
-            <option value="changes_requested">{t("filters.changesRequested")}</option>
-          </select>
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
+          <Select value={statusFilter} onValueChange={handleStatusChange}>
+            <SelectTrigger className="pl-10 w-[180px]">
+              <SelectValue placeholder={t("filters.allStatus")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("filters.allStatus")}</SelectItem>
+              <SelectItem value="pending">{t("filters.pending")}</SelectItem>
+              <SelectItem value="approved">{t("filters.approved")}</SelectItem>
+              <SelectItem value="rejected">{t("filters.rejected")}</SelectItem>
+              <SelectItem value="changes_requested">{t("filters.changesRequested")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* Reviews List */}
       {reviews.length > 0 ? (
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+        <Card className="overflow-hidden">
           {/* Desktop Table */}
           <table className="min-w-full divide-y divide-gray-200 hidden md:table">
             <thead className="bg-gray-50">
@@ -325,36 +380,104 @@ export default function DashboardPage() {
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {review.reviewers.map((r) => r.email).join(", ")}
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    <div className="space-y-1">
+                      {review.reviewers.map((r) => (
+                        <div key={r.id} className="flex items-center gap-2">
+                          {r.viewedAt ? (
+                            <span className="flex items-center gap-1 text-green-600" title={t("reviews.viewedAgo", { time: formatTimeAgo(r.viewedAt) })}>
+                              <Eye className="w-3 h-3" />
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-gray-400" title={t("reviews.notViewedYet")}>
+                              <EyeOff className="w-3 h-3" />
+                            </span>
+                          )}
+                          <span className="truncate max-w-[150px]">{r.email}</span>
+                          {r.timeSpentMs && r.timeSpentMs > 0 && (
+                            <span className="text-xs text-gray-500 flex items-center gap-0.5" title={`Time spent: ${formatTimeSpent(r.timeSpentMs)}`}>
+                              <Clock className="w-3 h-3" />
+                              {formatTimeSpent(r.timeSpentMs)}
+                            </span>
+                          )}
+                          {r.status === "PENDING" && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => pokeMutation.mutate({ reviewId: review.id, reviewerId: r.id })}
+                                  disabled={pokeMutation.isPending}
+                                  aria-label={t("reviews.sendReminder")}
+                                  className="h-8 w-8"
+                                >
+                                  <Bell className="w-4 h-4" aria-hidden="true" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{t("reviews.sendReminder")}</TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                      ))}
+                      {/* Remind All button when multiple reviewers pending */}
+                      {review.reviewers.filter(r => r.status === "PENDING").length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            review.reviewers
+                              .filter(r => r.status === "PENDING")
+                              .forEach(r => pokeMutation.mutate({ reviewId: review.id, reviewerId: r.id }));
+                          }}
+                          disabled={pokeMutation.isPending}
+                          className="mt-2 text-xs"
+                        >
+                          <Bell className="w-3 h-3 mr-1" />
+                          {t("reviews.remindAll", { count: review.reviewers.filter(r => r.status === "PENDING").length })}
+                        </Button>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={review.status} />
+                    <div className="flex flex-col gap-1">
+                      <StatusBadge status={review.status} />
+                      {review.deadline && <DeadlineBadge deadline={review.deadline} />}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => setShareReviewId(review.id)}
-                        className="text-gray-500 hover:text-blue-600 p-1"
-                        aria-label={`Share review ${review.title}`}
-                      >
-                        <Share2 className="w-4 h-4" aria-hidden="true" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm(t("reviews.deleteConfirm"))) {
-                            deleteReviewMutation.mutate({ id: review.id });
-                          }
-                        }}
-                        disabled={deleteReviewMutation.isPending}
-                        className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label={`Delete review ${review.title}`}
-                      >
-                        <Trash2 className="w-4 h-4" aria-hidden="true" />
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setShareReviewId(review.id)}
+                            aria-label={`Share review ${review.title}`}
+                            className="h-8 w-8"
+                          >
+                            <Share2 className="w-4 h-4" aria-hidden="true" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("reviews.share")}</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleteReviewId(review.id)}
+                            disabled={deleteReviewMutation.isPending}
+                            aria-label={`Delete review ${review.title}`}
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{tCommon("delete")}</TooltipContent>
+                      </Tooltip>
                     </div>
                   </td>
                 </tr>
@@ -376,117 +499,168 @@ export default function DashboardPage() {
                     {review.title}
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                  <StatusBadge status={review.status} />
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusBadge status={review.status} />
+                    {review.deadline && <DeadlineBadge deadline={review.deadline} />}
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">
-                  {review.reviewers.map((r) => r.email).join(", ")}
-                </p>
+                <div className="text-sm text-gray-600 mb-2 space-y-1">
+                  {review.reviewers.map((r) => (
+                    <div key={r.id} className="flex items-center gap-2">
+                      {r.viewedAt ? (
+                        <span title={t("reviews.viewedAgo", { time: formatTimeAgo(r.viewedAt) })}>
+                          <Eye className="w-3 h-3 text-green-600" />
+                        </span>
+                      ) : (
+                        <span title={t("reviews.notViewedYet")}>
+                          <EyeOff className="w-3 h-3 text-gray-400" />
+                        </span>
+                      )}
+                      <span className="truncate">{r.email}</span>
+                      {r.timeSpentMs && r.timeSpentMs > 0 && (
+                        <span className="text-xs text-gray-500 flex items-center gap-0.5" title={`Time spent: ${formatTimeSpent(r.timeSpentMs)}`}>
+                          <Clock className="w-3 h-3" />
+                          {formatTimeSpent(r.timeSpentMs)}
+                        </span>
+                      )}
+                      {r.status === "PENDING" && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => pokeMutation.mutate({ reviewId: review.id, reviewerId: r.id })}
+                              disabled={pokeMutation.isPending}
+                              aria-label={t("reviews.sendReminder")}
+                              className="h-6 w-6"
+                            >
+                              <Bell className="w-3 h-3" aria-hidden="true" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>{t("reviews.sendReminder")}</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  ))}
+                  {/* Remind All button when multiple reviewers pending - Mobile */}
+                  {review.reviewers.filter(r => r.status === "PENDING").length > 1 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        review.reviewers
+                          .filter(r => r.status === "PENDING")
+                          .forEach(r => pokeMutation.mutate({ reviewId: review.id, reviewerId: r.id }));
+                      }}
+                      disabled={pokeMutation.isPending}
+                      className="mt-2 text-xs w-full"
+                    >
+                      <Bell className="w-3 h-3 mr-1" />
+                      {t("reviews.remindAll", { count: review.reviewers.filter(r => r.status === "PENDING").length })}
+                    </Button>
+                  )}
+                </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
                   <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => setShareReviewId(review.id)}
-                      className="text-gray-500 hover:text-blue-600 p-1"
-                      aria-label={`Share review ${review.title}`}
-                    >
-                      <Share2 className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm(t("reviews.deleteConfirm"))) {
-                          deleteReviewMutation.mutate({ id: review.id });
-                        }
-                      }}
-                      disabled={deleteReviewMutation.isPending}
-                      className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                      aria-label={`Delete review ${review.title}`}
-                    >
-                      <Trash2 className="w-4 h-4" aria-hidden="true" />
-                    </button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setShareReviewId(review.id)}
+                          aria-label={`Share review ${review.title}`}
+                          className="h-8 w-8"
+                        >
+                          <Share2 className="w-4 h-4" aria-hidden="true" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>{t("reviews.share")}</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteReviewId(review.id)}
+                          disabled={deleteReviewMutation.isPending}
+                          aria-label={`Delete review ${review.title}`}
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>{tCommon("delete")}</TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="bg-white shadow-sm rounded-lg p-12 text-center">
-          <p className="text-gray-600">{t("reviews.noReviews")}</p>
-        </div>
+        <Card className="p-12 text-center">
+          <p className="text-muted-foreground">{t("reviews.noReviews")}</p>
+        </Card>
       )}
 
       {/* Create Review Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
-            {createStep === "template" ? (
-              <>
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 id="modal-title" className="text-xl font-bold text-gray-900">
-                        {t("createModal.title")}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {t("createModal.templateDescription")}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setIsCreateModalOpen(false)}
-                      className="text-gray-400 hover:text-gray-600 text-3xl leading-none"
-                      aria-label="Close modal"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <Credenza open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <CredenzaContent className="max-w-2xl">
+          {createStep === "template" ? (
+            <>
+              <CredenzaHeader>
+                <CredenzaTitle>{t("createModal.title")}</CredenzaTitle>
+                <CredenzaDescription>
+                  {t("createModal.templateDescription")}
+                </CredenzaDescription>
+              </CredenzaHeader>
+              <CredenzaBody>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {REVIEW_TEMPLATES.map((template) => (
-                    <button
+                    <Button
                       key={template.id}
+                      variant="outline"
                       onClick={() => handleSelectTemplate(template)}
-                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-left"
+                      className="h-auto p-4 flex flex-col items-start text-left hover:border-primary hover:bg-primary/5"
                     >
-                      <div className="text-blue-600 mb-2">
+                      <div className="text-primary mb-2">
                         {TEMPLATE_ICONS[template.icon] ?? <File className="w-6 h-6" />}
                       </div>
-                      <h4 className="font-semibold text-gray-900">{template.name}</h4>
-                      <p className="text-sm text-gray-500 mt-1">{template.description}</p>
-                    </button>
+                      <span className="font-semibold">{template.name}</span>
+                      <span className="text-sm text-muted-foreground mt-1 font-normal">
+                        {template.description}
+                      </span>
+                    </Button>
                   ))}
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setCreateStep("template")}
-                      className="text-gray-500 hover:text-gray-700 p-1"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        {selectedTemplate && TEMPLATE_ICONS[selectedTemplate.icon]}
-                        {selectedTemplate?.name ?? "New Review"}
-                      </h3>
-                    </div>
-                  </div>
+              </CredenzaBody>
+            </>
+          ) : (
+            <>
+              <CredenzaHeader>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setCreateStep("template")}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </Button>
+                  <CredenzaTitle className="flex items-center gap-2">
+                    {selectedTemplate && TEMPLATE_ICONS[selectedTemplate.icon]}
+                    {selectedTemplate?.name ?? "New Review"}
+                  </CredenzaTitle>
                 </div>
-
-                <form onSubmit={handleCreateReview} className="p-6 space-y-4">
-                  <div>
-                    <label
-                      htmlFor="title"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      {t("createModal.titleLabel")}
-                    </label>
-                    <input
+              </CredenzaHeader>
+              <CredenzaBody>
+                <form onSubmit={handleCreateReview} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">{t("createModal.titleLabel")}</Label>
+                    <Input
                       id="title"
                       type="text"
                       value={newReview.title}
@@ -494,18 +668,14 @@ export default function DashboardPage() {
                         setNewReview({ ...newReview, title: e.target.value })
                       }
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="reviewerEmail"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
+                  <div className="space-y-2">
+                    <Label htmlFor="reviewerEmail">
                       {t("createModal.reviewerEmailLabel")}
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="reviewerEmail"
                       type="email"
                       value={newReview.reviewerEmail}
@@ -513,56 +683,59 @@ export default function DashboardPage() {
                         setNewReview({ ...newReview, reviewerEmail: e.target.value })
                       }
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="content"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      {t("createModal.contentLabel")}
-                    </label>
-                    <textarea
-                      id="content"
-                      value={newReview.content}
+                  <div className="space-y-2">
+                    <Label htmlFor="deadline">
+                      {t("createModal.deadlineLabel")}
+                    </Label>
+                    <Input
+                      id="deadline"
+                      type="datetime-local"
+                      value={newReview.deadline}
                       onChange={(e) =>
-                        setNewReview({ ...newReview, content: e.target.value })
+                        setNewReview({ ...newReview, deadline: e.target.value })
                       }
-                      required
-                      rows={12}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                      min={new Date().toISOString().slice(0, 16)}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Supports Markdown formatting
+                    <p className="text-xs text-muted-foreground">
+                      {t("createModal.deadlineHint")}
                     </p>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <button
+                  <div className="space-y-2">
+                    <Label htmlFor="content">{t("createModal.contentLabel")}</Label>
+                    <RichTextEditor
+                      content={newReview.content}
+                      onChange={(_html, markdown) =>
+                        setNewReview({ ...newReview, content: markdown })
+                      }
+                      placeholder={t("createModal.contentPlaceholder")}
+                      minHeight="250px"
+                    />
+                  </div>
+
+                  <CredenzaFooter className="pt-4">
+                    <Button
                       type="button"
+                      variant="outline"
                       onClick={() => setIsCreateModalOpen(false)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                     >
                       {t("createModal.cancel")}
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={createReviewMutation.isPending}
-                      className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:opacity-50"
-                    >
+                    </Button>
+                    <Button type="submit" disabled={createReviewMutation.isPending}>
                       {createReviewMutation.isPending
                         ? t("createModal.creating")
                         : t("createModal.create")}
-                    </button>
-                  </div>
+                    </Button>
+                  </CredenzaFooter>
                 </form>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+              </CredenzaBody>
+            </>
+          )}
+        </CredenzaContent>
+      </Credenza>
 
       {/* Share Modal */}
       <ShareModal
@@ -570,7 +743,26 @@ export default function DashboardPage() {
         open={!!shareReviewId}
         onOpenChange={(open) => !open && setShareReviewId(null)}
       />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        open={!!deleteReviewId}
+        onOpenChange={(open) => !open && setDeleteReviewId(null)}
+        onConfirm={() => {
+          if (deleteReviewId) {
+            deleteReviewMutation.mutate({ id: deleteReviewId });
+            setDeleteReviewId(null);
+          }
+        }}
+        title={tCommon("delete")}
+        message={t("reviews.deleteConfirm")}
+        confirmLabel={tCommon("delete")}
+        cancelLabel={tCommon("cancel")}
+        variant="danger"
+        isLoading={deleteReviewMutation.isPending}
+      />
     </div>
+    </TooltipProvider>
   );
 }
 

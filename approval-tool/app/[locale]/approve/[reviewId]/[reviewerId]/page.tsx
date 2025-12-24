@@ -4,16 +4,10 @@ import { useState } from "react";
 import { api } from "@/trpc/react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CheckCircle, XCircle, AlertCircle, Loader2 } from "lucide-react";
-
-/**
- * Email Approval Page
- *
- * Handles approve/reject from email links.
- * Requires user to click confirmation button to prevent CSRF attacks
- * from email prefetching or malicious forwards.
- */
+import { useTranslations } from "next-intl";
 
 export default function EmailApprovePage() {
+  const t = useTranslations("approve");
   const params = useParams();
   const searchParams = useSearchParams();
 
@@ -22,7 +16,6 @@ export default function EmailApprovePage() {
   const token = searchParams.get("token") ?? "";
   const decision = searchParams.get("decision");
 
-  // Validate parameters
   if (!reviewId || !reviewerId || !token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -30,14 +23,13 @@ export default function EmailApprovePage() {
           <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-red-100 mb-4" aria-hidden="true">
             <XCircle className="w-8 h-8 text-red-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Invalid Link</h1>
-          <p className="mt-2 text-gray-600">This approval link is invalid or expired. Please check your email for the correct link.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("invalidLink")}</h1>
+          <p className="mt-2 text-gray-600">{t("invalidLinkDesc")}</p>
         </div>
       </div>
     );
   }
 
-  // Validate decision parameter
   if (decision && !["approve", "reject"].includes(decision)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -45,8 +37,8 @@ export default function EmailApprovePage() {
           <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-red-100 mb-4" aria-hidden="true">
             <XCircle className="w-8 h-8 text-red-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Invalid Request</h1>
-          <p className="mt-2 text-gray-600">The decision parameter is invalid. Please use the link from your email.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("invalidRequest")}</h1>
+          <p className="mt-2 text-gray-600">{t("invalidRequestDesc")}</p>
         </div>
       </div>
     );
@@ -56,7 +48,7 @@ export default function EmailApprovePage() {
     decision ? "pending_confirmation" : "invalid"
   );
   const [errorMessage, setErrorMessage] = useState(
-    !decision ? "Invalid approval link. Please use the link from your email." : ""
+    !decision ? t("invalidDecision") : ""
   );
   const [finalDecision, setFinalDecision] = useState<"APPROVED" | "REJECTED" | null>(null);
 
@@ -74,7 +66,7 @@ export default function EmailApprovePage() {
   const handleConfirmDecision = () => {
     if (!decision || !["approve", "reject"].includes(decision)) {
       setStatus("invalid");
-      setErrorMessage("Invalid approval link. Please use the link from your email.");
+      setErrorMessage(t("invalidDecision"));
       return;
     }
 
@@ -108,10 +100,10 @@ export default function EmailApprovePage() {
               )}
             </div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Confirm {isApproveAction ? "Approval" : "Rejection"}
+              {isApproveAction ? t("confirmApproval") : t("confirmRejection")}
             </h1>
             <p className="mt-2 text-gray-600">
-              Click the button below to confirm your decision.
+              {t("confirmDecisionDesc")}
             </p>
             <button
               onClick={handleConfirmDecision}
@@ -121,13 +113,13 @@ export default function EmailApprovePage() {
                   : "bg-red-600 hover:bg-red-700"
               }`}
             >
-              {isApproveAction ? "Confirm Approval" : "Confirm Rejection"}
+              {isApproveAction ? t("confirmApprovalButton") : t("confirmRejectionButton")}
             </button>
             <a
               href={`/review/${encodeURIComponent(reviewId)}?token=${encodeURIComponent(token)}`}
               className="mt-4 block text-blue-600 hover:text-blue-700 hover:underline font-medium"
             >
-              View full review details instead
+              {t("viewFullReview")}
             </a>
           </>
         )}
@@ -137,8 +129,8 @@ export default function EmailApprovePage() {
             <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-blue-100 mb-4" role="status" aria-label="Processing">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" aria-hidden="true" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Processing...</h1>
-            <p className="mt-2 text-gray-600">Submitting your decision</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t("processing")}</h1>
+            <p className="mt-2 text-gray-600">{t("processingDesc")}</p>
           </>
         )}
 
@@ -158,16 +150,16 @@ export default function EmailApprovePage() {
               )}
             </div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {isApproved ? "Approved!" : "Rejected"}
+              {isApproved ? t("approvedTitle") : t("rejectedTitle")}
             </h1>
             <p className="mt-2 text-gray-600">
-              Your decision has been recorded. You can close this page.
+              {t("decisionRecorded")}
             </p>
             <a
               href={`/review/${encodeURIComponent(reviewId)}?token=${encodeURIComponent(token)}`}
               className="mt-6 inline-block text-blue-600 hover:text-blue-700 hover:underline font-medium"
             >
-              View full review details
+              {t("viewReviewDetails")}
             </a>
           </>
         )}
@@ -178,14 +170,14 @@ export default function EmailApprovePage() {
               <AlertCircle className="w-8 h-8 text-yellow-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {errorMessage.includes("already") ? "Already Decided" : "Error"}
+              {errorMessage.includes("already") ? t("alreadyDecided") : t("errorTitle")}
             </h1>
             <p className="mt-2 text-gray-600">{errorMessage}</p>
             <a
               href={`/review/${encodeURIComponent(reviewId)}?token=${encodeURIComponent(token)}`}
               className="mt-6 inline-block text-blue-600 hover:text-blue-700 hover:underline font-medium"
             >
-              View review
+              {t("viewReview")}
             </a>
           </>
         )}
@@ -195,7 +187,7 @@ export default function EmailApprovePage() {
             <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-red-100 mb-4">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Invalid Link</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("invalidLink")}</h1>
             <p className="mt-2 text-gray-600">{errorMessage}</p>
           </>
         )}

@@ -4,47 +4,65 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e9ba56d-7e5a-4752-aeb0-d332c4894922" name="Changes" comment="">
+    <list default="true" id="3e9ba56d-7e5a-4752-aeb0-d332c4894922" name="Changes" comment="new features">
+      <change afterPath="$PROJECT_DIR$/approval-tool/src/components/share-modal/copy-link-section.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/ACTION_PLAN_CONSOLIDATED.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/ACTION_PLAN_CONSOLIDATED.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/DEEP_USER_RESEARCH_PROMPT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/DEEP_USER_RESEARCH_PROMPT.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.1_CONTENT_TYPES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.1_CONTENT_TYPES.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/IMPLEMENTATION_PLAN_V2.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/MARKET_ANALYSIS_CHATGPT_APPSTORE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/MARKET_ANALYSIS_CHATGPT_APPSTORE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/USER_RESEARCH_REPORT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/USER_RESEARCH_REPORT.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/00-MARKETING-EXECUTION-GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/00-MARKETING-EXECUTION-GUIDE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/01-LINKEDIN-CONTENT-CALENDAR.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/01-LINKEDIN-CONTENT-CALENDAR.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/02-REDDIT-SEEDING-PLAYBOOK.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/02-REDDIT-SEEDING-PLAYBOOK.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/03-PRODUCT-HUNT-LAUNCH-KIT.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/03-PRODUCT-HUNT-LAUNCH-KIT.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/04-SEO-BLOG-CONTENT-OUTLINES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/04-SEO-BLOG-CONTENT-OUTLINES.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/05-INFLUENCER-OUTREACH-SEQUENCES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/05-INFLUENCER-OUTREACH-SEQUENCES.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/06-COLD-EMAIL-SEQUENCES.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/06-COLD-EMAIL-SEQUENCES.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/marketing/07-CASE-STUDY-TEMPLATE.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/marketing/07-CASE-STUDY-TEMPLATE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/SETUP.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/SETUP.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/loading.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/loading.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/dashboard/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/error.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/error.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/loading.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(app)/loading.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signin/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signup/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/(auth)/signup/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/approve/[reviewId]/[reviewerId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/approve/[reviewId]/[reviewerId]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/features/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/features/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/for/[audience]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/for/[audience]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/industries/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/industries/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/integrations/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/integrations/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/loading.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/loading.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/review/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/app/api/slack/interactions/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/api/slack/interactions/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/solutions/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/solutions/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/use-cases/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/use-cases/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/[locale]/vs/[competitor]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/[locale]/vs/[competitor]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/api/auth/[...all]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/api/auth/[...all]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/api/webhooks/stripe/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/api/webhooks/stripe/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/hooks/use-is-chatgpt-app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/hooks/use-is-chatgpt-app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/app/hooks/use-widget-state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/hooks/use-widget-state.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/app/mcp/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/app/mcp/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/claude.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/claude.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/docs/CHATGPT_APP_STORE_STRATEGY.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/CHATGPT_APP_STORE_STRATEGY.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/docs/IMPLEMENTATION_PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/IMPLEMENTATION_PLAN.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/docs/MARKETING_PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/MARKETING_PLAN.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/docs/PRODUCT_POSITIONING.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/PRODUCT_POSITIONING.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/docs/ROADMAP.md" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/docs/ROADMAP.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/messages/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/messages/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/middleware.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/pnpm-lock.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/prisma/schema.prisma" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/src/components/content-renderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/content-renderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/BenefitsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/BenefitsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/ComparisonSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/ComparisonSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/FAQSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/landing/sections/FAQSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/share-modal/access-management-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/share-modal/access-management-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/share-modal/email-invite-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/share-modal/email-invite-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/share-modal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/share-modal/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/ui/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/ui/button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/ui/status-badge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/ui/status-badge.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/components/ui/toast.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/components/ui/toast.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/config/landing-pages/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/config/landing-pages/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/emails/reminder.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/emails/reminder.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/env.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/env.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/i18n/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/i18n/config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/email.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/email.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/stripe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/stripe.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/review-status.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/review-status.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/schemas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/schemas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/slack.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/slack.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/stripe-prices.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/stripe-prices.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/lib/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/root.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/root.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/routers/organization.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/routers/organization.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/routers/review.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/routers/review.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/routers/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/routers/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/approval-tool/src/server/api/trpc.ts" beforeDir="false" afterPath="$PROJECT_DIR$/approval-tool/src/server/api/trpc.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +82,31 @@
     &quot;assignee&quot;: &quot;filippofilip95&quot;
   }
 }</component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/new" />
+                    <option name="lastUsedInstant" value="1766500387" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/brand-naming-exploration" />
+                    <option name="lastUsedInstant" value="1766500386" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;git@github.com:Digitaliko/sendvelo.git&quot;,
@@ -87,7 +130,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "#4 on feature/brand-naming-exploration",
+    "git-widget-placeholder": "feature/new",
     "javascript.preferred.runtime.type.id": "node",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
@@ -142,11 +185,24 @@
       <option name="presentableId" value="Default" />
       <updated>1766227765472</updated>
       <workItem from="1766227766732" duration="16550000" />
-      <workItem from="1766485074937" duration="5619000" />
+      <workItem from="1766485074937" duration="23761000" />
     </task>
+    <task id="LOCAL-00001" summary="new features">
+      <option name="closed" value="true" />
+      <created>1766500429246</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1766500429246</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="new features" />
+    <option name="LAST_COMMIT_MESSAGE" value="new features" />
   </component>
 </project>

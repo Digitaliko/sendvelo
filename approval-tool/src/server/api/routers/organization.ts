@@ -364,4 +364,153 @@ export const organizationRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  // Get Slack integration for organization
+  getSlackIntegration: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // Check if user is member
+      const membership = await ctx.prisma.organizationMember.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          organizationId: input.organizationId,
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized" });
+      }
+
+      const slackIntegration = await ctx.prisma.slackIntegration.findUnique({
+        where: { organizationId: input.organizationId },
+        select: {
+          id: true,
+          teamName: true,
+          defaultChannelId: true,
+          defaultChannelName: true,
+          notifyOnNew: true,
+          notifyOnApproved: true,
+          notifyOnRejected: true,
+          notifyOnComment: true,
+          createdAt: true,
+        },
+      });
+
+      return slackIntegration;
+    }),
+
+  // Update Slack notification settings
+  updateSlackSettings: protectedProcedure
+    .input(z.object({
+      organizationId: z.string(),
+      notifyOnNew: z.boolean().optional(),
+      notifyOnApproved: z.boolean().optional(),
+      notifyOnRejected: z.boolean().optional(),
+      notifyOnComment: z.boolean().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if user is admin/owner
+      const membership = await ctx.prisma.organizationMember.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          organizationId: input.organizationId,
+          role: { in: ["OWNER", "ADMIN"] },
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized" });
+      }
+
+      const slackIntegration = await ctx.prisma.slackIntegration.findUnique({
+        where: { organizationId: input.organizationId },
+      });
+
+      if (!slackIntegration) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Slack integration not found" });
+      }
+
+      const updated = await ctx.prisma.slackIntegration.update({
+        where: { organizationId: input.organizationId },
+        data: {
+          notifyOnNew: input.notifyOnNew ?? slackIntegration.notifyOnNew,
+          notifyOnApproved: input.notifyOnApproved ?? slackIntegration.notifyOnApproved,
+          notifyOnRejected: input.notifyOnRejected ?? slackIntegration.notifyOnRejected,
+          notifyOnComment: input.notifyOnComment ?? slackIntegration.notifyOnComment,
+        },
+      });
+
+      return updated;
+    }),
+
+  // Disconnect Slack integration
+  disconnectSlack: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if user is admin/owner
+      const membership = await ctx.prisma.organizationMember.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          organizationId: input.organizationId,
+          role: { in: ["OWNER", "ADMIN"] },
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized" });
+      }
+
+      await ctx.prisma.slackIntegration.delete({
+        where: { organizationId: input.organizationId },
+      });
+
+      return { success: true };
+    }),
+
+  // Test Slack connection
+  testSlackConnection: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if user is admin/owner
+      const membership = await ctx.prisma.organizationMember.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          organizationId: input.organizationId,
+          role: { in: ["OWNER", "ADMIN"] },
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized" });
+      }
+
+      const slackIntegration = await ctx.prisma.slackIntegration.findUnique({
+        where: { organizationId: input.organizationId },
+      });
+
+      if (!slackIntegration) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Slack integration not found" });
+      }
+
+      try {
+        const { sendSlackNotification } = await import("@/lib/slack");
+        await sendSlackNotification({
+          organizationId: input.organizationId,
+          type: "APPROVED",
+          data: {
+            title: "Test Notification",
+            reviewerEmail: "test@example.com",
+            creatorName: "System",
+            reviewUrl: "#",
+          },
+        });
+        return { success: true, message: "Test notification sent successfully" };
+      } catch (error) {
+        console.error("Slack test failed:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Failed to send test notification",
+        });
+      }
+    }),
 });

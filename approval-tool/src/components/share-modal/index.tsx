@@ -12,6 +12,7 @@ import {
 import { CopyLinkSection } from "./copy-link-section";
 import { EmailInviteSection } from "./email-invite-section";
 import { AccessManagementSection } from "./access-management-section";
+import { useTranslations } from "next-intl";
 
 interface ShareModalProps {
   reviewId: string;
@@ -20,6 +21,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ reviewId, open, onOpenChange }: ShareModalProps) {
+  const t = useTranslations("share");
   const { data: shareDetails, refetch, isLoading } = api.review.getShareDetails.useQuery(
     { reviewId },
     { enabled: open }
@@ -32,10 +34,10 @@ export function ShareModal({ reviewId, open, onOpenChange }: ShareModalProps) {
       <CredenzaContent className="sm:max-w-lg">
         <CredenzaHeader>
           <CredenzaTitle>
-            {isLoading ? "Loading..." : `Share "${shareDetails?.title}"`}
+            {isLoading ? t("loading") : t("title", { title: shareDetails?.title ?? "" })}
           </CredenzaTitle>
           <CredenzaDescription>
-            Share this review via link or invite reviewers by email
+            {t("description")}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody className="space-y-6">

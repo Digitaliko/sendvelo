@@ -1,0 +1,304 @@
+{
+  "common": {
+    "appName": "Thumbway",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "submit": "Invia"
+  },
+  "nav": {
+    "signIn": "Accedi",
+    "getStarted": "Inizia",
+    "dashboard": "Dashboard",
+    "signOut": "Esci"
+  },
+  "home": {
+    "hero": {
+      "title": "Ottieni l'approvazione per i tuoi",
+      "titleHighlight": "contenuti generati da ChatGPT",
+      "subtitle": "Invia proposte, bozze e idee per la revisione direttamente da ChatGPT. Ricevi feedback via email con una semplice approvazione o rifiuto.",
+      "cta": "Inizia la prova gratuita",
+      "viewDashboard": "Visualizza dashboard"
+    },
+    "features": {
+      "emailNotifications": {
+        "title": "Notifiche email",
+        "description": "I revisori ricevono notifiche email istantanee con un link per approvare o rifiutare i tuoi contenuti."
+      },
+      "chatgptIntegration": {
+        "title": "Integrazione ChatGPT",
+        "description": "Usa direttamente da ChatGPT con il nostro strumento MCP. Nessun cambio di contesto necessario."
+      },
+      "simpleDecisions": {
+        "title": "Decisioni semplici",
+        "description": "I revisori possono approvare o rifiutare con commenti opzionali. Interfaccia pulita e semplice."
+      }
+    },
+    "pricing": {
+      "title": "Prezzi semplici e trasparenti",
+      "free": {
+        "name": "Gratuito",
+        "price": "$0",
+        "period": "/mese",
+        "features": {
+          "reviewsPerMonth": "5 revisioni al mese",
+          "emailNotifications": "Notifiche email",
+          "chatgptIntegration": "Integrazione ChatGPT"
+        },
+        "cta": "Inizia"
+      },
+      "pro": {
+        "name": "Pro",
+        "badge": "Popolare",
+        "price": "$15",
+        "period": "/mese",
+        "features": {
+          "unlimitedReviews": "Revisioni illimitate",
+          "everythingInFree": "Tutto del piano Gratuito",
+          "prioritySupport": "Supporto prioritario"
+        },
+        "cta": "Inizia la prova gratuita"
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 Thumbway. Tutti i diritti riservati."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Accedi al tuo account",
+      "subtitle": "Bentornato! Inserisci i tuoi dati.",
+      "email": "Indirizzo email",
+      "emailPlaceholder": "tu@esempio.it",
+      "password": "Password",
+      "forgotPassword": "Password dimenticata?",
+      "submit": "Accedi",
+      "signingIn": "Accesso in corso...",
+      "noAccount": "Non hai un account?",
+      "signUp": "Registrati",
+      "orContinueWith": "Oppure continua con",
+      "orContinueWithEmail": "Oppure continua con email",
+      "continueWithGoogle": "Continua con Google",
+      "continueWithGitHub": "Continua con GitHub",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signInFailed": "Accesso fallito",
+        "generic": "Si e verificato un errore durante l'accesso",
+        "socialFailed": "Accesso con {provider} fallito"
+      }
+    },
+    "signUp": {
+      "title": "Crea un account",
+      "subtitle": "Inizia con Thumbway oggi.",
+      "name": "Nome completo",
+      "namePlaceholder": "Mario Rossi",
+      "email": "Indirizzo email",
+      "emailPlaceholder": "tu@esempio.it",
+      "password": "Password",
+      "passwordRequirement": "Almeno 8 caratteri",
+      "submit": "Crea account",
+      "creatingAccount": "Creazione account...",
+      "hasAccount": "Hai gia un account?",
+      "signIn": "Accedi",
+      "orContinueWith": "Oppure continua con",
+      "orSignUpWith": "Oppure registrati con",
+      "termsAgreement": "Creando un account, accetti i nostri Termini di servizio e la Privacy Policy",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signUpFailed": "Registrazione fallita",
+        "generic": "Si e verificato un errore durante la registrazione"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bentornato!",
+    "createReview": "Crea revisione",
+    "stats": {
+      "totalReviews": "Revisioni totali",
+      "pending": "In attesa",
+      "subscription": "Abbonamento"
+    },
+    "subscription": {
+      "title": "Abbonamento",
+      "currentPlan": "Piano attuale",
+      "free": "gratuito",
+      "pro": "pro",
+      "upgrade": "Aggiorna",
+      "manage": "Gestisci",
+      "upgradeToPro": "Aggiorna a Pro",
+      "manageSubscription": "Gestisci abbonamento",
+      "reviewsThisMonth": "Revisioni questo mese",
+      "unlimited": "Revisioni illimitate",
+      "reviewsRemaining": "{count} revisioni rimanenti questo mese"
+    },
+    "reviews": {
+      "title": "Le tue revisioni",
+      "noReviews": "Nessuna revisione ancora. Crea la tua prima!",
+      "createFirst": "Crea la tua prima revisione per iniziare.",
+      "table": {
+        "title": "Titolo",
+        "reviewer": "Revisore",
+        "status": "Stato",
+        "created": "Creato",
+        "actions": "Azioni"
+      },
+      "status": {
+        "pending": "in attesa",
+        "approved": "approvato",
+        "rejected": "rifiutato"
+      },
+      "view": "Visualizza",
+      "delete": "Elimina",
+      "deleteConfirm": "Sei sicuro di voler eliminare questa revisione?"
+    },
+    "createModal": {
+      "title": "Crea nuova revisione",
+      "templateDescription": "Scegli un modello per iniziare rapidamente",
+      "titleLabel": "Titolo",
+      "reviewerEmailLabel": "Email del revisore",
+      "contentLabel": "Contenuto",
+      "cancel": "Annulla",
+      "create": "Crea",
+      "creating": "Creazione..."
+    },
+    "filters": {
+      "allStatus": "Tutti gli stati",
+      "pending": "In attesa",
+      "approved": "Approvato",
+      "rejected": "Rifiutato",
+      "changesRequested": "Modifiche richieste"
+    },
+    "searchPlaceholder": "Cerca revisioni..."
+  },
+  "review": {
+    "from": "Da:",
+    "approved": "Questa revisione e stata approvata",
+    "rejected": "Questa revisione e stata rifiutata",
+    "changesRequested": "Sono state richieste modifiche",
+    "comments": "Commenti:",
+    "commentsLabel": "Commenti (opzionale)",
+    "commentsPlaceholder": "Aggiungi commenti o feedback...",
+    "commentsSection": "Commenti",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "requestChanges": "Richiedi modifiche",
+    "reviewers": "Revisori",
+    "footer": "Powered by",
+    "accessRestricted": "Accesso limitato",
+    "accessRestrictedDesc": "Questa revisione richiede un invito. Controlla la tua email per il link di invito.",
+    "alreadyDecided": "Hai gia inviato la tua decisione:",
+    "publicViewerNotice": "Stai visualizzando questa revisione tramite link pubblico. Per fornire feedback, richiedi un invito al creatore.",
+    "publicViewerCanComment": "Stai visualizzando questa revisione tramite link pubblico. Puoi lasciare commenti qui sotto.",
+    "publicViewerViewOnly": "Stai visualizzando questa revisione tramite link pubblico. Per fornire feedback, richiedi un invito al creatore.",
+    "publicDecisionNotice": "Questa revisione consente decisioni pubbliche. Puoi approvare o rifiutare questo contenuto utilizzando il modulo qui sotto.",
+    "emailLabel": "Email (opzionale)",
+    "emailPlaceholder": "tua@email.it",
+    "nameLabel": "Nome (opzionale)",
+    "namePlaceholder": "Il tuo nome",
+    "submitting": "Invio in corso..."
+  },
+  "approve": {
+    "invalidLink": "Link non valido",
+    "invalidLinkDesc": "Questo link di approvazione non e valido o e scaduto. Controlla la tua email per il link corretto.",
+    "invalidRequest": "Richiesta non valida",
+    "invalidRequestDesc": "Il parametro di decisione non e valido. Usa il link dalla tua email.",
+    "invalidDecision": "Link di approvazione non valido. Usa il link dalla tua email.",
+    "confirmApproval": "Conferma approvazione",
+    "confirmRejection": "Conferma rifiuto",
+    "confirmDecisionDesc": "Clicca il pulsante qui sotto per confermare la tua decisione.",
+    "confirmApprovalButton": "Conferma approvazione",
+    "confirmRejectionButton": "Conferma rifiuto",
+    "viewFullReview": "Visualizza invece i dettagli completi della revisione",
+    "processing": "Elaborazione...",
+    "processingDesc": "Invio della tua decisione",
+    "approvedTitle": "Approvato!",
+    "rejectedTitle": "Rifiutato",
+    "decisionRecorded": "La tua decisione e stata registrata. Puoi chiudere questa pagina.",
+    "viewReviewDetails": "Visualizza i dettagli completi della revisione",
+    "alreadyDecided": "Gia deciso",
+    "errorTitle": "Errore",
+    "viewReview": "Visualizza revisione"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "profile": {
+      "title": "Profilo",
+      "name": "Nome",
+      "email": "Email"
+    },
+    "subscription": {
+      "title": "Abbonamento",
+      "currentTier": "Piano attuale",
+      "reviewsUsed": "Revisioni utilizzate questo mese",
+      "unlimited": "Illimitate",
+      "manageSubscription": "Gestisci abbonamento",
+      "upgradePlan": "Aggiorna piano"
+    }
+  },
+  "share": {
+    "title": "Condividi \"{title}\"",
+    "description": "Condividi questa revisione tramite link o invita revisori via email",
+    "loading": "Caricamento...",
+    "copyLink": {
+      "title": "Condividi link",
+      "copied": "Link copiato negli appunti",
+      "copyFailed": "Impossibile copiare il link",
+      "updateFailed": "Impossibile aggiornare",
+      "anyoneWithLink": "Chiunque con il link",
+      "accessLevels": {
+        "NONE": "Nessun accesso pubblico",
+        "NONE_desc": "Solo i revisori invitati possono visualizzare",
+        "VIEW_ONLY": "Chiunque puo visualizzare",
+        "VIEW_ONLY_desc": "Chiunque con il link puo visualizzare il contenuto",
+        "VIEW_COMMENT": "Chiunque puo visualizzare e commentare",
+        "VIEW_COMMENT_desc": "Chiunque con il link puo visualizzare e lasciare commenti",
+        "FULL_ACCESS": "Chiunque puo approvare",
+        "FULL_ACCESS_desc": "Chiunque con il link puo approvare o rifiutare"
+      },
+      "accessUpdated": "Livello di accesso aggiornato"
+    },
+    "emailInvite": {
+      "title": "Invita via email",
+      "placeholder": "Inserisci indirizzi email (separati da virgola)",
+      "invite": "Invita",
+      "sending": "Invio...",
+      "description": "I revisori riceveranno un'email con un link unico per revisionare e fornire feedback.",
+      "success": "Inviti inviati",
+      "successCount": "{count} revisore/i invitato/i",
+      "noNew": "Nessun nuovo invito",
+      "allInvited": "Tutte le email gia invitate",
+      "invalidEmail": "Email non valida",
+      "invalidEmailDesc": "Inserisci un indirizzo email valido",
+      "failed": "Impossibile invitare"
+    },
+    "access": {
+      "title": "Persone con accesso",
+      "owner": "Proprietario",
+      "noReviewers": "Nessun revisore invitato ancora. Aggiungi revisori sopra.",
+      "resend": "Rinvia invito",
+      "resendSuccess": "Invito rinviato",
+      "resendFailed": "Impossibile rinviare",
+      "remove": "Rimuovi",
+      "removeSuccess": "Revisore rimosso",
+      "removeFailed": "Impossibile rimuovere",
+      "cannotRemove": "Impossibile rimuovere",
+      "cannotRemoveLast": "E richiesto almeno un revisore",
+      "timeAgo": {
+        "justNow": "adesso",
+        "minutesAgo": "{count}m fa",
+        "hoursAgo": "{count}h fa",
+        "daysAgo": "{count}g fa"
+      }
+    }
+  }
+}

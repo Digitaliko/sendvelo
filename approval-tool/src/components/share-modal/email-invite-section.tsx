@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { useToast } from "@/components/ui/toast";
+import { useTranslations } from "next-intl";
 
 interface EmailInviteSectionProps {
   reviewId: string;
@@ -16,6 +17,7 @@ export function EmailInviteSection({
   reviewId,
   onInviteSent,
 }: EmailInviteSectionProps) {
+  const t = useTranslations("share.emailInvite");
   const { addToast } = useToast();
   const [emailInput, setEmailInput] = useState("");
 
@@ -26,15 +28,15 @@ export function EmailInviteSection({
       if (data.added > 0) {
         addToast(
           "success",
-          "Invites sent",
-          `${data.added} reviewer${data.added > 1 ? "s" : ""} invited`
+          t("success"),
+          t("successCount", { count: data.added })
         );
       } else {
-        addToast("info", "No new invites", data.message ?? "All emails already invited");
+        addToast("info", t("noNew"), data.message ?? t("allInvited"));
       }
     },
     onError: (error) => {
-      addToast("error", "Failed to invite", error.message);
+      addToast("error", t("failed"), error.message);
     },
   });
 
@@ -47,7 +49,7 @@ export function EmailInviteSection({
       .filter((e) => e.includes("@"));
 
     if (emails.length === 0) {
-      addToast("error", "Invalid email", "Please enter a valid email address");
+      addToast("error", t("invalidEmail"), t("invalidEmailDesc"));
       return;
     }
 
@@ -58,13 +60,13 @@ export function EmailInviteSection({
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
         <Mail className="w-4 h-4" />
-        Invite by email
+        {t("title")}
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           type="text"
-          placeholder="Enter email addresses (comma separated)"
+          placeholder={t("placeholder")}
           value={emailInput}
           onChange={(e) => setEmailInput(e.target.value)}
           className="flex-1"
@@ -76,12 +78,12 @@ export function EmailInviteSection({
           className="shrink-0"
         >
           <Send className="w-4 h-4 mr-2" />
-          {addReviewersMutation.isPending ? "Sending..." : "Invite"}
+          {addReviewersMutation.isPending ? t("sending") : t("invite")}
         </Button>
       </form>
 
       <p className="text-xs text-gray-500">
-        Reviewers will receive an email with a unique link to review and provide feedback.
+        {t("description")}
       </p>
     </div>
   );

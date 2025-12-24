@@ -207,6 +207,9 @@ model Review {
   publicAccessLevel PublicAccessLevel @default(NONE)
   publicViewCount   Int               @default(0)
 
+  // Deadline for approval responses
+  deadline DateTime?
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -299,9 +302,15 @@ model Reviewer {
   timeSpentMs  Int       @default(0)
   lastActiveAt DateTime?
 
+  // Reminder tracking
+  lastReminderSentAt DateTime?
+
   // Decision
   decidedAt DateTime?
   comments  String?   @db.Text
+
+  // Public submission flag (for FULL_ACCESS public decisions)
+  isPublicSubmission Boolean @default(false)
 
   // Timestamps
   createdAt DateTime @default(now())

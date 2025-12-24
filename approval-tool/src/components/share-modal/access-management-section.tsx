@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { Users, MoreVertical, Trash2, RefreshCw, Eye, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ReviewerStatusBadge } from "@/components/ui/status-badge";
 import { api } from "@/trpc/react";
 import { useToast } from "@/components/ui/toast";
+import { useTranslations } from "next-intl";
 import type { ReviewerStatus } from "@prisma/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Reviewer {
   id: string;
@@ -32,34 +39,32 @@ export function AccessManagementSection({
   creatorEmail,
   onChanged,
 }: AccessManagementSectionProps) {
+  const t = useTranslations("share.access");
   const { addToast } = useToast();
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   const removeReviewerMutation = api.review.removeReviewer.useMutation({
     onSuccess: () => {
       onChanged();
-      setMenuOpenId(null);
-      addToast("success", "Reviewer removed");
+      addToast("success", t("removeSuccess"));
     },
     onError: (error) => {
-      addToast("error", "Failed to remove", error.message);
+      addToast("error", t("removeFailed"), error.message);
     },
   });
 
   const resendMutation = api.review.resendInvitation.useMutation({
     onSuccess: () => {
       onChanged();
-      setMenuOpenId(null);
-      addToast("success", "Invitation resent");
+      addToast("success", t("resendSuccess"));
     },
     onError: (error) => {
-      addToast("error", "Failed to resend", error.message);
+      addToast("error", t("resendFailed"), error.message);
     },
   });
 
   const handleRemove = (reviewerId: string) => {
     if (reviewers.length <= 1) {
-      addToast("error", "Cannot remove", "At least one reviewer is required");
+      addToast("error", t("cannotRemove"), t("cannotRemoveLast"));
       return;
     }
     removeReviewerMutation.mutate({ reviewId, reviewerId });
@@ -72,29 +77,31 @@ export function AccessManagementSection({
   const formatTimeAgo = (date: Date | null) => {
     if (!date) return null;
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
-    if (seconds < 60) return "just now";
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    return `${Math.floor(seconds / 86400)}d ago`;
+    if (seconds < 60) return t("timeAgo.justNow");
+    if (seconds < 3600) return t("timeAgo.minutesAgo", { count: Math.floor(seconds / 60) });
+    if (seconds < 86400) return t("timeAgo.hoursAgo", { count: Math.floor(seconds / 3600) });
+    return t("timeAgo.daysAgo", { count: Math.floor(seconds / 86400) });
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
         <Users className="w-4 h-4" />
-        People with access
+        {t("title")}
       </div>
 
       <div className="space-y-2">
         {creatorEmail && (
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <Crown className="w-4 h-4 text-blue-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-blue-100">
+                  <Crown className="w-4 h-4 text-blue-600" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-sm font-medium text-gray-900">{creatorEmail}</p>
-                <p className="text-xs text-gray-500">Owner</p>
+                <p className="text-xs text-gray-500">{t("owner")}</p>
               </div>
             </div>
           </div>
@@ -106,11 +113,11 @@ export function AccessManagementSection({
             className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
           >
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                <span className="text-sm font-medium text-gray-600">
+              <Avatar className="h-8 w-8 shrink-0">
+                <AvatarFallback className="bg-gray-100 text-sm font-medium text-gray-600">
                   {reviewer.email[0]?.toUpperCase()}
-                </span>
-              </div>
+                </AvatarFallback>
+              </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {reviewer.name ?? reviewer.email}
@@ -127,52 +134,39 @@ export function AccessManagementSection({
               </div>
             </div>
 
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setMenuOpenId(menuOpenId === reviewer.id ? null : reviewer.id)}
-              >
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-
-              {menuOpenId === reviewer.id && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setMenuOpenId(null)}
-                  />
-                  <div className="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                    {reviewer.status === "PENDING" && (
-                      <button
-                        onClick={() => handleResend(reviewer.id)}
-                        disabled={resendMutation.isPending}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                        Resend invite
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleRemove(reviewer.id)}
-                      disabled={removeReviewerMutation.isPending || reviewers.length <= 1}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Remove
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {reviewer.status === "PENDING" && (
+                  <DropdownMenuItem
+                    onClick={() => handleResend(reviewer.id)}
+                    disabled={resendMutation.isPending}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    {t("resend")}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  onClick={() => handleRemove(reviewer.id)}
+                  disabled={removeReviewerMutation.isPending || reviewers.length <= 1}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {t("remove")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
       </div>
 
       {reviewers.length === 0 && (
         <p className="text-sm text-gray-500 text-center py-4">
-          No reviewers invited yet. Add reviewers above.
+          {t("noReviewers")}
         </p>
       )}
     </div>

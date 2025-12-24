@@ -13,10 +13,20 @@
     "next": "Next",
     "submit": "Submit"
   },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try again",
+    "invalidAccessToken": "Invalid access token",
+    "accessTokenExpired": "Access token has expired",
+    "alreadySubmitted": "You've already submitted your decision",
+    "reviewNotFound": "Review not found"
+  },
   "nav": {
     "signIn": "Sign in",
     "getStarted": "Get started",
     "dashboard": "Dashboard",
+    "settings": "Settings",
     "signOut": "Sign out"
   },
   "home": {
@@ -75,28 +85,48 @@
     "signIn": {
       "title": "Sign in to your account",
       "subtitle": "Welcome back! Please enter your details.",
-      "email": "Email",
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
       "password": "Password",
       "forgotPassword": "Forgot password?",
       "submit": "Sign in",
+      "signingIn": "Signing in...",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
       "orContinueWith": "Or continue with",
+      "orContinueWithEmail": "Or continue with email",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithGitHub": "Continue with GitHub",
       "google": "Google",
-      "github": "GitHub"
+      "github": "GitHub",
+      "errors": {
+        "signInFailed": "Sign in failed",
+        "generic": "An error occurred during sign in",
+        "socialFailed": "Failed to sign in with {provider}"
+      }
     },
     "signUp": {
       "title": "Create an account",
       "subtitle": "Get started with Thumbway today.",
-      "name": "Name",
-      "email": "Email",
+      "name": "Full name",
+      "namePlaceholder": "John Doe",
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
       "password": "Password",
-      "submit": "Sign up",
+      "passwordRequirement": "Must be at least 8 characters",
+      "submit": "Create account",
+      "creatingAccount": "Creating account...",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
       "orContinueWith": "Or continue with",
+      "orSignUpWith": "Or sign up with",
+      "termsAgreement": "By creating an account, you agree to our Terms of Service and Privacy Policy",
       "google": "Google",
-      "github": "GitHub"
+      "github": "GitHub",
+      "errors": {
+        "signUpFailed": "Sign up failed",
+        "generic": "An error occurred during sign up"
+      }
     }
   },
   "dashboard": {
@@ -119,7 +149,7 @@
       "manageSubscription": "Manage Subscription",
       "reviewsThisMonth": "Reviews this month",
       "unlimited": "Unlimited reviews",
-      "reviewsRemaining": "{{count}} reviews remaining this month"
+      "reviewsRemaining": "{count} reviews remaining this month"
     },
     "reviews": {
       "title": "Your Reviews",
@@ -139,14 +169,30 @@
       },
       "view": "View",
       "delete": "Delete",
-      "deleteConfirm": "Are you sure you want to delete this review?"
+      "deleteConfirm": "Are you sure you want to delete this review?",
+      "viewedAgo": "Viewed {time}",
+      "notViewedYet": "Not viewed yet",
+      "sendReminder": "Send reminder",
+      "reminderSent": "Reminder sent",
+      "reminderSentDesc": "Reviewer has been nudged",
+      "createSuccess": "Review created",
+      "createSuccessDesc": "Your review has been sent to reviewers",
+      "createFailed": "Failed to create review",
+      "deleteFailed": "Failed to delete review",
+      "deleteSuccess": "Review deleted",
+      "reminderFailed": "Failed to send reminder",
+      "remindAll": "Remind all ({count})",
+      "share": "Share"
     },
     "createModal": {
       "title": "Create New Review",
       "templateDescription": "Choose a template to get started quickly",
       "titleLabel": "Title",
       "reviewerEmailLabel": "Reviewer Email",
+      "deadlineLabel": "Deadline (optional)",
+      "deadlineHint": "Set a deadline to create urgency for faster responses",
       "contentLabel": "Content",
+      "contentPlaceholder": "Start writing your content here...",
       "cancel": "Cancel",
       "create": "Create",
       "creating": "Creating..."
@@ -162,18 +208,92 @@
   },
   "review": {
     "from": "From:",
-    "approved": "✓ This review has been approved",
-    "rejected": "✗ This review has been rejected",
-    "changesRequested": "⚠ Changes have been requested",
+    "approved": "This review has been approved",
+    "rejected": "This review has been rejected",
+    "changesRequested": "Changes have been requested",
     "comments": "Comments:",
     "commentsLabel": "Comments (optional)",
     "commentsPlaceholder": "Add any comments or feedback...",
     "commentsSection": "Comments",
-    "approve": "✓ Approve",
-    "reject": "✗ Reject",
-    "requestChanges": "⚠ Request Changes",
+    "approve": "Approve",
+    "reject": "Reject",
+    "requestChanges": "Request Changes",
     "reviewers": "Reviewers",
-    "footer": "Powered by"
+    "footer": "Powered by",
+    "accessRestricted": "Access Restricted",
+    "accessRestrictedDesc": "This review requires an invitation to access. Please check your email for an invitation link.",
+    "alreadyDecided": "You have already submitted your decision:",
+    "publicViewerNotice": "You are viewing this review via a public link. To provide feedback, please request an invitation from the creator.",
+    "publicViewerCanComment": "You are viewing this review via a public link. You can leave comments below.",
+    "publicViewerViewOnly": "You are viewing this review via a public link. To provide feedback, please request an invitation from the creator.",
+    "publicDecisionNotice": "This review allows public decisions. You can approve or reject this content using the form below.",
+    "emailLabel": "Email (optional)",
+    "emailPlaceholder": "your@email.com",
+    "nameLabel": "Name (optional)",
+    "namePlaceholder": "Your name",
+    "submitting": "Submitting..."
+  },
+  "approve": {
+    "invalidLink": "Invalid Link",
+    "invalidLinkDesc": "This approval link is invalid or expired. Please check your email for the correct link.",
+    "invalidRequest": "Invalid Request",
+    "invalidRequestDesc": "The decision parameter is invalid. Please use the link from your email.",
+    "invalidDecision": "Invalid approval link. Please use the link from your email.",
+    "confirmApproval": "Confirm Approval",
+    "confirmRejection": "Confirm Rejection",
+    "confirmDecisionDesc": "Click the button below to confirm your decision.",
+    "confirmApprovalButton": "Confirm Approval",
+    "confirmRejectionButton": "Confirm Rejection",
+    "viewFullReview": "View full review details instead",
+    "processing": "Processing...",
+    "processingDesc": "Submitting your decision",
+    "approvedTitle": "Approved!",
+    "rejectedTitle": "Rejected",
+    "decisionRecorded": "Your decision has been recorded. You can close this page.",
+    "viewReviewDetails": "View full review details",
+    "alreadyDecided": "Already Decided",
+    "errorTitle": "Error",
+    "viewReview": "View review"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "email": "Email"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "currentTier": "Current Tier",
+      "reviewsUsed": "Reviews Used This Month",
+      "unlimited": "Unlimited",
+      "manageSubscription": "Manage Subscription",
+      "upgradePlan": "Upgrade Plan",
+      "reviewsUsedLabel": "reviews this month"
+    },
+    "account": {
+      "title": "Account",
+      "dangerZone": "Danger Zone",
+      "deleteWarning": "Once you delete your account, there is no going back. This will permanently delete your account and all associated data.",
+      "deleteAccount": "Delete Account",
+      "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone."
+    },
+    "integrations": {
+      "title": "Integrations",
+      "slack": {
+        "title": "Slack",
+        "description": "Connect your Slack workspace to receive notifications about review status changes.",
+        "noOrg": "Create or join an organization to connect Slack.",
+        "connect": "Connect to Slack",
+        "connected": "Connected",
+        "disconnect": "Disconnect",
+        "notifications": "Notification Settings",
+        "notifyOnNew": "New review created",
+        "notifyOnApproved": "Review approved",
+        "notifyOnRejected": "Review rejected",
+        "notifyOnComment": "New comment added"
+      }
+    }
   },
   "share": {
     "title": "Share \"{title}\"",
@@ -183,6 +303,7 @@
       "title": "Share link",
       "copied": "Link copied to clipboard",
       "copyFailed": "Failed to copy link",
+      "updateFailed": "Failed to update",
       "anyoneWithLink": "Anyone with the link",
       "accessLevels": {
         "NONE": "No public access",
@@ -206,7 +327,9 @@
       "successCount": "{count} reviewer(s) invited",
       "noNew": "No new invites",
       "allInvited": "All emails already invited",
-      "invalidEmail": "Please enter a valid email address"
+      "invalidEmail": "Invalid email",
+      "invalidEmailDesc": "Please enter a valid email address",
+      "failed": "Failed to invite"
     },
     "access": {
       "title": "People with access",
@@ -214,9 +337,18 @@
       "noReviewers": "No reviewers invited yet. Add reviewers above.",
       "resend": "Resend invite",
       "resendSuccess": "Invitation resent",
+      "resendFailed": "Failed to resend",
       "remove": "Remove",
       "removeSuccess": "Reviewer removed",
-      "cannotRemoveLast": "At least one reviewer is required"
+      "removeFailed": "Failed to remove",
+      "cannotRemove": "Cannot remove",
+      "cannotRemoveLast": "At least one reviewer is required",
+      "timeAgo": {
+        "justNow": "just now",
+        "minutesAgo": "{count}m ago",
+        "hoursAgo": "{count}h ago",
+        "daysAgo": "{count}d ago"
+      }
     }
   }
 }

@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, type SignInInput } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Form,
@@ -19,14 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-
-/**
- * Sign In Page
- *
- * Allows users to sign in with email/password or social providers (Google, GitHub).
- */
+import { useTranslations } from "next-intl";
 
 export default function SignInPage() {
+  const t = useTranslations("auth.signIn");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [error, setError] = useState("");
   const [socialLoading, setSocialLoading] = useState<"google" | "github" | null>(null);
@@ -49,13 +45,13 @@ export default function SignInPage() {
       });
 
       if (result.error) {
-        setError(result.error.message ?? "Sign in failed");
+        setError(result.error.message ?? t("errors.signInFailed"));
         return;
       }
 
       router.push("/dashboard");
     } catch {
-      setError("An error occurred during sign in");
+      setError(t("errors.generic"));
     }
   };
 
@@ -69,7 +65,7 @@ export default function SignInPage() {
         callbackURL: "/dashboard",
       });
     } catch {
-      setError(`Failed to sign in with ${provider}`);
+      setError(t("errors.socialFailed", { provider }));
       setSocialLoading(null);
     }
   };
@@ -80,18 +76,18 @@ export default function SignInPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h1 className="text-center text-3xl font-bold text-gray-900">
-          Thumbway
+          {tCommon("appName")}
         </h1>
         <h2 className="mt-6 text-center text-2xl font-semibold text-gray-900">
-          Sign in to your account
+          {t("title")}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Or{" "}
+          {t("noAccount")}{" "}
           <a
             href="/signup"
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            create a new account
+            {t("signUp")}
           </a>
         </p>
       </div>
@@ -134,7 +130,7 @@ export default function SignInPage() {
                   />
                 </svg>
               )}
-              Continue with Google
+              {t("continueWithGoogle")}
             </Button>
 
             <Button
@@ -155,7 +151,7 @@ export default function SignInPage() {
                   />
                 </svg>
               )}
-              Continue with GitHub
+              {t("continueWithGitHub")}
             </Button>
           </div>
 
@@ -166,7 +162,7 @@ export default function SignInPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Or continue with email
+                  {t("orContinueWithEmail")}
                 </span>
               </div>
             </div>
@@ -179,12 +175,12 @@ export default function SignInPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email address</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
                         autoComplete="email"
-                        placeholder="you@example.com"
+                        placeholder={t("emailPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -198,7 +194,7 @@ export default function SignInPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -219,10 +215,10 @@ export default function SignInPage() {
                 {form.formState.isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    {t("signingIn")}
                   </>
                 ) : (
-                  "Sign in"
+                  t("submit")
                 )}
               </Button>
             </form>

@@ -10,6 +10,7 @@ import {
   generateStructuredData,
   StructuredDataScript,
 } from "@/lib/landing/seo";
+import type { Locale } from "@/i18n/config";
 
 interface PageProps {
   params: Promise<{ audience: string; locale: string }>;
@@ -21,8 +22,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { audience } = await params;
-  const config = getLandingPageBySlug("audience", audience);
+  const { audience, locale } = await params;
+  const config = getLandingPageBySlug("audience", audience, locale as Locale);
 
   if (!config) {
     return { title: "Not Found" };
@@ -32,8 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function AudiencePage({ params }: PageProps) {
-  const { audience } = await params;
-  const config = getLandingPageBySlug("audience", audience);
+  const { audience, locale } = await params;
+  const config = getLandingPageBySlug("audience", audience, locale as Locale);
 
   if (!config || config.status !== "published") {
     notFound();

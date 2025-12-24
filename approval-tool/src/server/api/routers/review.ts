@@ -2,10 +2,13 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
-import { sendReviewRequestEmail, sendReviewDecisionEmail } from "@/lib/email";
+import { sendReviewRequestEmail, sendReviewDecisionEmail, sendReminderEmail } from "@/lib/email";
 import { sendSlackNotification } from "@/lib/slack";
 import { env } from "@/env";
 import { calculateReviewStatus, normalizeStatusFilter } from "@/lib/review-status";
+import { rateLimiter, getRateLimitIdentifier, getClientIp } from "@/lib/rate-limiter";
+import { getEmailUsername } from "@/lib/utils";
+import { captureException } from "@/lib/error-tracking";
 import {
   CreateReviewInputSchema,
   GetMyReviewsInputSchema,
@@ -18,13 +21,65 @@ import {
   AddReviewersInputSchema,
   RemoveReviewerInputSchema,
   ResendInvitationInputSchema,
+  SubmitPublicDecisionInputSchema,
+  UpdateEngagementInputSchema,
 } from "@/lib/schemas";
+
+function isTokenExpired(accessExpires: Date | null): boolean {
+  return accessExpires !== null && new Date() > accessExpires;
+}
 
 export const reviewRouter = createTRPCRouter({
   // Create review with multiple reviewers
   create: protectedProcedure
     .input(CreateReviewInputSchema)
     .mutation(async ({ ctx, input }) => {
+      // Check subscription limits
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: {
+          subscriptionTier: true,
+          reviewsThisMonth: true,
+          resetDate: true,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+
+      // Check if we need to reset the counter (monthly reset)
+      const now = new Date();
+      const resetDate = new Date(user.resetDate);
+      const monthsSinceReset =
+        (now.getFullYear() - resetDate.getFullYear()) * 12 +
+        (now.getMonth() - resetDate.getMonth());
+
+      let currentReviewCount = user.reviewsThisMonth;
+
+      if (monthsSinceReset >= 1) {
+        // Reset counter
+        await ctx.prisma.user.update({
+          where: { id: ctx.session.user.id },
+          data: {
+            reviewsThisMonth: 0,
+            resetDate: now,
+          },
+        });
+        currentReviewCount = 0;
+      }
+
+      // Free users have 5 reviews per month limit
+      if (user.subscriptionTier === "FREE") {
+        const limit = 5;
+        if (currentReviewCount >= limit) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Monthly review limit reached. Please upgrade your plan to create more reviews.",
+          });
+        }
+      }
+
       // Verify organization access if provided
       if (input.organizationId) {
         const membership = await ctx.prisma.organizationMember.findFirst({
@@ -56,6 +111,7 @@ export const reviewRouter = createTRPCRouter({
           creatorId: ctx.session.user.id,
           organizationId: input.organizationId,
           workflowType: input.workflowType,
+          deadline: input.deadline,
           versions: {
             create: {
               version: 1,
@@ -91,7 +147,9 @@ export const reviewRouter = createTRPCRouter({
             reviewerId: reviewer.id,
           });
         } catch (e) {
-          console.error(`Failed to email ${reviewer.email}:`, e);
+          captureException(e instanceof Error ? e : new Error("Failed to email reviewer"), {
+            extra: { email: reviewer.email, reviewId: review.id },
+          });
         }
       }
 
@@ -108,6 +166,16 @@ export const reviewRouter = createTRPCRouter({
           },
         });
       }
+
+      // Increment review count
+      await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          reviewsThisMonth: {
+            increment: 1,
+          },
+        },
+      });
 
       return review;
     }),
@@ -162,10 +230,11 @@ export const reviewRouter = createTRPCRouter({
         where: { slug: input.slug },
         include: {
           creator: { select: { name: true, email: true, image: true } },
-          reviewers: { orderBy: { order: "asc" } },
-          versions: { orderBy: { version: "desc" } },
+          reviewers: { orderBy: { order: "asc" }, take: 100 },
+          versions: { orderBy: { version: "desc" }, take: 1 },
           comments: {
             orderBy: { createdAt: "asc" },
+            take: 50,
             include: { user: { select: { name: true, image: true } } },
           },
         },
@@ -178,7 +247,7 @@ export const reviewRouter = createTRPCRouter({
       // Track engagement if token provided
       if (input.token) {
         const reviewer = review.reviewers.find((r) => r.accessToken === input.token);
-        if (reviewer && !reviewer.viewedAt) {
+        if (reviewer && !reviewer.viewedAt && !isTokenExpired(reviewer.accessExpires)) {
           await ctx.prisma.reviewer.update({
             where: { id: reviewer.id },
             data: {
@@ -206,6 +275,18 @@ export const reviewRouter = createTRPCRouter({
   submitDecision: publicProcedure
     .input(SubmitDecisionInputSchema)
     .mutation(async ({ ctx, input }) => {
+      // Rate limiting: 10 decisions per minute per IP/token
+      const clientIp = getClientIp(ctx.headers);
+      const rateLimitId = getRateLimitIdentifier(clientIp, input.token);
+      const rateLimit = rateLimiter.check(rateLimitId, 10, 60000);
+
+      if (!rateLimit.allowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many decision submissions. Please try again later.",
+        });
+      }
+
       // Find review and reviewer
       const review = await ctx.prisma.review.findUnique({
         where: { slug: input.slug },
@@ -222,6 +303,10 @@ export const reviewRouter = createTRPCRouter({
       const reviewer = review.reviewers.find((r) => r.accessToken === input.token);
       if (!reviewer) {
         throw new TRPCError({ code: "FORBIDDEN", message: "Invalid access token" });
+      }
+
+      if (isTokenExpired(reviewer.accessExpires)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Access token has expired" });
       }
 
       if (reviewer.status !== "PENDING") {
@@ -288,7 +373,9 @@ export const reviewRouter = createTRPCRouter({
             reviewUrl: `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`,
           });
         } catch (error) {
-          console.error("Failed to send decision email:", error);
+          captureException(error instanceof Error ? error : new Error("Failed to send decision email"), {
+            extra: { reviewId: review.id },
+          });
         }
       }
 
@@ -306,17 +393,200 @@ export const reviewRouter = createTRPCRouter({
             },
           });
         } catch (error) {
-          console.error("Failed to send Slack notification:", error);
+          captureException(error instanceof Error ? error : new Error("Failed to send Slack notification"), {
+            extra: { reviewId: review.id, organizationId: review.organizationId },
+          });
         }
       }
 
       return { success: true, newStatus };
     }),
 
-  // Add comment
+  submitPublicDecision: publicProcedure
+    .input(SubmitPublicDecisionInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (input.honeypot) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Spam detected",
+        });
+      }
+
+      if (env.TURNSTILE_SECRET_KEY && input.turnstileToken) {
+        try {
+          const verifyResponse = await fetch(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                secret: env.TURNSTILE_SECRET_KEY,
+                response: input.turnstileToken,
+              }),
+            }
+          );
+
+          const verifyData = await verifyResponse.json();
+
+          if (!verifyData.success) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "CAPTCHA verification failed",
+            });
+          }
+        } catch (error) {
+          captureException(error instanceof Error ? error : new Error("Turnstile verification error"));
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "CAPTCHA verification failed",
+          });
+        }
+      }
+
+      const clientIp = getClientIp(ctx.headers);
+      const rateLimitId = getRateLimitIdentifier(clientIp);
+      const rateLimit = rateLimiter.check(rateLimitId, 10, 60000);
+
+      if (!rateLimit.allowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many decision submissions. Please try again later.",
+        });
+      }
+
+      const review = await ctx.prisma.review.findUnique({
+        where: { slug: input.slug },
+        include: {
+          reviewers: true,
+          creator: true,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      if (review.publicAccessLevel !== "FULL_ACCESS") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "This review does not allow public decisions",
+        });
+      }
+
+      if (review.status !== "PENDING" && review.status !== "PARTIALLY_APPROVED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This review has already been decided",
+        });
+      }
+
+      const publicEmail = input.email ?? `anonymous-${nanoid(6)}@public.thumbway.app`;
+      const publicName = input.name ?? (input.email ? getEmailUsername(input.email) : "Anonymous");
+
+      const newStatus = await ctx.prisma.$transaction(async (tx) => {
+        const publicReviewer = await tx.reviewer.create({
+          data: {
+            reviewId: review.id,
+            email: publicEmail,
+            name: publicName,
+            status: input.decision.toUpperCase() as "APPROVED" | "REJECTED" | "CHANGES_REQUESTED",
+            comments: input.comments ?? null,
+            decidedAt: new Date(),
+            viewedAt: new Date(),
+            order: 0,
+            isPublicSubmission: true,
+          },
+        });
+
+        const updatedReviewers = await tx.reviewer.findMany({
+          where: { reviewId: review.id },
+        });
+
+        const calculatedStatus = calculateReviewStatus(
+          updatedReviewers,
+          review.workflowType,
+          input.decision.toUpperCase() as "APPROVED" | "REJECTED" | "CHANGES_REQUESTED",
+          review.status
+        );
+
+        if (calculatedStatus !== review.status) {
+          await tx.review.update({
+            where: { id: review.id },
+            data: { status: calculatedStatus },
+          });
+        }
+
+        await tx.activityLog.create({
+          data: {
+            action: input.decision === "approved" ? "REVIEW_APPROVED"
+              : input.decision === "rejected" ? "REVIEW_REJECTED"
+              : "REVIEW_CHANGES_REQUESTED",
+            reviewId: review.id,
+            metadata: {
+              reviewerEmail: publicEmail,
+              reviewerName: publicName,
+              comments: input.comments,
+              isPublicSubmission: true,
+            },
+          },
+        });
+
+        return calculatedStatus;
+      });
+
+      if (review.creator.email) {
+        try {
+          await sendReviewDecisionEmail({
+            to: review.creator.email,
+            creatorName: review.creator.name ?? "there",
+            title: review.title,
+            decision: input.decision,
+            reviewerEmail: publicEmail,
+            comments: input.comments,
+            reviewUrl: `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`,
+          });
+        } catch (error) {
+          captureException(error instanceof Error ? error : new Error("Failed to send decision email"), {
+            extra: { reviewId: review.id },
+          });
+        }
+      }
+
+      if (review.organizationId) {
+        try {
+          await sendSlackNotification({
+            organizationId: review.organizationId,
+            type: input.decision === "approved" ? "APPROVED" : input.decision === "rejected" ? "REJECTED" : "CHANGES_REQUESTED",
+            data: {
+              title: review.title,
+              reviewerEmail: `${publicName} (via public link)`,
+              creatorName: review.creator.name ?? review.creator.email,
+              reviewUrl: `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}`,
+            },
+          });
+        } catch (error) {
+          captureException(error instanceof Error ? error : new Error("Failed to send Slack notification"), {
+            extra: { reviewId: review.id, organizationId: review.organizationId },
+          });
+        }
+      }
+
+      return { success: true, newStatus };
+    }),
+
   addComment: publicProcedure
     .input(AddCommentInputSchema)
     .mutation(async ({ ctx, input }) => {
+      const clientIp = getClientIp(ctx.headers);
+      const rateLimitKey = `comment:${input.token ?? `ip:${clientIp}`}`;
+      const rateLimit = rateLimiter.check(rateLimitKey, 10, 60000);
+      if (!rateLimit.allowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many comments. Please wait before trying again.",
+        });
+      }
+
       const review = await ctx.prisma.review.findUnique({
         where: { slug: input.slug },
         include: { reviewers: true },
@@ -326,7 +596,6 @@ export const reviewRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
-      // Determine author
       let authorData: {
         authorEmail?: string;
         authorName?: string;
@@ -335,13 +604,28 @@ export const reviewRouter = createTRPCRouter({
 
       if (input.token) {
         const reviewer = review.reviewers.find((r) => r.accessToken === input.token);
-        if (reviewer) {
-          authorData = {
-            authorEmail: reviewer.email,
-            authorName: reviewer.name ?? reviewer.email.split("@")[0],
-            userId: reviewer.userId ?? undefined,
-          };
+        if (!reviewer) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Invalid access token" });
         }
+        if (isTokenExpired(reviewer.accessExpires)) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Access token has expired" });
+        }
+        authorData = {
+          authorEmail: reviewer.email,
+          authorName: reviewer.name ?? getEmailUsername(reviewer.email),
+          userId: reviewer.userId ?? undefined,
+        };
+      } else if (ctx.session?.user) {
+        authorData = {
+          authorEmail: ctx.session.user.email,
+          authorName: ctx.session.user.name ?? getEmailUsername(ctx.session.user.email),
+          userId: ctx.session.user.id,
+        };
+      } else {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Authentication required to add comments",
+        });
       }
 
       const comment = await ctx.prisma.comment.create({
@@ -352,7 +636,6 @@ export const reviewRouter = createTRPCRouter({
         },
       });
 
-      // Log activity
       await ctx.prisma.activityLog.create({
         data: {
           action: "COMMENT_ADDED",
@@ -499,6 +782,10 @@ export const reviewRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid or expired link" });
       }
 
+      if (isTokenExpired(reviewer.accessExpires)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Access token has expired" });
+      }
+
       if (reviewer.status !== "PENDING") {
         throw new TRPCError({ code: "BAD_REQUEST", message: "You have already submitted your decision" });
       }
@@ -559,7 +846,9 @@ export const reviewRouter = createTRPCRouter({
             reviewUrl: `${env.NEXT_PUBLIC_APP_URL}/review/${reviewer.review.slug}`,
           });
         } catch (error) {
-          console.error("Failed to send decision email:", error);
+          captureException(error instanceof Error ? error : new Error("Failed to send decision email"), {
+            extra: { reviewId: reviewer.review.id },
+          });
         }
       }
 
@@ -577,7 +866,9 @@ export const reviewRouter = createTRPCRouter({
             },
           });
         } catch (error) {
-          console.error("Failed to send Slack notification:", error);
+          captureException(error instanceof Error ? error : new Error("Failed to send Slack notification"), {
+            extra: { reviewId: reviewer.review.id, organizationId: reviewer.review.organizationId },
+          });
         }
       }
 
@@ -720,7 +1011,9 @@ export const reviewRouter = createTRPCRouter({
             reviewerId: reviewer.id,
           });
         } catch (e) {
-          console.error(`Failed to email ${reviewer.email}:`, e);
+          captureException(e instanceof Error ? e : new Error("Failed to email reviewer"), {
+            extra: { email: reviewer.email, reviewId: review.id },
+          });
         }
       }
 
@@ -811,16 +1104,18 @@ export const reviewRouter = createTRPCRouter({
 
       const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${review.slug}?token=${reviewer.accessToken}`;
       try {
-        await sendReviewRequestEmail({
+        await sendReminderEmail({
           to: reviewer.email,
+          reviewerName: reviewer.name ?? undefined,
           creatorName: review.creator.name ?? review.creator.email ?? "Someone",
           title: review.title,
           reviewUrl: accessUrl,
-          reviewId: review.id,
-          reviewerId: reviewer.id,
+          customMessage: input.customMessage,
         });
       } catch (e) {
-        console.error(`Failed to resend email to ${reviewer.email}:`, e);
+        captureException(e instanceof Error ? e : new Error("Failed to resend email to reviewer"), {
+          extra: { email: reviewer.email, reviewId: input.reviewId },
+        });
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to send email",
@@ -832,10 +1127,400 @@ export const reviewRouter = createTRPCRouter({
           action: "REMINDER_SENT",
           userId: ctx.session.user.id,
           reviewId: review.id,
-          metadata: { email: reviewer.email },
+          metadata: { email: reviewer.email, customMessage: input.customMessage },
         },
       });
 
       return { success: true };
+    }),
+
+  // ========================================
+  // VERSION HISTORY
+  // ========================================
+
+  getVersionHistory: protectedProcedure
+    .input(z.object({ reviewId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      return ctx.prisma.reviewVersion.findMany({
+        where: { reviewId: input.reviewId },
+        orderBy: { version: "desc" },
+      });
+    }),
+
+  getVersionDiff: protectedProcedure
+    .input(z.object({
+      reviewId: z.string(),
+      version1: z.number(),
+      version2: z.number(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const [v1, v2] = await Promise.all([
+        ctx.prisma.reviewVersion.findUnique({
+          where: {
+            reviewId_version: {
+              reviewId: input.reviewId,
+              version: input.version1,
+            },
+          },
+        }),
+        ctx.prisma.reviewVersion.findUnique({
+          where: {
+            reviewId_version: {
+              reviewId: input.reviewId,
+              version: input.version2,
+            },
+          },
+        }),
+      ]);
+
+      if (!v1 || !v2) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Version not found" });
+      }
+
+      return {
+        version1: v1,
+        version2: v2,
+      };
+    }),
+
+  restoreVersion: protectedProcedure
+    .input(z.object({
+      reviewId: z.string(),
+      versionToRestore: z.number(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: {
+          versions: { orderBy: { version: "desc" }, take: 1 },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const versionToRestore = await ctx.prisma.reviewVersion.findUnique({
+        where: {
+          reviewId_version: {
+            reviewId: input.reviewId,
+            version: input.versionToRestore,
+          },
+        },
+      });
+
+      if (!versionToRestore) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Version not found" });
+      }
+
+      const newVersion = (review.versions[0]?.version ?? 0) + 1;
+
+      const restoredVersion = await ctx.prisma.reviewVersion.create({
+        data: {
+          reviewId: review.id,
+          version: newVersion,
+          content: versionToRestore.content,
+          contentFormat: versionToRestore.contentFormat,
+          wordCount: versionToRestore.wordCount,
+          characterCount: versionToRestore.characterCount,
+          changes: `Restored from version ${input.versionToRestore}`,
+        },
+      });
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REVIEW_UPDATED",
+          userId: ctx.session.user.id,
+          reviewId: review.id,
+          metadata: {
+            version: newVersion,
+            restoredFrom: input.versionToRestore,
+          },
+        },
+      });
+
+      return { success: true, newVersion, restoredVersion };
+    }),
+
+  // ========================================
+  // REMINDER SCHEDULING
+  // ========================================
+
+  scheduleReminder: protectedProcedure
+    .input(z.object({
+      reviewId: z.string(),
+      reviewerId: z.string(),
+      scheduledAt: z.date().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.prisma.review.findFirst({
+        where: {
+          id: input.reviewId,
+          creatorId: ctx.session.user.id,
+        },
+        include: { reviewers: true },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const reviewer = review.reviewers.find((r) => r.id === input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Reviewer not found" });
+      }
+
+      if (reviewer.status !== "PENDING") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Can only schedule reminders for pending reviewers",
+        });
+      }
+
+      const scheduledAt = input.scheduledAt ?? new Date();
+
+      const reminder = await ctx.prisma.reminder.create({
+        data: {
+          reviewerId: reviewer.id,
+          scheduledAt,
+        },
+      });
+
+      return { success: true, reminder };
+    }),
+
+  sendReminder: protectedProcedure
+    .input(z.object({
+      reminderId: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const reminder = await ctx.prisma.reminder.findUnique({
+        where: { id: input.reminderId },
+      });
+
+      if (!reminder) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Reminder not found" });
+      }
+
+      if (reminder.sentAt) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Reminder already sent",
+        });
+      }
+
+      const reviewer = await ctx.prisma.reviewer.findUnique({
+        where: { id: reminder.reviewerId },
+        include: {
+          review: {
+            include: {
+              creator: { select: { name: true, email: true } },
+            },
+          },
+        },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Reviewer not found" });
+      }
+
+      if (reviewer.status !== "PENDING") {
+        await ctx.prisma.reminder.update({
+          where: { id: reminder.id },
+          data: { sentAt: new Date() },
+        });
+        return { success: true, message: "Reviewer already responded" };
+      }
+
+      const accessUrl = `${env.NEXT_PUBLIC_APP_URL}/review/${reviewer.review.slug}?token=${reviewer.accessToken}`;
+      try {
+        await sendReminderEmail({
+          to: reviewer.email,
+          reviewerName: reviewer.name ?? getEmailUsername(reviewer.email),
+          creatorName: reviewer.review.creator.name ?? reviewer.review.creator.email ?? "Someone",
+          title: reviewer.review.title,
+          reviewUrl: accessUrl,
+        });
+      } catch (error) {
+        captureException(error instanceof Error ? error : new Error("Failed to send reminder email"), {
+          extra: { reminderId: input.reminderId, reviewerId: reviewer.id },
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send reminder email",
+        });
+      }
+
+      await ctx.prisma.reminder.update({
+        where: { id: reminder.id },
+        data: { sentAt: new Date() },
+      });
+
+      await ctx.prisma.activityLog.create({
+        data: {
+          action: "REMINDER_SENT",
+          userId: ctx.session.user.id,
+          reviewId: reviewer.review.id,
+          metadata: { email: reviewer.email, reminderId: reminder.id },
+        },
+      });
+
+      return { success: true };
+    }),
+
+  updateEngagement: publicProcedure
+    .input(UpdateEngagementInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await ctx.prisma.reviewer.findUnique({
+        where: { accessToken: input.accessToken },
+        select: { id: true, reviewId: true, accessExpires: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invalid access token",
+        });
+      }
+
+      if (isTokenExpired(reviewer.accessExpires)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Access token has expired" });
+      }
+
+      await ctx.prisma.reviewer.update({
+        where: { id: reviewer.id },
+        data: {
+          timeSpentMs: { increment: input.timeSpentMs },
+          lastActiveAt: new Date(),
+        },
+      });
+
+      return { success: true };
+    }),
+
+  getDashboardStats: protectedProcedure
+    .input(
+      z.object({
+        period: z.enum(["week", "month", "all"]).default("week"),
+      }).optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const now = new Date();
+
+      let startDate: Date | undefined;
+      if (input?.period === "week") {
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      } else if (input?.period === "month") {
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      const whereClause = {
+        creatorId: userId,
+        ...(startDate && { createdAt: { gte: startDate } }),
+      };
+
+      const reviews = await ctx.prisma.review.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+          deadline: true,
+          reviewers: {
+            select: {
+              status: true,
+              decidedAt: true,
+            },
+          },
+        },
+      });
+
+      const sent = reviews.length;
+      const approved = reviews.filter((r) => r.status === "APPROVED").length;
+      const pending = reviews.filter(
+        (r) => r.status === "PENDING" || r.status === "PARTIALLY_APPROVED"
+      ).length;
+      const rejected = reviews.filter((r) => r.status === "REJECTED").length;
+      const changesRequested = reviews.filter(
+        (r) => r.status === "CHANGES_REQUESTED"
+      ).length;
+
+      const overdue = reviews.filter(
+        (r) =>
+          (r.status === "PENDING" || r.status === "PARTIALLY_APPROVED") &&
+          r.deadline &&
+          new Date(r.deadline) < now
+      ).length;
+
+      let avgTimeDays: number | null = null;
+      const completedReviews = reviews.filter((r) => {
+        if (r.status !== "APPROVED" && r.status !== "REJECTED") return false;
+        const lastDecision = r.reviewers
+          .filter((rev) => rev.decidedAt)
+          .sort(
+            (a, b) =>
+              new Date(b.decidedAt!).getTime() - new Date(a.decidedAt!).getTime()
+          )[0];
+        return !!lastDecision;
+      });
+
+      if (completedReviews.length > 0) {
+        const totalMs = completedReviews.reduce((sum, r) => {
+          const lastDecision = r.reviewers
+            .filter((rev) => rev.decidedAt)
+            .sort(
+              (a, b) =>
+                new Date(b.decidedAt!).getTime() -
+                new Date(a.decidedAt!).getTime()
+            )[0];
+          if (!lastDecision?.decidedAt) return sum;
+          return (
+            sum +
+            (new Date(lastDecision.decidedAt).getTime() - r.createdAt.getTime())
+          );
+        }, 0);
+        avgTimeDays =
+          Math.round((totalMs / completedReviews.length / (1000 * 60 * 60 * 24)) * 10) / 10;
+      }
+
+      const approvalRate =
+        sent > 0 ? Math.round((approved / sent) * 100) : null;
+
+      return {
+        sent,
+        approved,
+        pending,
+        rejected,
+        changesRequested,
+        overdue,
+        avgTimeDays,
+        approvalRate,
+      };
     }),
 });

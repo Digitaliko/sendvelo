@@ -3,45 +3,94 @@ import {
   type LandingPageCategory,
   landingPageSchema,
 } from "./schema";
+import { locales, defaultLocale, type Locale } from "@/i18n/config";
 
-// Registry to hold all landing page configs
+// Registry to hold all landing page configs by locale
 const landingPageRegistry: Map<string, LandingPageConfig> = new Map();
 
-// Register a landing page config
-export function registerLandingPage(config: LandingPageConfig): void {
-  const key = `${config.category}:${config.slug}`;
+// Create a registry key with locale support
+function createRegistryKey(
+  locale: Locale,
+  category: LandingPageCategory,
+  slug: string
+): string {
+  return `${locale}:${category}:${slug}`;
+}
+
+// Register a landing page config for a specific locale
+export function registerLandingPage(
+  config: LandingPageConfig,
+  locale: Locale = defaultLocale
+): void {
+  const key = createRegistryKey(locale, config.category, config.slug);
   const validated = landingPageSchema.parse(config);
   landingPageRegistry.set(key, validated);
 }
 
-// Get a landing page by category and slug
+// Get a landing page by category, slug, and locale (with fallback to default locale)
 export function getLandingPageBySlug(
   category: LandingPageCategory,
-  slug: string
+  slug: string,
+  locale: Locale = defaultLocale
 ): LandingPageConfig | undefined {
-  return landingPageRegistry.get(`${category}:${slug}`);
+  // First try locale-specific config
+  const localeKey = createRegistryKey(locale, category, slug);
+  const localeConfig = landingPageRegistry.get(localeKey);
+  if (localeConfig) return localeConfig;
+
+  // Fall back to default locale
+  if (locale !== defaultLocale) {
+    const defaultKey = createRegistryKey(defaultLocale, category, slug);
+    return landingPageRegistry.get(defaultKey);
+  }
+
+  return undefined;
 }
 
-// Get all landing pages
-export function getAllLandingPages(): LandingPageConfig[] {
-  return Array.from(landingPageRegistry.values());
+// Get all landing pages for a specific locale
+export function getAllLandingPages(locale: Locale = defaultLocale): LandingPageConfig[] {
+  const prefix = `${locale}:`;
+  const defaultPrefix = `${defaultLocale}:`;
+  const results = new Map<string, LandingPageConfig>();
+
+  // First add all default locale configs
+  for (const [key, config] of landingPageRegistry) {
+    if (key.startsWith(defaultPrefix)) {
+      const categorySlug = key.slice(defaultPrefix.length);
+      results.set(categorySlug, config);
+    }
+  }
+
+  // Then override with locale-specific configs if available
+  if (locale !== defaultLocale) {
+    for (const [key, config] of landingPageRegistry) {
+      if (key.startsWith(prefix)) {
+        const categorySlug = key.slice(prefix.length);
+        results.set(categorySlug, config);
+      }
+    }
+  }
+
+  return Array.from(results.values());
 }
 
-// Get all landing pages by category
+// Get all landing pages by category for a specific locale
 export function getLandingPagesByCategory(
-  category: LandingPageCategory
+  category: LandingPageCategory,
+  locale: Locale = defaultLocale
 ): LandingPageConfig[] {
-  return getAllLandingPages().filter((page) => page.category === category);
+  return getAllLandingPages(locale).filter((page) => page.category === category);
 }
 
 // Get all slugs for a category (for generateStaticParams)
 export function getLandingPageSlugs(category: LandingPageCategory): string[] {
-  return getLandingPagesByCategory(category).map((page) => page.slug);
+  // Return unique slugs from default locale (all locales have same slugs)
+  return getLandingPagesByCategory(category, defaultLocale).map((page) => page.slug);
 }
 
-// Get all published landing pages
-export function getPublishedLandingPages(): LandingPageConfig[] {
-  return getAllLandingPages().filter((page) => page.status === "published");
+// Get all published landing pages for a specific locale
+export function getPublishedLandingPages(locale: Locale = defaultLocale): LandingPageConfig[] {
+  return getAllLandingPages(locale).filter((page) => page.status === "published");
 }
 
 // Get URL path for a landing page
@@ -85,10 +134,15 @@ export const defaultSectionOrder = [
   "cta",
 ] as const;
 
+// Get available locales for landing pages
+export function getAvailableLocales(): Locale[] {
+  return [...locales];
+}
+
 // Re-export schema types
 export * from "./schema";
 
-// Import and register all landing page configs
+// Import and register all landing page configs (default locale - English)
 // Audiences
 import { freelancers } from "./audiences/freelancers";
 import { marketingTeams } from "./audiences/marketing-teams";
@@ -139,7 +193,7 @@ import { noSignupApproval } from "./features/no-signup-approval";
 import { autoReminders } from "./features/auto-reminders";
 import { multiReviewer } from "./features/multi-reviewer";
 
-// Register all configs
+// Register all configs for default locale (English)
 const allConfigs: LandingPageConfig[] = [
   // Audiences
   freelancers,
@@ -186,4 +240,13 @@ const allConfigs: LandingPageConfig[] = [
   multiReviewer,
 ];
 
-allConfigs.forEach(registerLandingPage);
+// Register all English configs
+allConfigs.forEach((config) => registerLandingPage(config, "en"));
+
+// Import and register locale-specific configs
+// SK (Slovak)
+import "./locales/sk";
+// IT (Italian)
+import "./locales/it";
+// DE (German)
+import "./locales/de";

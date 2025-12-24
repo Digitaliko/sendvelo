@@ -1,0 +1,304 @@
+{
+  "common": {
+    "appName": "Thumbway",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Loschen",
+    "edit": "Bearbeiten",
+    "close": "Schliessen",
+    "back": "Zuruck",
+    "next": "Weiter",
+    "submit": "Absenden"
+  },
+  "nav": {
+    "signIn": "Anmelden",
+    "getStarted": "Loslegen",
+    "dashboard": "Dashboard",
+    "signOut": "Abmelden"
+  },
+  "home": {
+    "hero": {
+      "title": "Holen Sie sich die Genehmigung fur Ihre",
+      "titleHighlight": "ChatGPT-generierten Inhalte",
+      "subtitle": "Senden Sie Vorschlage, Entwurfe und Ideen zur Uberprufung direkt aus ChatGPT. Erhalten Sie Feedback per E-Mail mit einfacher Genehmigung oder Ablehnung.",
+      "cta": "Kostenlose Testversion starten",
+      "viewDashboard": "Dashboard anzeigen"
+    },
+    "features": {
+      "emailNotifications": {
+        "title": "E-Mail-Benachrichtigungen",
+        "description": "Prufer erhalten sofortige E-Mail-Benachrichtigungen mit einem Link zur Genehmigung oder Ablehnung Ihrer Inhalte."
+      },
+      "chatgptIntegration": {
+        "title": "ChatGPT-Integration",
+        "description": "Verwenden Sie es direkt aus ChatGPT mit unserem MCP-Tool. Kein Kontextwechsel erforderlich."
+      },
+      "simpleDecisions": {
+        "title": "Einfache Entscheidungen",
+        "description": "Prufer konnen mit optionalen Kommentaren genehmigen oder ablehnen. Saubere, einfache Oberflache."
+      }
+    },
+    "pricing": {
+      "title": "Einfache, transparente Preise",
+      "free": {
+        "name": "Kostenlos",
+        "price": "$0",
+        "period": "/Monat",
+        "features": {
+          "reviewsPerMonth": "5 Uberprufungen pro Monat",
+          "emailNotifications": "E-Mail-Benachrichtigungen",
+          "chatgptIntegration": "ChatGPT-Integration"
+        },
+        "cta": "Loslegen"
+      },
+      "pro": {
+        "name": "Pro",
+        "badge": "Beliebt",
+        "price": "$15",
+        "period": "/Monat",
+        "features": {
+          "unlimitedReviews": "Unbegrenzte Uberprufungen",
+          "everythingInFree": "Alles aus Kostenlos",
+          "prioritySupport": "Prioritatssupport"
+        },
+        "cta": "Kostenlose Testversion starten"
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 Thumbway. Alle Rechte vorbehalten."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "In Ihr Konto anmelden",
+      "subtitle": "Willkommen zuruck! Bitte geben Sie Ihre Daten ein.",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "sie@beispiel.de",
+      "password": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "signingIn": "Anmeldung...",
+      "noAccount": "Kein Konto?",
+      "signUp": "Registrieren",
+      "orContinueWith": "Oder fortfahren mit",
+      "orContinueWithEmail": "Oder mit E-Mail fortfahren",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "continueWithGitHub": "Mit GitHub fortfahren",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signInFailed": "Anmeldung fehlgeschlagen",
+        "generic": "Bei der Anmeldung ist ein Fehler aufgetreten",
+        "socialFailed": "Anmeldung mit {provider} fehlgeschlagen"
+      }
+    },
+    "signUp": {
+      "title": "Konto erstellen",
+      "subtitle": "Starten Sie noch heute mit Thumbway.",
+      "name": "Vollstandiger Name",
+      "namePlaceholder": "Max Mustermann",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "sie@beispiel.de",
+      "password": "Passwort",
+      "passwordRequirement": "Mindestens 8 Zeichen",
+      "submit": "Konto erstellen",
+      "creatingAccount": "Konto wird erstellt...",
+      "hasAccount": "Haben Sie bereits ein Konto?",
+      "signIn": "Anmelden",
+      "orContinueWith": "Oder fortfahren mit",
+      "orSignUpWith": "Oder registrieren mit",
+      "termsAgreement": "Mit der Erstellung eines Kontos stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signUpFailed": "Registrierung fehlgeschlagen",
+        "generic": "Bei der Registrierung ist ein Fehler aufgetreten"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen zuruck!",
+    "createReview": "Uberprufung erstellen",
+    "stats": {
+      "totalReviews": "Gesamte Uberprufungen",
+      "pending": "Ausstehend",
+      "subscription": "Abonnement"
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "currentPlan": "Aktueller Plan",
+      "free": "kostenlos",
+      "pro": "pro",
+      "upgrade": "Upgraden",
+      "manage": "Verwalten",
+      "upgradeToPro": "Auf Pro upgraden",
+      "manageSubscription": "Abonnement verwalten",
+      "reviewsThisMonth": "Uberprufungen diesen Monat",
+      "unlimited": "Unbegrenzte Uberprufungen",
+      "reviewsRemaining": "{count} Uberprufungen verbleibend diesen Monat"
+    },
+    "reviews": {
+      "title": "Ihre Uberprufungen",
+      "noReviews": "Noch keine Uberprufungen. Erstellen Sie Ihre erste!",
+      "createFirst": "Erstellen Sie Ihre erste Uberprufung um zu starten.",
+      "table": {
+        "title": "Titel",
+        "reviewer": "Prufer",
+        "status": "Status",
+        "created": "Erstellt",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "pending": "ausstehend",
+        "approved": "genehmigt",
+        "rejected": "abgelehnt"
+      },
+      "view": "Anzeigen",
+      "delete": "Loschen",
+      "deleteConfirm": "Sind Sie sicher, dass Sie diese Uberprufung loschen mochten?"
+    },
+    "createModal": {
+      "title": "Neue Uberprufung erstellen",
+      "templateDescription": "Wahlen Sie eine Vorlage fur einen schnellen Start",
+      "titleLabel": "Titel",
+      "reviewerEmailLabel": "Prufer-E-Mail",
+      "contentLabel": "Inhalt",
+      "cancel": "Abbrechen",
+      "create": "Erstellen",
+      "creating": "Erstellen..."
+    },
+    "filters": {
+      "allStatus": "Alle Status",
+      "pending": "Ausstehend",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "changesRequested": "Anderungen angefordert"
+    },
+    "searchPlaceholder": "Uberprufungen suchen..."
+  },
+  "review": {
+    "from": "Von:",
+    "approved": "Diese Uberprufung wurde genehmigt",
+    "rejected": "Diese Uberprufung wurde abgelehnt",
+    "changesRequested": "Anderungen wurden angefordert",
+    "comments": "Kommentare:",
+    "commentsLabel": "Kommentare (optional)",
+    "commentsPlaceholder": "Kommentare oder Feedback hinzufugen...",
+    "commentsSection": "Kommentare",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen",
+    "requestChanges": "Anderungen anfordern",
+    "reviewers": "Prufer",
+    "footer": "Bereitgestellt von",
+    "accessRestricted": "Zugang eingeschrankt",
+    "accessRestrictedDesc": "Diese Uberprufung erfordert eine Einladung. Bitte prufen Sie Ihre E-Mail auf den Einladungslink.",
+    "alreadyDecided": "Sie haben Ihre Entscheidung bereits eingereicht:",
+    "publicViewerNotice": "Sie betrachten diese Uberprufung uber einen offentlichen Link. Um Feedback zu geben, bitten Sie den Ersteller um eine Einladung.",
+    "publicViewerCanComment": "Sie betrachten diese Uberprufung uber einen offentlichen Link. Sie konnen unten Kommentare hinterlassen.",
+    "publicViewerViewOnly": "Sie betrachten diese Uberprufung uber einen offentlichen Link. Um Feedback zu geben, bitten Sie den Ersteller um eine Einladung.",
+    "publicDecisionNotice": "Diese Uberprufung erlaubt offentliche Entscheidungen. Sie konnen diese Inhalte mit dem Formular unten genehmigen oder ablehnen.",
+    "emailLabel": "E-Mail (optional)",
+    "emailPlaceholder": "ihre@email.de",
+    "nameLabel": "Name (optional)",
+    "namePlaceholder": "Ihr Name",
+    "submitting": "Wird ubermittelt..."
+  },
+  "approve": {
+    "invalidLink": "Ungultiger Link",
+    "invalidLinkDesc": "Dieser Genehmigungslink ist ungultig oder abgelaufen. Bitte uberprufen Sie Ihre E-Mail auf den korrekten Link.",
+    "invalidRequest": "Ungultige Anfrage",
+    "invalidRequestDesc": "Der Entscheidungsparameter ist ungultig. Bitte verwenden Sie den Link aus Ihrer E-Mail.",
+    "invalidDecision": "Ungultiger Genehmigungslink. Bitte verwenden Sie den Link aus Ihrer E-Mail.",
+    "confirmApproval": "Genehmigung bestatigen",
+    "confirmRejection": "Ablehnung bestatigen",
+    "confirmDecisionDesc": "Klicken Sie auf die Schaltflache unten, um Ihre Entscheidung zu bestatigen.",
+    "confirmApprovalButton": "Genehmigung bestatigen",
+    "confirmRejectionButton": "Ablehnung bestatigen",
+    "viewFullReview": "Stattdessen vollstandige Uberprufungsdetails anzeigen",
+    "processing": "Wird verarbeitet...",
+    "processingDesc": "Ihre Entscheidung wird ubermittelt",
+    "approvedTitle": "Genehmigt!",
+    "rejectedTitle": "Abgelehnt",
+    "decisionRecorded": "Ihre Entscheidung wurde aufgezeichnet. Sie konnen diese Seite schliessen.",
+    "viewReviewDetails": "Vollstandige Uberprufungsdetails anzeigen",
+    "alreadyDecided": "Bereits entschieden",
+    "errorTitle": "Fehler",
+    "viewReview": "Uberprufung anzeigen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": {
+      "title": "Profil",
+      "name": "Name",
+      "email": "E-Mail"
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "currentTier": "Aktueller Tarif",
+      "reviewsUsed": "Uberprufungen diesen Monat verwendet",
+      "unlimited": "Unbegrenzt",
+      "manageSubscription": "Abonnement verwalten",
+      "upgradePlan": "Plan upgraden"
+    }
+  },
+  "share": {
+    "title": "\"{title}\" teilen",
+    "description": "Diese Uberprufung per Link teilen oder Prufer per E-Mail einladen",
+    "loading": "Laden...",
+    "copyLink": {
+      "title": "Link teilen",
+      "copied": "Link in Zwischenablage kopiert",
+      "copyFailed": "Link konnte nicht kopiert werden",
+      "updateFailed": "Aktualisierung fehlgeschlagen",
+      "anyoneWithLink": "Jeder mit dem Link",
+      "accessLevels": {
+        "NONE": "Kein offentlicher Zugang",
+        "NONE_desc": "Nur eingeladene Prufer konnen anzeigen",
+        "VIEW_ONLY": "Jeder kann anzeigen",
+        "VIEW_ONLY_desc": "Jeder mit dem Link kann Inhalte anzeigen",
+        "VIEW_COMMENT": "Jeder kann anzeigen und kommentieren",
+        "VIEW_COMMENT_desc": "Jeder mit dem Link kann anzeigen und Kommentare hinterlassen",
+        "FULL_ACCESS": "Jeder kann genehmigen",
+        "FULL_ACCESS_desc": "Jeder mit dem Link kann genehmigen oder ablehnen"
+      },
+      "accessUpdated": "Zugriffsebene aktualisiert"
+    },
+    "emailInvite": {
+      "title": "Per E-Mail einladen",
+      "placeholder": "E-Mail-Adressen eingeben (durch Komma getrennt)",
+      "invite": "Einladen",
+      "sending": "Senden...",
+      "description": "Prufer erhalten eine E-Mail mit einem eindeutigen Link zur Uberprufung und Feedback-Abgabe.",
+      "success": "Einladungen gesendet",
+      "successCount": "{count} Prufer eingeladen",
+      "noNew": "Keine neuen Einladungen",
+      "allInvited": "Alle E-Mails bereits eingeladen",
+      "invalidEmail": "Ungultige E-Mail",
+      "invalidEmailDesc": "Bitte geben Sie eine gultige E-Mail-Adresse ein",
+      "failed": "Einladung fehlgeschlagen"
+    },
+    "access": {
+      "title": "Personen mit Zugang",
+      "owner": "Eigentumer",
+      "noReviewers": "Noch keine Prufer eingeladen. Fugen Sie oben Prufer hinzu.",
+      "resend": "Einladung erneut senden",
+      "resendSuccess": "Einladung erneut gesendet",
+      "resendFailed": "Erneutes Senden fehlgeschlagen",
+      "remove": "Entfernen",
+      "removeSuccess": "Prufer entfernt",
+      "removeFailed": "Entfernen fehlgeschlagen",
+      "cannotRemove": "Kann nicht entfernt werden",
+      "cannotRemoveLast": "Mindestens ein Prufer ist erforderlich",
+      "timeAgo": {
+        "justNow": "gerade eben",
+        "minutesAgo": "vor {count}m",
+        "hoursAgo": "vor {count}h",
+        "daysAgo": "vor {count}T"
+      }
+    }
+  }
+}

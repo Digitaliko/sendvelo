@@ -10,6 +10,7 @@ import {
   generateStructuredData,
   StructuredDataScript,
 } from "@/lib/landing/seo";
+import type { Locale } from "@/i18n/config";
 
 interface PageProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -21,8 +22,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const config = getLandingPageBySlug("use-case", slug);
+  const { slug, locale } = await params;
+  const config = getLandingPageBySlug("use-case", slug, locale as Locale);
 
   if (!config) {
     return { title: "Not Found" };
@@ -32,8 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function UseCasePage({ params }: PageProps) {
-  const { slug } = await params;
-  const config = getLandingPageBySlug("use-case", slug);
+  const { slug, locale } = await params;
+  const config = getLandingPageBySlug("use-case", slug, locale as Locale);
 
   if (!config || config.status !== "published") {
     notFound();

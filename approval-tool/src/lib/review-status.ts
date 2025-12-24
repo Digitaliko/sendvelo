@@ -1,4 +1,5 @@
 import type { ReviewStatus, WorkflowType, ReviewerStatus } from "@prisma/client";
+import { REVIEW_STATUS, REVIEWER_STATUS, WORKFLOW_TYPE, STATUS_FILTER_MAP } from "@/lib/constants";
 
 export type ReviewerForStatusCalc = {
   status: ReviewerStatus;
@@ -8,39 +9,32 @@ export function calculateReviewStatus(
   reviewers: ReviewerForStatusCalc[],
   workflowType: WorkflowType,
   latestDecision?: "APPROVED" | "REJECTED" | "CHANGES_REQUESTED",
-  currentStatus: ReviewStatus = "PENDING"
+  currentStatus: ReviewStatus = REVIEW_STATUS.PENDING
 ): ReviewStatus {
-  const approved = reviewers.filter((r) => r.status === "APPROVED").length;
-  const rejected = reviewers.filter((r) => r.status === "REJECTED").length;
-  const changesRequested = reviewers.filter((r) => r.status === "CHANGES_REQUESTED").length;
+  const approved = reviewers.filter((r) => r.status === REVIEWER_STATUS.APPROVED).length;
+  const rejected = reviewers.filter((r) => r.status === REVIEWER_STATUS.REJECTED).length;
+  const changesRequested = reviewers.filter((r) => r.status === REVIEWER_STATUS.CHANGES_REQUESTED).length;
   const total = reviewers.length;
 
-  if (workflowType === "ANY_ONE") {
+  if (workflowType === WORKFLOW_TYPE.ANY_ONE) {
     if (latestDecision) {
       return latestDecision;
     }
-    if (approved > 0) return "APPROVED";
-    if (rejected > 0) return "REJECTED";
-    if (changesRequested > 0) return "CHANGES_REQUESTED";
+    if (approved > 0) return REVIEW_STATUS.APPROVED;
+    if (rejected > 0) return REVIEW_STATUS.REJECTED;
+    if (changesRequested > 0) return REVIEW_STATUS.CHANGES_REQUESTED;
     return currentStatus;
   }
 
-  if (rejected > 0) return "REJECTED";
-  if (changesRequested > 0) return "CHANGES_REQUESTED";
-  if (approved === total && total > 0) return "APPROVED";
-  if (approved > 0) return "PARTIALLY_APPROVED";
+  if (rejected > 0) return REVIEW_STATUS.REJECTED;
+  if (changesRequested > 0) return REVIEW_STATUS.CHANGES_REQUESTED;
+  if (approved === total && total > 0) return REVIEW_STATUS.APPROVED;
+  if (approved > 0) return REVIEW_STATUS.PARTIALLY_APPROVED;
 
   return currentStatus;
 }
 
-export const STATUS_FILTER_MAP: Record<string, ReviewStatus> = {
-  pending: "PENDING",
-  approved: "APPROVED",
-  rejected: "REJECTED",
-  changes_requested: "CHANGES_REQUESTED",
-  partially_approved: "PARTIALLY_APPROVED",
-  canceled: "CANCELED",
-};
+export { STATUS_FILTER_MAP };
 
 export function normalizeStatusFilter(status: string | undefined): ReviewStatus | undefined {
   if (!status || status === "all") return undefined;

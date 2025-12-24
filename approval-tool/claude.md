@@ -291,6 +291,82 @@ import { cn, formatDate } from "@/lib/utils";
 import { prisma } from "../../../lib/db";
 ```
 
+### 10. UI Components (shadcn/ui)
+
+Always prefer shadcn components over custom HTML elements. Components are in `src/components/ui/`.
+
+**Available Components:**
+- `Button` - All buttons (variants: default, destructive, outline, secondary, ghost, link)
+- `Input` - Text inputs, email, password fields
+- `Textarea` - Multi-line text input
+- `Card`, `CardContent`, `CardHeader`, `CardTitle` - Container cards
+- `Select`, `SelectTrigger`, `SelectContent`, `SelectItem` - Dropdowns
+- `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` - Action menus
+- `Alert`, `AlertDescription`, `AlertTitle` - Status messages
+- `Label` - Form labels
+- `Credenza` - Mobile-responsive modals (auto-switches Dialog/Drawer)
+
+**Credenza over Dialog (MANDATORY for modals):**
+```typescript
+// ✅ GOOD: Use Credenza for mobile-responsive modals
+import {
+  Credenza,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaDescription,
+  CredenzaBody,
+  CredenzaFooter,
+} from "@/components/ui/credenza";
+
+<Credenza open={open} onOpenChange={setOpen}>
+  <CredenzaContent>
+    <CredenzaHeader>
+      <CredenzaTitle>Title</CredenzaTitle>
+      <CredenzaDescription>Description</CredenzaDescription>
+    </CredenzaHeader>
+    <CredenzaBody>{/* content */}</CredenzaBody>
+    <CredenzaFooter>
+      <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+      <Button onClick={handleSubmit}>Confirm</Button>
+    </CredenzaFooter>
+  </CredenzaContent>
+</Credenza>
+
+// ❌ BAD: Custom modal overlays or Dialog (not mobile-friendly)
+<div className="fixed inset-0 bg-black/50">...</div>
+```
+
+**DropdownMenu over custom menus:**
+```typescript
+// ✅ GOOD: shadcn DropdownMenu (handles state, keyboard nav, accessibility)
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="ghost" size="icon"><MoreVertical /></Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+    <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+      Delete
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
+// ❌ BAD: Custom dropdown with manual state
+const [menuOpen, setMenuOpen] = useState(false);
+{menuOpen && <div className="absolute ...">...</div>}
+```
+
+**Button variants:**
+```typescript
+<Button>Primary action</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="outline">Secondary</Button>
+<Button variant="ghost">Subtle</Button>
+<Button variant="link" size="sm">Edit</Button>
+<Button variant="ghost" size="icon"><Share2 /></Button>
+```
+
 ## API Routes (Exceptions to tRPC)
 
 Only these should NOT use tRPC:
@@ -398,8 +474,10 @@ if (!reviewer) throw new TRPCError({ code: "FORBIDDEN" });
 6. **Null-check integrations** (Stripe, Postmark, Slack)
 7. **Use transactions** for multi-step database operations
 8. **Escape HTML** in email templates
+9. **Use shadcn components** over custom HTML (Button, Input, Card, etc.)
+10. **Use Credenza** for modals (mobile-responsive Dialog/Drawer)
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2025-01-24
+**Version**: 1.1.0
+**Last Updated**: 2025-12-23

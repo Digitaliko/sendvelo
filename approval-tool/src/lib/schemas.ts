@@ -39,6 +39,7 @@ export const CreateReviewInputSchema = z.object({
   workflowType: WorkflowTypeSchema.default("PARALLEL"),
   organizationId: z.string().optional(),
   contentFormat: ContentFormatSchema.default("MARKDOWN"),
+  deadline: z.date().optional(),
 });
 export type CreateReviewInput = z.infer<typeof CreateReviewInputSchema>;
 
@@ -136,6 +137,7 @@ export type RemoveReviewerInput = z.infer<typeof RemoveReviewerInputSchema>;
 export const ResendInvitationInputSchema = z.object({
   reviewId: z.string(),
   reviewerId: z.string(),
+  customMessage: z.string().max(500).optional(),
 });
 export type ResendInvitationInput = z.infer<typeof ResendInvitationInputSchema>;
 
@@ -143,3 +145,20 @@ export const GetShareDetailsInputSchema = z.object({
   reviewId: z.string(),
 });
 export type GetShareDetailsInput = z.infer<typeof GetShareDetailsInputSchema>;
+
+export const SubmitPublicDecisionInputSchema = z.object({
+  slug: z.string(),
+  decision: DecisionSchema,
+  comments: z.string().max(5000).optional(),
+  email: z.string().email().optional(),
+  name: z.string().max(100).optional(),
+  honeypot: z.string().optional(),
+  turnstileToken: z.string().optional(),
+});
+export type SubmitPublicDecisionInput = z.infer<typeof SubmitPublicDecisionInputSchema>;
+
+export const UpdateEngagementInputSchema = z.object({
+  accessToken: z.string(),
+  timeSpentMs: z.number().min(0).max(7200000),
+});
+export type UpdateEngagementInput = z.infer<typeof UpdateEngagementInputSchema>;

@@ -4,13 +4,28 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { env } from "@/env";
 
 /**
  * 1. CONTEXT
  *
  * This section defines the "contexts" that are available in the backend API.
  */
+const ALLOWED_ORIGINS = [
+  env.NEXT_PUBLIC_APP_URL,
+  "https://chatgpt.com",
+  "https://chat.openai.com",
+].filter(Boolean) as string[];
+
+function isOriginAllowed(origin: string | null): boolean {
+  if (!origin) return true;
+  return ALLOWED_ORIGINS.some(
+    (allowed) => origin === allowed || origin.endsWith(".vercel.app")
+  );
+}
+
 export const createTRPCContext = async (opts: FetchCreateContextFnOptions) => {
+  const origin = opts.req.headers.get("origin");
   const session = await auth.api.getSession({
     headers: opts.req.headers,
   });
@@ -19,6 +34,8 @@ export const createTRPCContext = async (opts: FetchCreateContextFnOptions) => {
     session,
     prisma,
     headers: opts.req.headers,
+    origin,
+    isOriginAllowed: isOriginAllowed(origin),
   };
 };
 
@@ -73,9 +90,11 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+  if (!ctx.isOriginAllowed) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Invalid origin" });
+  }
   return next({
     ctx: {
-      // infers the `session` as non-nullable
       session: { ...ctx.session, user: ctx.session.user },
     },
   });

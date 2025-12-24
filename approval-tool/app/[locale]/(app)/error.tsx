@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { captureException } from "@/lib/error-tracking";
 
 export default function AppError({
   error,
@@ -12,8 +14,12 @@ export default function AppError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("errors");
+
   useEffect(() => {
-    console.error("App error:", error);
+    captureException(error, {
+      tags: { digest: error.digest ?? "unknown" },
+    });
   }, [error]);
 
   return (
@@ -21,13 +27,13 @@ export default function AppError({
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Something went wrong</AlertTitle>
+          <AlertTitle>{t("somethingWentWrong")}</AlertTitle>
           <AlertDescription>
-            {error.message || "An unexpected error occurred. Please try again."}
+            {error.message || t("unexpectedError")}
           </AlertDescription>
         </Alert>
         <Button onClick={reset} variant="outline">
-          Try again
+          {t("tryAgain")}
         </Button>
       </div>
     </div>

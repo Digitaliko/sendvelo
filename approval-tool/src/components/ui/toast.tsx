@@ -4,6 +4,7 @@ import * as React from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { clsx } from "clsx";
+import { nanoid } from "nanoid";
 
 // ========================================
 // TOAST CONTEXT
@@ -41,10 +42,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const addToast = React.useCallback(
     (type: Toast["type"], message: string, description?: string) => {
-      const id = Math.random().toString(36).slice(2, 9);
+      const id = nanoid();
       setToasts((prev) => [...prev, { id, type, message, description }]);
 
-      // Auto-remove after 4 seconds
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 4000);

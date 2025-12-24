@@ -135,4 +135,35 @@ export const userRouter = createTRPCRouter({
 
     return { success: true };
   }),
+
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1).max(100),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          name: input.name,
+        },
+      });
+
+      return { success: true, user };
+    }),
+
+  deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
+    await ctx.prisma.$transaction(async (tx) => {
+      await tx.review.deleteMany({
+        where: { creatorId: ctx.session.user.id },
+      });
+
+      await tx.user.delete({
+        where: { id: ctx.session.user.id },
+      });
+    });
+
+    return { success: true };
+  }),
 });

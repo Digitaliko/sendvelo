@@ -6,7 +6,14 @@ import { env } from "@/env";
 import { getTranslations } from "next-intl/server";
 import { ContentRenderer } from "@/components/content-renderer";
 import { StatusBadge, ReviewerStatusBadge } from "@/components/ui/status-badge";
+import { DeadlineBadge } from "@/components/ui/deadline-badge";
+import { PublicDecisionForm } from "@/components/public-decision-form";
+import { EngagementTracker } from "@/components/engagement-tracker";
 import type { ContentFormat } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 /**
  * Public Review Page
@@ -65,14 +72,13 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
   const canComment = hasValidToken || publicAccessLevel === "VIEW_COMMENT" || publicAccessLevel === "FULL_ACCESS";
   const canDecidePublic = publicAccessLevel === "FULL_ACCESS";
 
-  // If no access, show restricted message
   if (!canView) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Access Restricted</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">{t("accessRestricted")}</h1>
           <p className="text-gray-600">
-            This review requires an invitation to access. Please check your email for an invitation link.
+            {t("accessRestrictedDesc")}
           </p>
         </div>
       </div>
@@ -105,6 +111,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
   const canDecide = currentReviewer && currentReviewer.status === "PENDING";
   const isPublicViewer = !currentReviewer && publicAccessLevel !== "NONE";
   const isDecided = review.status !== "PENDING" && review.status !== "PARTIALLY_APPROVED";
+  const canSubmitPublicDecision = isPublicViewer && canDecidePublic && !isDecided;
 
   async function handleDecision(formData: FormData) {
     "use server";
@@ -228,43 +235,84 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
     redirect(`/review/${encodeURIComponent(slug)}${reviewerToken ? `?token=${encodeURIComponent(reviewerToken)}` : ""}`);
   }
 
+  const publicDecisionLabels = {
+    approve: t("approve"),
+    reject: t("reject"),
+    requestChanges: t("requestChanges"),
+    commentsLabel: t("commentsLabel"),
+    commentsPlaceholder: t("commentsPlaceholder"),
+    emailLabel: t("emailLabel"),
+    emailPlaceholder: t("emailPlaceholder"),
+    nameLabel: t("nameLabel"),
+    namePlaceholder: t("namePlaceholder"),
+    submitting: t("submitting"),
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile-fixed bottom action bar */}
+      {/* Engagement tracking */}
+      {currentReviewer && <EngagementTracker accessToken={currentReviewer.accessToken} />}
+
+      {/* Mobile-fixed bottom action bar for authenticated reviewers */}
       {canDecide && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden z-50 safe-area-inset-bottom" role="toolbar" aria-label="Review actions">
-          <form action={handleDecision} className="flex gap-3">
+          <form action={handleDecision} className="space-y-2">
             <input type="hidden" name="token" value={token || ""} />
-            <button
-              type="submit"
-              name="decision"
-              value="rejected"
-              className="flex-1 py-4 px-6 bg-red-500 text-white rounded-xl font-semibold text-lg active:scale-95 transition-transform touch-manipulation"
-              aria-label="Reject review"
-            >
-              {t("reject")}
-            </button>
-            <button
+            {/* Primary action - Approve */}
+            <Button
               type="submit"
               name="decision"
               value="approved"
-              className="flex-1 py-4 px-6 bg-green-500 text-white rounded-xl font-semibold text-lg active:scale-95 transition-transform touch-manipulation"
+              size="lg"
+              className="w-full py-4 rounded-xl text-lg bg-green-600 hover:bg-green-700 active:scale-95 transition-transform touch-manipulation"
               aria-label="Approve review"
             >
               {t("approve")}
-            </button>
+            </Button>
+            {/* Secondary actions - Reject and Request Changes */}
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                name="decision"
+                value="rejected"
+                variant="destructive"
+                className="flex-1 py-3 rounded-xl active:scale-95 transition-transform touch-manipulation"
+                aria-label="Reject review"
+              >
+                {t("reject")}
+              </Button>
+              <Button
+                type="submit"
+                name="decision"
+                value="changes_requested"
+                className="flex-1 py-3 rounded-xl bg-yellow-600 hover:bg-yellow-700 active:scale-95 transition-transform touch-manipulation"
+                aria-label="Request changes"
+              >
+                {t("requestChanges")}
+              </Button>
+            </div>
           </form>
         </div>
       )}
 
+      {/* Mobile-fixed bottom action bar for public decisions */}
+      {canSubmitPublicDecision && (
+        <PublicDecisionForm
+          slug={slug}
+          isMobile={true}
+          labels={publicDecisionLabels}
+        />
+      )}
+
       {/* Content with bottom padding for fixed bar */}
-      <div className={canDecide ? "pb-28 md:pb-0" : ""}>
+      <div className={(canDecide || canSubmitPublicDecision) ? "pb-28 md:pb-0" : ""}>
         {/* Header - Sticky on mobile */}
         <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-40">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">{review.title}</h1>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <StatusBadge status={review.status} />
+              {review.deadline && <DeadlineBadge deadline={review.deadline} />}
               <span className="text-sm text-gray-500">
                 {t("from")} {review.creator.name ?? review.creator.email}
               </span>
@@ -311,7 +359,7 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
           {currentReviewer && currentReviewer.status !== "PENDING" && (
             <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
               <p className="text-sm font-medium text-blue-800">
-                You have already submitted your decision: {currentReviewer.status.toLowerCase().replace("_", " ")}
+                {t("alreadyDecided")} {currentReviewer.status.toLowerCase().replace("_", " ")}
               </p>
               {currentReviewer.comments && (
                 <p className="text-sm text-gray-700 mt-2">
@@ -322,34 +370,45 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
           )}
 
           {/* Public Viewer Notice */}
-          {isPublicViewer && (
+          {isPublicViewer && !canSubmitPublicDecision && (
             <div className="mb-6 p-4 rounded-lg bg-gray-50 border border-gray-200">
               <p className="text-sm text-gray-600">
-                You are viewing this review via a public link. To provide feedback, please request an invitation from the creator.
+                {canComment
+                  ? t("publicViewerCanComment")
+                  : t("publicViewerViewOnly")}
+              </p>
+            </div>
+          )}
+
+          {/* Public Decision Notice */}
+          {canSubmitPublicDecision && (
+            <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+              <p className="text-sm text-blue-800">
+                {t("publicDecisionNotice")}
               </p>
             </div>
           )}
 
           {/* Review Content - Card style */}
-          <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6">
+          <Card className="p-4 md:p-6 mb-6">
             <ContentRenderer content={content} format={contentFormat} />
-          </div>
+          </Card>
 
           {/* Reviewer List */}
           {review.reviewers.length > 1 && (
             <div className="mb-6">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                 {t("reviewers")} ({review.reviewers.filter(r => r.status !== "PENDING").length}/{review.reviewers.length})
               </h2>
               <div className="space-y-2">
                 {review.reviewers.map((r) => (
-                  <div
+                  <Card
                     key={r.id}
-                    className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm"
+                    className="flex items-center justify-between p-3"
                   >
-                    <span className="text-gray-900 text-sm">{r.email}</span>
+                    <span className="text-sm">{r.email}</span>
                     <ReviewerStatusBadge status={r.status} />
-                  </div>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -357,52 +416,60 @@ export default async function ReviewPage({ params, searchParams }: ReviewPagePro
 
           {/* Decision Form - Desktop only */}
           {canDecide && (
-            <form action={handleDecision} className="hidden md:block space-y-6 bg-white rounded-xl shadow-sm p-6 mb-6">
-              <input type="hidden" name="token" value={token || ""} />
+            <Card className="hidden md:block p-6 mb-6">
+              <form action={handleDecision} className="space-y-6">
+                <input type="hidden" name="token" value={token || ""} />
 
-              <div>
-                <label
-                  htmlFor="comments"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  {t("commentsLabel")}
-                </label>
-                <textarea
-                  id="comments"
-                  name="comments"
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder={t("commentsPlaceholder")}
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="comments">{t("commentsLabel")}</Label>
+                  <Textarea
+                    id="comments"
+                    name="comments"
+                    rows={4}
+                    placeholder={t("commentsPlaceholder")}
+                  />
+                </div>
 
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  name="decision"
-                  value="approved"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition-colors duration-200"
-                >
-                  {t("approve")}
-                </button>
-                <button
-                  type="submit"
-                  name="decision"
-                  value="changes_requested"
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition-colors duration-200"
-                >
-                  {t("requestChanges")}
-                </button>
-                <button
-                  type="submit"
-                  name="decision"
-                  value="rejected"
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition-colors duration-200"
-                >
-                  {t("reject")}
-                </button>
-              </div>
-            </form>
+                <div className="flex gap-4">
+                  <Button
+                    type="submit"
+                    name="decision"
+                    value="approved"
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {t("approve")}
+                  </Button>
+                  <Button
+                    type="submit"
+                    name="decision"
+                    value="changes_requested"
+                    className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    {t("requestChanges")}
+                  </Button>
+                  <Button
+                    type="submit"
+                    name="decision"
+                    value="rejected"
+                    variant="destructive"
+                    className="flex-1"
+                  >
+                    {t("reject")}
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          )}
+
+          {/* Public Decision Form - Desktop only */}
+          {canSubmitPublicDecision && (
+            <div className="hidden md:block">
+              <PublicDecisionForm
+                slug={slug}
+                isMobile={false}
+                labels={publicDecisionLabels}
+              />
+            </div>
           )}
 
           {/* Comments Section */}

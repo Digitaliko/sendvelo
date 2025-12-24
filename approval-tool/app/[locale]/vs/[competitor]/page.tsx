@@ -10,6 +10,7 @@ import {
   generateStructuredData,
   StructuredDataScript,
 } from "@/lib/landing/seo";
+import type { Locale } from "@/i18n/config";
 
 interface PageProps {
   params: Promise<{ competitor: string; locale: string }>;
@@ -21,8 +22,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { competitor } = await params;
-  const config = getLandingPageBySlug("comparison", competitor);
+  const { competitor, locale } = await params;
+  const config = getLandingPageBySlug("comparison", competitor, locale as Locale);
 
   if (!config) {
     return { title: "Not Found" };
@@ -32,8 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ComparisonPage({ params }: PageProps) {
-  const { competitor } = await params;
-  const config = getLandingPageBySlug("comparison", competitor);
+  const { competitor, locale } = await params;
+  const config = getLandingPageBySlug("comparison", competitor, locale as Locale);
 
   if (!config || config.status !== "published") {
     notFound();

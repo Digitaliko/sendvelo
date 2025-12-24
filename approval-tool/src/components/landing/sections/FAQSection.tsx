@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import type { FAQSection as FAQSectionData } from "@/config/landing-pages/schema";
 import { SectionWrapper, SectionHeader } from "../shared/SectionWrapper";
-import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface FAQSectionProps {
   data: FAQSectionData;
 }
 
 export function FAQSection({ data }: FAQSectionProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
   return (
     <SectionWrapper id="faq" variant="muted" size="narrow">
       <SectionHeader
@@ -20,38 +21,22 @@ export function FAQSection({ data }: FAQSectionProps) {
         subheadline={data.subheadline}
       />
 
-      <div className="space-y-4">
+      <Accordion type="single" collapsible defaultValue="item-0" className="space-y-4">
         {data.faqs.map((faq, index) => (
-          <div
+          <AccordionItem
             key={index}
-            className="rounded-lg border bg-background"
+            value={`item-${index}`}
+            className="rounded-lg border bg-background px-6"
           >
-            <button
-              type="button"
-              className="flex w-full items-center justify-between px-6 py-4 text-left"
-              onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            >
-              <span className="font-medium">{faq.question}</span>
-              <ChevronDown
-                className={cn(
-                  "h-5 w-5 shrink-0 text-muted-foreground transition-transform",
-                  openIndex === index && "rotate-180"
-                )}
-              />
-            </button>
-            <div
-              className={cn(
-                "overflow-hidden transition-all",
-                openIndex === index ? "max-h-96" : "max-h-0"
-              )}
-            >
-              <div className="px-6 pb-4 text-muted-foreground">
-                {faq.answer}
-              </div>
-            </div>
-          </div>
+            <AccordionTrigger className="hover:no-underline">
+              {faq.question}
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              {faq.answer}
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </SectionWrapper>
   );
 }

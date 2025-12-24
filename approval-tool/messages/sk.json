@@ -1,0 +1,304 @@
+{
+  "common": {
+    "appName": "Thumbway",
+    "loading": "Nacitavam...",
+    "error": "Chyba",
+    "success": "Uspech",
+    "cancel": "Zrusit",
+    "save": "Ulozit",
+    "delete": "Vymazat",
+    "edit": "Upravit",
+    "close": "Zavriet",
+    "back": "Spat",
+    "next": "Dalej",
+    "submit": "Odoslat"
+  },
+  "nav": {
+    "signIn": "Prihlasit sa",
+    "getStarted": "Zacat",
+    "dashboard": "Nastienka",
+    "signOut": "Odhlasit sa"
+  },
+  "home": {
+    "hero": {
+      "title": "Ziskajte schvalenie pre vas",
+      "titleHighlight": "ChatGPT-generovany obsah",
+      "subtitle": "Posielajte navrhy, koncepty a napady na schvalenie priamo z ChatGPT. Ziskajte spatnu vazbu e-mailom s jednoduchym schvalenim alebo zamietnutim.",
+      "cta": "Zacat skusobnu verziu",
+      "viewDashboard": "Zobrazit nastienku"
+    },
+    "features": {
+      "emailNotifications": {
+        "title": "E-mailove notifikacie",
+        "description": "Recenzenti dostanu okamzite e-mailove notifikacie s odkazom na schvalenie alebo zamietnutie vasho obsahu."
+      },
+      "chatgptIntegration": {
+        "title": "Integracia s ChatGPT",
+        "description": "Pouzivajte priamo z ChatGPT s nasim MCP nastrojom. Bez prepinania kontextu."
+      },
+      "simpleDecisions": {
+        "title": "Jednoduche rozhodnutia",
+        "description": "Recenzenti mozu schvalit alebo zamietnut s volitelnym komentarom. Cisty, jednoduchy interface."
+      }
+    },
+    "pricing": {
+      "title": "Jednoduchy, transparentny cennik",
+      "free": {
+        "name": "Zadarmo",
+        "price": "$0",
+        "period": "/mesiac",
+        "features": {
+          "reviewsPerMonth": "5 recenzii mesacne",
+          "emailNotifications": "E-mailove notifikacie",
+          "chatgptIntegration": "Integracia s ChatGPT"
+        },
+        "cta": "Zacat"
+      },
+      "pro": {
+        "name": "Pro",
+        "badge": "Oblubene",
+        "price": "$15",
+        "period": "/mesiac",
+        "features": {
+          "unlimitedReviews": "Neobmedzene recenzie",
+          "everythingInFree": "Vsetko zo zakladnej verzie",
+          "prioritySupport": "Prioritna podpora"
+        },
+        "cta": "Zacat skusobnu verziu"
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 Thumbway. Vsetky prava vyhradene."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Prihlaste sa do svojho uctu",
+      "subtitle": "Vitajte spat! Prosim, zadajte svoje udaje.",
+      "email": "E-mailova adresa",
+      "emailPlaceholder": "vy@priklad.sk",
+      "password": "Heslo",
+      "forgotPassword": "Zabudli ste heslo?",
+      "submit": "Prihlasit sa",
+      "signingIn": "Prihlasovanie...",
+      "noAccount": "Nemate ucet?",
+      "signUp": "Zaregistrovat sa",
+      "orContinueWith": "Alebo pokracujte s",
+      "orContinueWithEmail": "Alebo pokracujte e-mailom",
+      "continueWithGoogle": "Pokracovat s Google",
+      "continueWithGitHub": "Pokracovat s GitHub",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signInFailed": "Prihlasenie zlyhalo",
+        "generic": "Pocas prihlasenia nastala chyba",
+        "socialFailed": "Prihlasenie cez {provider} zlyhalo"
+      }
+    },
+    "signUp": {
+      "title": "Vytvorte si ucet",
+      "subtitle": "Zacnite s Thumbway uz dnes.",
+      "name": "Cele meno",
+      "namePlaceholder": "Jan Novak",
+      "email": "E-mailova adresa",
+      "emailPlaceholder": "vy@priklad.sk",
+      "password": "Heslo",
+      "passwordRequirement": "Minimalne 8 znakov",
+      "submit": "Vytvorit ucet",
+      "creatingAccount": "Vytvaram ucet...",
+      "hasAccount": "Uz mate ucet?",
+      "signIn": "Prihlasit sa",
+      "orContinueWith": "Alebo pokracujte s",
+      "orSignUpWith": "Alebo sa registrujte cez",
+      "termsAgreement": "Vytvorenim uctu suhlasite s nasimi Podmienkami pouzitia a Zasadami ochrany osobnych udajov",
+      "google": "Google",
+      "github": "GitHub",
+      "errors": {
+        "signUpFailed": "Registracia zlyhala",
+        "generic": "Pocas registracie nastala chyba"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Nastienka",
+    "welcome": "Vitajte spat!",
+    "createReview": "Vytvorit recenziu",
+    "stats": {
+      "totalReviews": "Celkove recenzie",
+      "pending": "Cakajuce",
+      "subscription": "Predplatne"
+    },
+    "subscription": {
+      "title": "Predplatne",
+      "currentPlan": "Aktualny plan",
+      "free": "zadarmo",
+      "pro": "pro",
+      "upgrade": "Vylepsit",
+      "manage": "Spravovat",
+      "upgradeToPro": "Vylepsit na Pro",
+      "manageSubscription": "Spravovat predplatne",
+      "reviewsThisMonth": "Recenzie tento mesiac",
+      "unlimited": "Neobmedzene recenzie",
+      "reviewsRemaining": "{count} recenzii zostava tento mesiac"
+    },
+    "reviews": {
+      "title": "Vase recenzie",
+      "noReviews": "Zatial ziadne recenzie. Vytvorte svoju prvu!",
+      "createFirst": "Vytvorte svoju prvu recenziu a zacnite.",
+      "table": {
+        "title": "Nazov",
+        "reviewer": "Recenzent",
+        "status": "Stav",
+        "created": "Vytvorene",
+        "actions": "Akcie"
+      },
+      "status": {
+        "pending": "cakajuce",
+        "approved": "schvalene",
+        "rejected": "zamietnutie"
+      },
+      "view": "Zobrazit",
+      "delete": "Vymazat",
+      "deleteConfirm": "Ste si isty, ze chcete vymazat tuto recenziu?"
+    },
+    "createModal": {
+      "title": "Vytvorit novu recenziu",
+      "templateDescription": "Vyberte sablonu pre rychly zaciatok",
+      "titleLabel": "Nazov",
+      "reviewerEmailLabel": "E-mail recenzenta",
+      "contentLabel": "Obsah",
+      "cancel": "Zrusit",
+      "create": "Vytvorit",
+      "creating": "Vytvaram..."
+    },
+    "filters": {
+      "allStatus": "Vsetky stavy",
+      "pending": "Cakajuce",
+      "approved": "Schvalene",
+      "rejected": "Zamietnutie",
+      "changesRequested": "Pozadovane zmeny"
+    },
+    "searchPlaceholder": "Hladat recenzie..."
+  },
+  "review": {
+    "from": "Od:",
+    "approved": "Tato recenzia bola schvalena",
+    "rejected": "Tato recenzia bola zamietnuta",
+    "changesRequested": "Boli pozadovane zmeny",
+    "comments": "Komentare:",
+    "commentsLabel": "Komentare (volitelne)",
+    "commentsPlaceholder": "Pridajte komentare alebo spatnu vazbu...",
+    "commentsSection": "Komentare",
+    "approve": "Schvalit",
+    "reject": "Zamietnut",
+    "requestChanges": "Poziadovat zmeny",
+    "reviewers": "Recenzenti",
+    "footer": "Pohanane",
+    "accessRestricted": "Pristup obmedzeny",
+    "accessRestrictedDesc": "Tato recenzia vyzaduje pozvanku. Prosim, skontrolujte svoju e-mailovu schranku.",
+    "alreadyDecided": "Uz ste odoslali svoje rozhodnutie:",
+    "publicViewerNotice": "Prezedate tuto recenziu cez verejny odkaz. Pre poskytnutie spatnej vazby poziadajte autora o pozvanku.",
+    "publicViewerCanComment": "Prezedate tuto recenziu cez verejny odkaz. Mozete zanechat komentare nizsie.",
+    "publicViewerViewOnly": "Prezedate tuto recenziu cez verejny odkaz. Pre poskytnutie spatnej vazby poziadajte autora o pozvanku.",
+    "publicDecisionNotice": "Tato recenzia umoznuje verejne rozhodnutia. Mozete schvalit alebo zamietnut tento obsah pomocou formulara nizsie.",
+    "emailLabel": "E-mail (volitelne)",
+    "emailPlaceholder": "vas@email.sk",
+    "nameLabel": "Meno (volitelne)",
+    "namePlaceholder": "Vase meno",
+    "submitting": "Odosielam..."
+  },
+  "approve": {
+    "invalidLink": "Neplatny odkaz",
+    "invalidLinkDesc": "Tento schvalovaci odkaz je neplatny alebo vyprsala jeho platnost. Prosim skontrolujte svoju e-mailovu schranku pre spravny odkaz.",
+    "invalidRequest": "Neplatna poziadavka",
+    "invalidRequestDesc": "Parameter rozhodnutia je neplatny. Prosim pouzite odkaz z vasej e-mailovej schranky.",
+    "invalidDecision": "Neplatny schvalovaci odkaz. Prosim pouzite odkaz z vasej e-mailovej schranky.",
+    "confirmApproval": "Potvrdit schvalenie",
+    "confirmRejection": "Potvrdit zamietnutie",
+    "confirmDecisionDesc": "Kliknite na tlacidlo nizsie pre potvrdenie vasho rozhodnutia.",
+    "confirmApprovalButton": "Potvrdit schvalenie",
+    "confirmRejectionButton": "Potvrdit zamietnutie",
+    "viewFullReview": "Namiesto toho zobrazit uplne detaily recenzie",
+    "processing": "Spracovavam...",
+    "processingDesc": "Odosielam vase rozhodnutie",
+    "approvedTitle": "Schvalene!",
+    "rejectedTitle": "Zamietnutie",
+    "decisionRecorded": "Vase rozhodnutie bolo zaznamenane. Mozete zavret tuto stranku.",
+    "viewReviewDetails": "Zobrazit uplne detaily recenzie",
+    "alreadyDecided": "Uz rozhodnute",
+    "errorTitle": "Chyba",
+    "viewReview": "Zobrazit recenziu"
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "profile": {
+      "title": "Profil",
+      "name": "Meno",
+      "email": "E-mail"
+    },
+    "subscription": {
+      "title": "Predplatne",
+      "currentTier": "Aktualny tarif",
+      "reviewsUsed": "Pouzite recenzie tento mesiac",
+      "unlimited": "Neobmedzene",
+      "manageSubscription": "Spravovat predplatne",
+      "upgradePlan": "Vylepsit plan"
+    }
+  },
+  "share": {
+    "title": "Zdielat \"{title}\"",
+    "description": "Zdielat tuto recenziu cez odkaz alebo pozvat recenzentov e-mailom",
+    "loading": "Nacitavam...",
+    "copyLink": {
+      "title": "Zdielat odkaz",
+      "copied": "Odkaz skopirovany do schranky",
+      "copyFailed": "Nepodarilo sa skopirovat odkaz",
+      "updateFailed": "Nepodarilo sa aktualizovat",
+      "anyoneWithLink": "Ktokolavek s odkazom",
+      "accessLevels": {
+        "NONE": "Ziadny verejny pristup",
+        "NONE_desc": "Len pozvania recenzenti mozu zobrazit",
+        "VIEW_ONLY": "Ktokolavek moze zobrazit",
+        "VIEW_ONLY_desc": "Ktokolavek s odkazom moze zobrazit obsah",
+        "VIEW_COMMENT": "Ktokolavek moze zobrazit a komentovat",
+        "VIEW_COMMENT_desc": "Ktokolavek s odkazom moze zobrazit a zanechat komentare",
+        "FULL_ACCESS": "Ktokolavek moze schvalovat",
+        "FULL_ACCESS_desc": "Ktokolavek s odkazom moze schvalit alebo zamietnut"
+      },
+      "accessUpdated": "Uroven pristupu aktualizovana"
+    },
+    "emailInvite": {
+      "title": "Pozvat e-mailom",
+      "placeholder": "Zadajte e-mailove adresy (oddelene ciarkami)",
+      "invite": "Pozvat",
+      "sending": "Odosielam...",
+      "description": "Recenzenti dostanu e-mail s jedinecnym odkazom na recenziu a poskytnutie spatnej vazby.",
+      "success": "Pozvanky odoslane",
+      "successCount": "{count} recenzent(ov) pozvany(ch)",
+      "noNew": "Ziadne nove pozvanky",
+      "allInvited": "Vsetky e-maily uz pozvanee",
+      "invalidEmail": "Neplatny e-mail",
+      "invalidEmailDesc": "Prosim zadajte platnu e-mailovu adresu",
+      "failed": "Nepodarilo sa pozvat"
+    },
+    "access": {
+      "title": "Ludia s pristupom",
+      "owner": "Vlastnik",
+      "noReviewers": "Zatial ziadni recenzenti. Pridajte recenzentov vyssie.",
+      "resend": "Znova odoslat pozvanku",
+      "resendSuccess": "Pozvanka znova odoslana",
+      "resendFailed": "Nepodarilo sa znova odoslat",
+      "remove": "Odstranit",
+      "removeSuccess": "Recenzent odstraneny",
+      "removeFailed": "Nepodarilo sa odstranit",
+      "cannotRemove": "Nemozno odstranit",
+      "cannotRemoveLast": "Aspon jeden recenzent je potrebny",
+      "timeAgo": {
+        "justNow": "prave teraz",
+        "minutesAgo": "pred {count}m",
+        "hoursAgo": "pred {count}h",
+        "daysAgo": "pred {count}d"
+      }
+    }
+  }
+}

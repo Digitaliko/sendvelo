@@ -9,7 +9,29 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix: "as-needed",
 });
 
+const ALLOWED_ORIGINS = [
+  process.env.NEXT_PUBLIC_APP_URL,
+  "https://chatgpt.com",
+  "https://chat.openai.com",
+].filter(Boolean) as string[];
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed =>
+    origin === allowed || origin.endsWith('.vercel.app')
+  ) ? origin : ALLOWED_ORIGINS[0] || '';
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-trpc-source",
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
+
 export function middleware(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Skip i18n for API routes and static files
   if (
     request.nextUrl.pathname.startsWith("/api") ||
@@ -19,20 +41,13 @@ export function middleware(request: NextRequest) {
   ) {
     if (request.method === "OPTIONS") {
       const response = new NextResponse(null, { status: 204 });
-      response.headers.set("Access-Control-Allow-Origin", "*");
-      response.headers.set(
-        "Access-Control-Allow-Methods",
-        "GET,POST,PUT,DELETE,OPTIONS"
-      );
-      response.headers.set("Access-Control-Allow-Headers", "*");
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
       return response;
     }
     return NextResponse.next({
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "*",
-      },
+      headers: corsHeaders,
     });
   }
 
@@ -40,12 +55,9 @@ export function middleware(request: NextRequest) {
   const response = intlMiddleware(request);
 
   // Add CORS headers to i18n response
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.headers.set(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,DELETE,OPTIONS"
-  );
-  response.headers.set("Access-Control-Allow-Headers", "*");
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
 
   return response;
 }

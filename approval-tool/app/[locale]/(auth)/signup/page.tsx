@@ -19,14 +19,11 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-
-/**
- * Sign Up Page
- *
- * Allows users to create a new account with email/password.
- */
+import { useTranslations } from "next-intl";
 
 export default function SignUpPage() {
+  const t = useTranslations("auth.signUp");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [error, setError] = useState("");
 
@@ -50,13 +47,13 @@ export default function SignUpPage() {
       });
 
       if (result.error) {
-        setError(result.error.message ?? "Sign up failed");
+        setError(result.error.message ?? t("errors.signUpFailed"));
         return;
       }
 
       router.push("/dashboard");
     } catch {
-      setError("An error occurred during sign up");
+      setError(t("errors.generic"));
     }
   };
 
@@ -64,18 +61,18 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h1 className="text-center text-3xl font-bold text-gray-900">
-          Thumbway
+          {tCommon("appName")}
         </h1>
         <h2 className="mt-6 text-center text-2xl font-semibold text-gray-900">
-          Create your account
+          {t("title")}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Already have an account?{" "}
+          {t("hasAccount")}{" "}
           <a
             href="/signin"
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            Sign in
+            {t("signIn")}
           </a>
         </p>
       </div>
@@ -95,12 +92,12 @@ export default function SignUpPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full name</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
                         autoComplete="name"
-                        placeholder="John Doe"
+                        placeholder={t("namePlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -114,12 +111,12 @@ export default function SignUpPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email address</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
                         autoComplete="email"
-                        placeholder="you@example.com"
+                        placeholder={t("emailPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -133,7 +130,7 @@ export default function SignUpPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -142,7 +139,7 @@ export default function SignUpPage() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Must be at least 8 characters
+                      {t("passwordRequirement")}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -157,10 +154,10 @@ export default function SignUpPage() {
                 {form.formState.isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
+                    {t("creatingAccount")}
                   </>
                 ) : (
-                  "Create account"
+                  t("submit")
                 )}
               </Button>
             </form>
@@ -173,7 +170,7 @@ export default function SignUpPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Or sign up with
+                  {t("orSignUpWith")}
                 </span>
               </div>
             </div>
@@ -181,8 +178,7 @@ export default function SignUpPage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
-              By creating an account, you agree to our Terms of Service and
-              Privacy Policy
+              {t("termsAgreement")}
             </p>
           </div>
         </div>
